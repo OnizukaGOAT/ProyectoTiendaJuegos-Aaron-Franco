@@ -14,10 +14,14 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("login"), 900, 650);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-        stage.setTitle("GamePyramid - Tienda de Videojuegos");
+        scene = new Scene(loadFXML("login"), 980, 680);
+        scene.getStylesheets().add(
+                getClass().getResource("/com/mycompany/proyectotiendajuegos/aaron/franco/styles.css")
+                          .toExternalForm());
+        stage.setTitle("GamePyramid – Tienda de Videojuegos");
         stage.setScene(scene);
+        stage.setMinWidth(900);
+        stage.setMinHeight(620);
         stage.setResizable(true);
         stage.show();
     }
@@ -27,7 +31,9 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        FXMLLoader loader = new FXMLLoader(
+                App.class.getResource(
+                        "/com/mycompany/proyectotiendajuegos/aaron/franco/" + fxml + ".fxml"));
         return loader.load();
     }
 

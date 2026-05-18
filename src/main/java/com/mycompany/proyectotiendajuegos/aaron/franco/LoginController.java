@@ -1,9 +1,9 @@
 package com.mycompany.proyectotiendajuegos.aaron.franco;
 
 import com.mycompany.proyectotiendajuegos.aaron.franco.App;
-import com.mycompany.proyectotiendajuegos.aaron.franco.GestorDatos;
-import com.mycompany.proyectotiendajuegos.aaron.franco.Administrador;
-import com.mycompany.proyectotiendajuegos.aaron.franco.Usuario;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.GestorDatos;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Administrador;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -13,9 +13,9 @@ import java.io.IOException;
 
 public class LoginController {
 
-    @FXML private TextField txCorreo;
+    @FXML private TextField     txCorreo;
     @FXML private PasswordField txPassword;
-    @FXML private Label lblError;
+    @FXML private Label         lblError;
 
     private final GestorDatos gd = GestorDatos.getInstance();
 
@@ -23,30 +23,34 @@ public class LoginController {
     private void loginUsuario() {
         String correo = txCorreo.getText().trim();
         String pass   = txPassword.getText();
-        Usuario u = gd.loginUsuario(correo, pass);
-        if (u == null) {
-            mostrarError("Correo o contraseña incorrectos.");
-        } else {
-            navegar("main_usuario");
+        lblError.setVisible(false);
+
+        if (correo.isEmpty() || pass.isEmpty()) {
+            mostrarError("Introduce correo y contraseña.");
+            return;
         }
+        Usuario u = gd.loginUsuario(correo, pass);
+        if (u == null) mostrarError("Correo o contraseña incorrectos.");
+        else navegar("main_usuario");
     }
 
     @FXML
     private void loginAdmin() {
         String correo = txCorreo.getText().trim();
         String pass   = txPassword.getText();
-        Administrador a = gd.loginAdmin(correo, pass);
-        if (a == null) {
-            mostrarError("Correo o contraseña de administrador incorrectos.");
-        } else {
-            navegar("main_admin");
+        lblError.setVisible(false);
+
+        if (correo.isEmpty() || pass.isEmpty()) {
+            mostrarError("Introduce correo y contraseña.");
+            return;
         }
+        Administrador a = gd.loginAdmin(correo, pass);
+        if (a == null) mostrarError("Credenciales de administrador incorrectas.");
+        else navegar("main_admin");
     }
 
     @FXML
-    private void irARegistro() {
-        navegar("registro");
-    }
+    private void irARegistro() { navegar("registro"); }
 
     private void mostrarError(String msg) {
         lblError.setText(msg);

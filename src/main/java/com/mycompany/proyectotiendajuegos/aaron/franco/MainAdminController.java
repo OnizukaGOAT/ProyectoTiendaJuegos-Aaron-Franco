@@ -1,9 +1,15 @@
 package com.mycompany.proyectotiendajuegos.aaron.franco;
 
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Juego;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Desarrollador;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Resena;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Administrador;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Usuario;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Compra;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Estudio;
 import com.mycompany.proyectotiendajuegos.aaron.franco.App;
-import com.mycompany.proyectotiendajuegos.aaron.franco.datos.GestorDatos;
-import com.mycompany.proyectotiendajuegos.aaron.franco.modelo.*;
-import com.mycompany.proyectotiendajuegos.aaron.franco.util.DialogUtil;
+import com.mycompany.proyectotiendajuegos.aaron.franco.clases.GestorDatos;
+import com.mycompany.proyectotiendajuegos.aaron.franco.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,7 +27,7 @@ import java.util.ResourceBundle;
 public class MainAdminController implements Initializable {
 
     @FXML private StackPane contentPane;
-    @FXML private Label lblAdminNombre;
+    @FXML private Label     lblAdminNombre;
 
     private final GestorDatos gd = GestorDatos.getInstance();
 
@@ -48,7 +54,6 @@ public class MainAdminController implements Initializable {
         btnNuevo.setOnAction(e -> formUsuario(null));
 
         TableView<Usuario> tabla = buildTablaUsuarios();
-
         root.getChildren().addAll(titulo, btnNuevo, tabla);
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
@@ -68,23 +73,22 @@ public class MainAdminController implements Initializable {
         acciones.setPrefWidth(160);
         acciones.setCellFactory(tc -> new TableCell<>() {
             final Button btnEdit = new Button("✏ Editar");
-            final Button btnDel  = new Button("🗑");
-            { btnEdit.getStyleClass().add("btn-secondary");
-              btnDel.getStyleClass().add("btn-danger");
-              btnEdit.setOnAction(e -> formUsuario(getTableView().getItems().get(getIndex())));
-              btnDel.setOnAction(e -> {
-                  Usuario u = getTableView().getItems().get(getIndex());
-                  if (DialogUtil.confirmar("¿Dar de baja al usuario " + u.getNombreCompleto() + "?")) {
-                      gd.bajaUsuario(u.getIdUsuario());
-                      gestionUsuarios();
-                  }
-              }); }
+            final Button btnDel  = new Button("🗑 Baja");
+            {
+                btnEdit.getStyleClass().add("btn-secondary");
+                btnDel.getStyleClass().add("btn-danger");
+                btnEdit.setOnAction(e -> formUsuario(getTableView().getItems().get(getIndex())));
+                btnDel.setOnAction(e -> {
+                    Usuario u = getTableView().getItems().get(getIndex());
+                    if (DialogUtil.confirmar("¿Dar de baja al usuario " + u.getNombreCompleto() + "?")) {
+                        gd.bajaUsuario(u.getIdUsuario());
+                        gestionUsuarios();
+                    }
+                });
+            }
             @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) { setGraphic(null); } else {
-                    HBox box = new HBox(5, btnEdit, btnDel);
-                    setGraphic(box);
-                }
+                setGraphic(empty ? null : new HBox(5, btnEdit, btnDel));
             }
         });
         tabla.getColumns().add(acciones);
@@ -100,14 +104,17 @@ public class MainAdminController implements Initializable {
         Label titulo = new Label(editar == null ? "Nuevo Usuario" : "Editar Usuario");
         titulo.getStyleClass().add("label-section");
 
-        TextField txNombre    = tf(editar != null ? editar.getNombre() : "");
+        TextField txNombre    = tf(editar != null ? editar.getNombre()    : "");
         TextField txApellidos = tf(editar != null ? editar.getApellidos() : "");
-        TextField txCorreo    = tf(editar != null ? editar.getCorreo() : "");
-        PasswordField txPass  = new PasswordField(); txPass.getStyleClass().add("password-field");
-        txPass.setPromptText(editar != null ? "(no cambiar)" : "Contraseña");
-        TextField txSaldo     = tf(editar != null ? String.valueOf(editar.getSaldo()) : "50");
-        ComboBox<String> cbIdioma = new ComboBox<>(FXCollections.observableArrayList("Español","English","Français","Deutsch","Português"));
+        TextField txCorreo    = tf(editar != null ? editar.getCorreo()    : "");
+        PasswordField txPass  = new PasswordField();
+        txPass.getStyleClass().add("password-field");
+        txPass.setPromptText(editar != null ? "(sin cambios)" : "Contraseña");
+        TextField txSaldo = tf(editar != null ? String.valueOf(editar.getSaldo()) : "50");
+        ComboBox<String> cbIdioma = new ComboBox<>(FXCollections.observableArrayList(
+                "Español", "English", "Français", "Deutsch", "Português", "Italiano"));
         cbIdioma.getSelectionModel().select(editar != null ? editar.getIdioma() : "Español");
+        cbIdioma.getStyleClass().add("combo-box");
 
         Label lblErr = new Label(); lblErr.getStyleClass().add("label-accent");
 
@@ -117,8 +124,9 @@ public class MainAdminController implements Initializable {
 
         btnGuardar.setOnAction(e -> {
             if (txNombre.getText().trim().isEmpty()) { lblErr.setText("El nombre es obligatorio."); return; }
-            double saldo = 0;
-            try { saldo = Double.parseDouble(txSaldo.getText().replace(",",".")); } catch(NumberFormatException ex) { lblErr.setText("Saldo inválido."); return; }
+            double saldo;
+            try { saldo = Double.parseDouble(txSaldo.getText().replace(",", ".")); }
+            catch (NumberFormatException ex) { lblErr.setText("Saldo inválido."); return; }
 
             if (editar == null) {
                 if (txPass.getText().isEmpty()) { lblErr.setText("La contraseña es obligatoria."); return; }
@@ -137,7 +145,7 @@ public class MainAdminController implements Initializable {
             gestionUsuarios();
         });
 
-        addRows(form, titulo,
+        form.getChildren().addAll(titulo,
                 lbl("Nombre:"), txNombre,
                 lbl("Apellidos:"), txApellidos,
                 lbl("Correo:"), txCorreo,
@@ -145,7 +153,6 @@ public class MainAdminController implements Initializable {
                 lbl("Saldo (€):"), txSaldo,
                 lbl("Idioma:"), cbIdioma,
                 lblErr, new HBox(10, btnGuardar, btnCancel));
-
         setContent(new ScrollPane(form) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -155,10 +162,8 @@ public class MainAdminController implements Initializable {
     @FXML public void gestionAdmins() {
         VBox root = new VBox(15);
         root.setPadding(new Insets(10));
-
         Label titulo = new Label("🔑 Gestión de Administradores");
         titulo.getStyleClass().add("label-title");
-
         Button btnNuevo = new Button("+ Nuevo Admin");
         btnNuevo.getStyleClass().add("btn-primary");
         btnNuevo.setOnAction(e -> formAdmin(null));
@@ -173,21 +178,22 @@ public class MainAdminController implements Initializable {
         TableColumn<Administrador, Void> acciones = new TableColumn<>("Acciones");
         acciones.setCellFactory(tc -> new TableCell<>() {
             final Button btnDel = new Button("🗑 Baja");
-            { btnDel.getStyleClass().add("btn-danger");
-              btnDel.setOnAction(e -> {
-                  Administrador a = getTableView().getItems().get(getIndex());
-                  if (DialogUtil.confirmar("¿Dar de baja al admin " + a.getNombreCompleto() + "?")) {
-                      gd.bajaAdmin(a.getIdAdmin());
-                      gestionAdmins();
-                  }
-              }); }
+            {
+                btnDel.getStyleClass().add("btn-danger");
+                btnDel.setOnAction(e -> {
+                    Administrador a = getTableView().getItems().get(getIndex());
+                    if (DialogUtil.confirmar("¿Dar de baja al admin " + a.getNombreCompleto() + "?")) {
+                        gd.bajaAdmin(a.getIdAdmin());
+                        gestionAdmins();
+                    }
+                });
+            }
             @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(empty ? null : btnDel);
             }
         });
         tabla.getColumns().add(acciones);
-
         root.getChildren().addAll(titulo, btnNuevo, tabla);
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
@@ -198,25 +204,38 @@ public class MainAdminController implements Initializable {
         form.setMaxWidth(450);
         form.getStyleClass().add("card");
 
-        Label titulo = new Label("Nuevo Administrador"); titulo.getStyleClass().add("label-section");
-        TextField txNombre = tf(""); TextField txApellidos = tf(""); TextField txCorreo = tf("");
-        PasswordField txPass = new PasswordField(); txPass.getStyleClass().add("password-field");
+        Label titulo = new Label(editar == null ? "Nuevo Administrador" : "Editar Administrador");
+        titulo.getStyleClass().add("label-section");
+        TextField txNombre    = tf(editar != null ? editar.getNombre()    : "");
+        TextField txApellidos = tf(editar != null ? editar.getApellidos() : "");
+        TextField txCorreo    = tf(editar != null ? editar.getCorreo()    : "");
+        PasswordField txPass  = new PasswordField();
+        txPass.getStyleClass().add("password-field");
+        txPass.setPromptText(editar != null ? "(sin cambios)" : "Contraseña");
         Label lblErr = new Label(); lblErr.getStyleClass().add("label-accent");
 
         Button btnGuardar = new Button("Guardar"); btnGuardar.getStyleClass().add("btn-primary");
         Button btnCancel  = new Button("Cancelar"); btnCancel.getStyleClass().add("btn-secondary");
         btnCancel.setOnAction(e -> gestionAdmins());
+
         btnGuardar.setOnAction(e -> {
-            if (txNombre.getText().trim().isEmpty() || txPass.getText().isEmpty()) {
-                lblErr.setText("Rellena todos los campos."); return;
+            if (txNombre.getText().trim().isEmpty()) { lblErr.setText("El nombre es obligatorio."); return; }
+            if (editar == null) {
+                if (txPass.getText().isEmpty()) { lblErr.setText("La contraseña es obligatoria."); return; }
+                boolean ok = gd.altaAdmin(txNombre.getText().trim(), txApellidos.getText().trim(),
+                        txCorreo.getText().trim(), txPass.getText());
+                if (!ok) { lblErr.setText("El correo ya existe."); return; }
+            } else {
+                editar.setNombre(txNombre.getText().trim());
+                editar.setApellidos(txApellidos.getText().trim());
+                editar.setCorreo(txCorreo.getText().trim());
+                if (!txPass.getText().isEmpty()) editar.setContrasena(txPass.getText());
             }
-            boolean ok = gd.altaAdmin(txNombre.getText().trim(), txApellidos.getText().trim(),
-                    txCorreo.getText().trim(), txPass.getText());
-            if (!ok) { lblErr.setText("El correo ya existe."); return; }
-            DialogUtil.info("Administrador creado."); gestionAdmins();
+            DialogUtil.info("Administrador guardado."); gestionAdmins();
         });
 
-        addRows(form, titulo, lbl("Nombre:"), txNombre, lbl("Apellidos:"), txApellidos,
+        form.getChildren().addAll(titulo,
+                lbl("Nombre:"), txNombre, lbl("Apellidos:"), txApellidos,
                 lbl("Correo:"), txCorreo, lbl("Contraseña:"), txPass,
                 lblErr, new HBox(10, btnGuardar, btnCancel));
         setContent(new ScrollPane(form) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
@@ -228,10 +247,8 @@ public class MainAdminController implements Initializable {
     @FXML public void gestionJuegos() {
         VBox root = new VBox(15);
         root.setPadding(new Insets(10));
-
         Label titulo = new Label("🎮 Gestión de Juegos");
         titulo.getStyleClass().add("label-title");
-
         Button btnNuevo = new Button("+ Nuevo Juego");
         btnNuevo.getStyleClass().add("btn-primary");
         btnNuevo.setOnAction(e -> formJuego(null));
@@ -239,33 +256,36 @@ public class MainAdminController implements Initializable {
         TableView<Juego> tabla = new TableView<>(FXCollections.observableArrayList(gd.getJuegos()));
         tabla.getStyleClass().add("table-view");
         tabla.setPrefHeight(350);
-        col(tabla, "ID",        j -> String.valueOf(j.getIdJuego()), 50);
-        col(tabla, "Título",    j -> j.getTitulo(), 180);
-        col(tabla, "Género",    j -> j.getGenero(), 120);
-        col(tabla, "Plataforma",j -> j.getPlataforma(), 120);
-        col(tabla, "Precio",    j -> String.format("%.2f€", j.getPrecio()), 80);
-        col(tabla, "Stock",     j -> String.valueOf(j.getStock()), 60);
-        col(tabla, "Director",  j -> j.getDirector(), 150);
+        col(tabla, "ID",         j -> String.valueOf(j.getIdJuego()), 50);
+        col(tabla, "Título",     j -> j.getTitulo(), 180);
+        col(tabla, "Género",     j -> j.getGenero(), 120);
+        col(tabla, "Plataforma", j -> j.getPlataforma(), 130);
+        col(tabla, "Precio",     j -> String.format("%.2f€", j.getPrecio()), 80);
+        col(tabla, "Stock",      j -> String.valueOf(j.getStock()), 60);
+        col(tabla, "Director",   j -> j.getDirector(), 150);
 
         TableColumn<Juego, Void> acciones = new TableColumn<>("Acciones");
         acciones.setPrefWidth(160);
         acciones.setCellFactory(tc -> new TableCell<>() {
-            final Button btnEdit = new Button("✏"); final Button btnDel = new Button("🗑");
-            { btnEdit.getStyleClass().add("btn-secondary"); btnDel.getStyleClass().add("btn-danger");
-              btnEdit.setOnAction(e -> formJuego(getTableView().getItems().get(getIndex())));
-              btnDel.setOnAction(e -> {
-                  Juego j = getTableView().getItems().get(getIndex());
-                  if (DialogUtil.confirmar("¿Eliminar el juego '" + j.getTitulo() + "'?")) {
-                      gd.bajaJuego(j.getIdJuego()); gestionJuegos();
-                  }
-              }); }
+            final Button btnEdit = new Button("✏");
+            final Button btnDel  = new Button("🗑");
+            {
+                btnEdit.getStyleClass().add("btn-secondary");
+                btnDel.getStyleClass().add("btn-danger");
+                btnEdit.setOnAction(e -> formJuego(getTableView().getItems().get(getIndex())));
+                btnDel.setOnAction(e -> {
+                    Juego j = getTableView().getItems().get(getIndex());
+                    if (DialogUtil.confirmar("¿Eliminar '" + j.getTitulo() + "'?")) {
+                        gd.bajaJuego(j.getIdJuego()); gestionJuegos();
+                    }
+                });
+            }
             @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(empty ? null : new HBox(5, btnEdit, btnDel));
             }
         });
         tabla.getColumns().add(acciones);
-
         root.getChildren().addAll(titulo, btnNuevo, tabla);
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
@@ -273,23 +293,28 @@ public class MainAdminController implements Initializable {
     private void formJuego(Juego editar) {
         VBox form = new VBox(12);
         form.setPadding(new Insets(20));
-        form.setMaxWidth(480);
+        form.setMaxWidth(500);
         form.getStyleClass().add("card");
 
         Label titulo = new Label(editar == null ? "Nuevo Juego" : "Editar Juego");
         titulo.getStyleClass().add("label-section");
 
-        TextField txTitulo    = tf(editar != null ? editar.getTitulo() : "");
-        TextField txGenero    = tf(editar != null ? editar.getGenero() : "");
-        TextField txPlat      = tf(editar != null ? editar.getPlataforma() : "");
-        TextField txPrecio    = tf(editar != null ? String.valueOf(editar.getPrecio()) : "");
-        TextField txStock     = tf(editar != null ? String.valueOf(editar.getStock()) : "");
-        TextField txDirector  = tf(editar != null ? editar.getDirector() : "");
+        TextField txTitulo   = tf(editar != null ? editar.getTitulo()     : "");
+        TextField txGenero   = tf(editar != null ? editar.getGenero()     : "");
+        TextField txPlat     = tf(editar != null ? editar.getPlataforma() : "");
+        TextField txPrecio   = tf(editar != null ? String.valueOf(editar.getPrecio()) : "");
+        TextField txStock    = tf(editar != null ? String.valueOf(editar.getStock())  : "");
+        TextField txDirector = tf(editar != null ? editar.getDirector()   : "");
 
-        // Selector de estudio
         ComboBox<Estudio> cbEstudio = new ComboBox<>(FXCollections.observableArrayList(gd.getEstudios()));
         cbEstudio.setPromptText("Asignar a estudio (opcional)");
         cbEstudio.getStyleClass().add("combo-box");
+        // Preseleccionar el estudio actual si existe
+        if (editar != null) {
+            gd.getEstudios().stream()
+                .filter(e -> e.getJuegos().contains(editar))
+                .findFirst().ifPresent(cbEstudio.getSelectionModel()::select);
+        }
 
         Label lblErr = new Label(); lblErr.getStyleClass().add("label-accent");
         Button btnGuardar = new Button("Guardar"); btnGuardar.getStyleClass().add("btn-primary");
@@ -298,9 +323,11 @@ public class MainAdminController implements Initializable {
 
         btnGuardar.setOnAction(e -> {
             if (txTitulo.getText().trim().isEmpty()) { lblErr.setText("El título es obligatorio."); return; }
-            double precio = 0; int stock = 0;
-            try { precio = Double.parseDouble(txPrecio.getText().replace(",",".")); } catch(Exception ex) { lblErr.setText("Precio inválido."); return; }
-            try { stock  = Integer.parseInt(txStock.getText()); } catch(Exception ex) { lblErr.setText("Stock inválido."); return; }
+            double precio; int stock;
+            try { precio = Double.parseDouble(txPrecio.getText().replace(",", ".")); }
+            catch (Exception ex) { lblErr.setText("Precio inválido."); return; }
+            try { stock = Integer.parseInt(txStock.getText()); }
+            catch (Exception ex) { lblErr.setText("Stock inválido."); return; }
 
             if (editar == null) {
                 Juego j = gd.altaJuego(txTitulo.getText().trim(), txGenero.getText().trim(),
@@ -313,30 +340,31 @@ public class MainAdminController implements Initializable {
                 editar.setPrecio(precio);
                 editar.setStock(stock);
                 editar.setDirector(txDirector.getText().trim());
+                if (cbEstudio.getValue() != null) cbEstudio.getValue().addJuego(editar);
             }
             DialogUtil.info("Juego guardado correctamente."); gestionJuegos();
         });
 
-        addRows(form, titulo,
-                lbl("Título:"), txTitulo, lbl("Género:"), txGenero, lbl("Plataforma:"), txPlat,
-                lbl("Precio (€):"), txPrecio, lbl("Stock:"), txStock, lbl("Director:"), txDirector,
+        form.getChildren().addAll(titulo,
+                lbl("Título:"), txTitulo, lbl("Género:"), txGenero,
+                lbl("Plataforma:"), txPlat, lbl("Precio (€):"), txPrecio,
+                lbl("Stock:"), txStock, lbl("Director:"), txDirector,
                 lbl("Estudio:"), cbEstudio, lblErr, new HBox(10, btnGuardar, btnCancel));
         setContent(new ScrollPane(form) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
     // ══════════════════════════════════════════════════════
-    // GESTIÓN ESTUDIOS
+    // GESTIÓN ESTUDIOS (con gestión de desarrolladores)
     // ══════════════════════════════════════════════════════
     @FXML public void gestionEstudios() {
         VBox root = new VBox(15);
         root.setPadding(new Insets(10));
-
         Label titulo = new Label("🏢 Gestión de Estudios");
         titulo.getStyleClass().add("label-title");
-
         Button btnNuevo = new Button("+ Nuevo Estudio");
         btnNuevo.getStyleClass().add("btn-primary");
         btnNuevo.setOnAction(e -> formEstudio(null));
+        root.getChildren().addAll(titulo, btnNuevo);
 
         for (Estudio est : gd.getEstudios()) {
             VBox card = new VBox(8);
@@ -344,48 +372,53 @@ public class MainAdminController implements Initializable {
             card.setPadding(new Insets(12));
 
             HBox cabecera = new HBox(10);
-            Label lblNombre = new Label("🏢 " + est.getNombre()); lblNombre.getStyleClass().add("label-section");
+            Label lblNombre = new Label("🏢 " + est.getNombre());
+            lblNombre.getStyleClass().add("label-section");
             Region sp = new Region(); HBox.setHgrow(sp, Priority.ALWAYS);
             Button btnEdit = new Button("✏ Editar"); btnEdit.getStyleClass().add("btn-secondary");
-            Button btnDel  = new Button("🗑 Baja"); btnDel.getStyleClass().add("btn-danger");
+            Button btnDel  = new Button("🗑 Baja");  btnDel.getStyleClass().add("btn-danger");
+            Button btnAddDev = new Button("+ Dev");  btnAddDev.getStyleClass().add("btn-gold");
             btnEdit.setOnAction(e -> formEstudio(est));
             btnDel.setOnAction(e -> {
                 if (DialogUtil.confirmar("¿Eliminar estudio '" + est.getNombre() + "'?")) {
                     gd.bajaEstudio(est.getIdEstudio()); gestionEstudios();
                 }
             });
-            cabecera.getChildren().addAll(lblNombre, sp, btnEdit, btnDel);
+            btnAddDev.setOnAction(e -> formDesarrollador(null, est));
+            cabecera.getChildren().addAll(lblNombre, sp, btnAddDev, btnEdit, btnDel);
 
-            Label lblJuegos = new Label("Juegos: " + est.getJuegos().size());
+            Label lblJuegos = new Label("Juegos (" + est.getJuegos().size() + "): "
+                    + est.getJuegos().stream().map(Juego::getTitulo).reduce("", (a, b) -> a.isEmpty() ? b : a + ", " + b));
             lblJuegos.getStyleClass().add("label-normal");
+            lblJuegos.setWrapText(true);
+            card.getChildren().addAll(cabecera, lblJuegos);
 
-            // Listar juegos del estudio
-            if (!est.getJuegos().isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                for (Juego j : est.getJuegos()) sb.append("• ").append(j.getTitulo()).append("\n");
-                Label lblListaJuegos = new Label(sb.toString().trim());
-                lblListaJuegos.getStyleClass().add("label-muted");
-                card.getChildren().addAll(cabecera, lblJuegos, lblListaJuegos);
-            } else {
-                card.getChildren().addAll(cabecera, lblJuegos);
-            }
-
-            // Desarrolladores notables
             if (!est.getDesarrolladores().isEmpty()) {
-                Label lblDevs = new Label("Desarrolladores notables:");
-                lblDevs.getStyleClass().add("label-muted");
-                StringBuilder sbDevs = new StringBuilder();
-                for (Desarrollador d : est.getDesarrolladores())
-                    sbDevs.append("  👨‍💻 ").append(d.getNombreCompleto()).append(" - ").append(d.getPuestoActual()).append("\n");
-                Label lblListaDevs = new Label(sbDevs.toString().trim());
-                lblListaDevs.getStyleClass().add("label-muted");
-                card.getChildren().addAll(lblDevs, lblListaDevs);
+                Label lblDevsTit = new Label("👨‍💻 Desarrolladores notables:");
+                lblDevsTit.getStyleClass().add("label-muted");
+                card.getChildren().add(lblDevsTit);
+                for (Desarrollador d : est.getDesarrolladores()) {
+                    HBox rowDev = new HBox(8);
+                    rowDev.setAlignment(Pos.CENTER_LEFT);
+                    Label lblD = new Label("  • " + d.getNombreCompleto()
+                            + " – " + d.getPuestoActual()
+                            + "  (" + d.getAnosExperiencia() + " años exp.)");
+                    lblD.getStyleClass().add("label-normal");
+                    HBox.setHgrow(lblD, Priority.ALWAYS);
+                    Button btnEditDev = new Button("✏"); btnEditDev.getStyleClass().add("btn-secondary");
+                    Button btnDelDev  = new Button("🗑"); btnDelDev.getStyleClass().add("btn-danger");
+                    btnEditDev.setOnAction(ev -> formDesarrollador(d, est));
+                    btnDelDev.setOnAction(ev -> {
+                        if (DialogUtil.confirmar("¿Dar de baja a " + d.getNombreCompleto() + "?")) {
+                            gd.bajaDesarrollador(d.getIdDesarrollador()); gestionEstudios();
+                        }
+                    });
+                    rowDev.getChildren().addAll(lblD, btnEditDev, btnDelDev);
+                    card.getChildren().add(rowDev);
+                }
             }
-
             root.getChildren().add(card);
         }
-
-        root.getChildren().add(1, btnNuevo); // insertar después del título
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -410,36 +443,102 @@ public class MainAdminController implements Initializable {
             DialogUtil.info("Estudio guardado."); gestionEstudios();
         });
 
-        addRows(form, titulo, lbl("Nombre:"), txNombre, lblErr, new HBox(10, btnGuardar, btnCancel));
+        form.getChildren().addAll(titulo, lbl("Nombre:"), txNombre, lblErr,
+                new HBox(10, btnGuardar, btnCancel));
+        setContent(new ScrollPane(form) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
+    }
+
+    private void formDesarrollador(Desarrollador editar, Estudio estudio) {
+        VBox form = new VBox(12);
+        form.setPadding(new Insets(20));
+        form.setMaxWidth(480);
+        form.getStyleClass().add("card");
+
+        Label titulo = new Label(editar == null ? "Nuevo Desarrollador" : "Editar Desarrollador");
+        titulo.getStyleClass().add("label-section");
+
+        TextField txNombre    = tf(editar != null ? editar.getNombre()    : "");
+        TextField txApellidos = tf(editar != null ? editar.getApellidos() : "");
+        TextField txPuesto    = tf(editar != null ? editar.getPuestoActual() : "");
+        TextField txAnos      = tf(editar != null ? String.valueOf(editar.getAnosExperiencia()) : "");
+
+        // Checkboxes con juegos que ha trabajado
+        Label lblJuegosTitle = new Label("Juegos en los que ha trabajado:");
+        lblJuegosTitle.getStyleClass().add("label-muted");
+        VBox juegosBox = new VBox(4);
+        List<CheckBox> checkBoxes = new java.util.ArrayList<>();
+        for (Juego j : gd.getJuegos()) {
+            CheckBox cb = new CheckBox(j.getTitulo());
+            cb.setStyle("-fx-text-fill:#eaeaea;");
+            if (editar != null) cb.setSelected(editar.getJuegosEnLosQueHaTrabajado().contains(j));
+            checkBoxes.add(cb);
+            juegosBox.getChildren().add(cb);
+        }
+
+        Label lblErr = new Label(); lblErr.getStyleClass().add("label-accent");
+        Button btnGuardar = new Button("Guardar"); btnGuardar.getStyleClass().add("btn-primary");
+        Button btnCancel  = new Button("Cancelar"); btnCancel.getStyleClass().add("btn-secondary");
+        btnCancel.setOnAction(e -> gestionEstudios());
+
+        btnGuardar.setOnAction(e -> {
+            if (txNombre.getText().trim().isEmpty()) { lblErr.setText("El nombre es obligatorio."); return; }
+            int anos = 0;
+            try { anos = Integer.parseInt(txAnos.getText()); } catch (Exception ex) { /* ignora */ }
+
+            if (editar == null) {
+                Desarrollador d = gd.altaDesarrollador(txNombre.getText().trim(),
+                        txApellidos.getText().trim(), anos, txPuesto.getText().trim(), estudio);
+                for (int i = 0; i < checkBoxes.size(); i++) {
+                    if (checkBoxes.get(i).isSelected()) d.addJuego(gd.getJuegos().get(i));
+                }
+            } else {
+                editar.setNombre(txNombre.getText().trim());
+                editar.setApellidos(txApellidos.getText().trim());
+                editar.setPuestoActual(txPuesto.getText().trim());
+                editar.setAnosExperiencia(anos);
+                editar.getJuegosEnLosQueHaTrabajado().clear();
+                for (int i = 0; i < checkBoxes.size(); i++) {
+                    if (checkBoxes.get(i).isSelected()) editar.addJuego(gd.getJuegos().get(i));
+                }
+            }
+            DialogUtil.info("Desarrollador guardado."); gestionEstudios();
+        });
+
+        form.getChildren().addAll(titulo,
+                lbl("Nombre:"), txNombre, lbl("Apellidos:"), txApellidos,
+                lbl("Puesto:"), txPuesto, lbl("Años de experiencia:"), txAnos,
+                lblJuegosTitle, juegosBox,
+                lblErr, new HBox(10, btnGuardar, btnCancel));
         setContent(new ScrollPane(form) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
     // ══════════════════════════════════════════════════════
-    // GESTIÓN RESEÑAS (admin puede eliminar)
+    // GESTIÓN RESEÑAS
     // ══════════════════════════════════════════════════════
     @FXML public void gestionResenas() {
         VBox root = new VBox(15);
         root.setPadding(new Insets(10));
-
         Label titulo = new Label("✍ Gestión de Reseñas");
         titulo.getStyleClass().add("label-title");
         root.getChildren().add(titulo);
 
-        // Filtro
         HBox filtro = new HBox(10);
-        TextField txFiltro = new TextField(); txFiltro.setPromptText("Filtrar por juego o usuario..."); txFiltro.getStyleClass().add("text-field");
-        Button btnFiltrar = new Button("Filtrar"); btnFiltrar.getStyleClass().add("btn-secondary");
+        TextField txFiltro = new TextField();
+        txFiltro.setPromptText("Filtrar por juego o usuario...");
+        txFiltro.getStyleClass().add("text-field");
+        Button btnFiltrar = new Button("Filtrar");
+        btnFiltrar.getStyleClass().add("btn-secondary");
         filtro.getChildren().addAll(txFiltro, btnFiltrar);
         root.getChildren().add(filtro);
 
         VBox listaResenas = new VBox(8);
-        Runnable actualizarLista = () -> {
+        Runnable actualizar = () -> {
             listaResenas.getChildren().clear();
-            String filtroTxt = txFiltro.getText().toLowerCase();
+            String f = txFiltro.getText().toLowerCase();
             for (Resena r : gd.getResenas()) {
-                if (!filtroTxt.isEmpty() &&
-                        !r.getJuego().getTitulo().toLowerCase().contains(filtroTxt) &&
-                        !r.getAutor().getNombreCompleto().toLowerCase().contains(filtroTxt)) continue;
+                if (!f.isEmpty()
+                        && !r.getJuego().getTitulo().toLowerCase().contains(f)
+                        && !r.getAutor().getNombreCompleto().toLowerCase().contains(f)) continue;
 
                 HBox card = new HBox(10);
                 card.getStyleClass().add("card");
@@ -447,36 +546,38 @@ public class MainAdminController implements Initializable {
                 card.setPadding(new Insets(8));
 
                 VBox info = new VBox(3); HBox.setHgrow(info, Priority.ALWAYS);
-                Label lblTitulo = new Label(r.getJuego().getTitulo() + " – ⭐" + r.getPuntuacion() + "/10");
-                lblTitulo.getStyleClass().add("label-section");
-                Label lblAutor = new Label("por " + r.getAutor().getNombreCompleto() + "  |  " + r.getFechaFormateada());
-                lblAutor.getStyleClass().add("label-muted");
-                Label lblComent = new Label(r.getComentario());
-                lblComent.getStyleClass().add("label-normal");
-                lblComent.setWrapText(true);
-                info.getChildren().addAll(lblTitulo, lblAutor, lblComent);
+                Label lblT = new Label(r.getJuego().getTitulo() + " – ⭐" + r.getPuntuacion() + "/10");
+                lblT.getStyleClass().add("label-section");
+                Label lblA = new Label("por " + r.getAutor().getNombreCompleto()
+                        + "  |  " + r.getFechaFormateada() + "  |  " + r.getIdioma());
+                lblA.getStyleClass().add("label-muted");
+                Label lblC = new Label(r.getComentario());
+                lblC.getStyleClass().add("label-normal");
+                lblC.setWrapText(true);
+                info.getChildren().addAll(lblT, lblA, lblC);
 
                 Button btnDel = new Button("🗑 Eliminar");
                 btnDel.getStyleClass().add("btn-danger");
                 btnDel.setOnAction(ev -> {
-                    if (DialogUtil.confirmar("¿Eliminar esta reseña inapropiada?")) {
-                        gd.eliminarResena(r.getIdResena());
-                        gestionResenas();
+                    if (DialogUtil.confirmar("¿Eliminar esta reseña?")) {
+                        gd.eliminarResena(r.getIdResena()); gestionResenas();
                     }
                 });
                 card.getChildren().addAll(info, btnDel);
                 listaResenas.getChildren().add(card);
             }
+            if (listaResenas.getChildren().isEmpty()) {
+                listaResenas.getChildren().add(new Label("No hay reseñas."));
+            }
         };
-        btnFiltrar.setOnAction(e -> actualizarLista.run());
-        actualizarLista.run();
+        btnFiltrar.setOnAction(e -> actualizar.run());
+        actualizar.run();
         root.getChildren().add(listaResenas);
-
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
     // ══════════════════════════════════════════════════════
-    // VER TODAS LAS COMPRAS
+    // HISTORIAL DE COMPRAS GLOBAL
     // ══════════════════════════════════════════════════════
     @FXML public void verCompras() {
         VBox root = new VBox(15);
@@ -484,15 +585,16 @@ public class MainAdminController implements Initializable {
         Label titulo = new Label("🛒 Historial de Compras Global");
         titulo.getStyleClass().add("label-title");
 
-        TableView<Compra> tabla = new TableView<>(FXCollections.observableArrayList(gd.getHistorialComprasGlobal()));
+        TableView<Compra> tabla = new TableView<>(
+                FXCollections.observableArrayList(gd.getHistorialComprasGlobal()));
         tabla.getStyleClass().add("table-view");
         tabla.setPrefHeight(400);
-        col(tabla, "ID",      c -> String.valueOf(c.getCodCompra()), 50);
-        col(tabla, "Usuario", c -> c.getUsuario().getNombreCompleto(), 170);
-        col(tabla, "Juego",   c -> c.getJuego().getTitulo(), 180);
-        col(tabla, "Fecha",   c -> c.getFechaFormateada(), 100);
-        col(tabla, "Cantidad",c -> String.valueOf(c.getCantidad()), 70);
-        col(tabla, "Coste",   c -> String.format("%.2f€", c.getCoste()), 90);
+        col(tabla, "ID",       c -> String.valueOf(c.getCodCompra()), 50);
+        col(tabla, "Usuario",  c -> c.getUsuario().getNombreCompleto(), 170);
+        col(tabla, "Juego",    c -> c.getJuego().getTitulo(), 180);
+        col(tabla, "Fecha",    c -> c.getFechaFormateada(), 100);
+        col(tabla, "Cantidad", c -> String.valueOf(c.getCantidad()), 70);
+        col(tabla, "Coste",    c -> String.format("%.2f€", c.getCoste()), 90);
 
         double total = gd.getHistorialComprasGlobal().stream().mapToDouble(Compra::getCoste).sum();
         Label lblTotal = new Label(String.format("Ingresos totales: %.2f€", total));
@@ -512,6 +614,8 @@ public class MainAdminController implements Initializable {
         titulo.getStyleClass().add("label-title");
         root.getChildren().add(titulo);
 
+        int maxVentas = gd.getJuegos().stream().mapToInt(gd::getVentasJuego).max().orElse(1);
+
         for (Juego j : gd.getJuegos()) {
             int ventas = gd.getVentasJuego(j);
             HBox row = new HBox(15);
@@ -521,24 +625,24 @@ public class MainAdminController implements Initializable {
 
             VBox info = new VBox(3); HBox.setHgrow(info, Priority.ALWAYS);
             Label lblT = new Label(j.getTitulo()); lblT.getStyleClass().add("label-section");
-            Label lblV = new Label("Ventas: " + ventas + "  |  Ingresos: " + String.format("%.2f€", ventas * j.getPrecio()));
+            Label lblV = new Label("Ventas: " + ventas + "  |  Ingresos: "
+                    + String.format("%.2f€", ventas * j.getPrecio()));
             lblV.getStyleClass().add("label-normal");
             info.getChildren().addAll(lblT, lblV);
 
-            // Barra visual simple
-            double max = 10.0; // relativa
-            double pct = Math.min(ventas / max, 1.0);
-            HBox barra = new HBox();
+            double pct = maxVentas > 0 ? (double) ventas / maxVentas : 0;
             Region fill = new Region();
             fill.setStyle("-fx-background-color:#e94560; -fx-background-radius:4;");
-            fill.setPrefWidth(200 * pct);
+            fill.setPrefWidth(220 * pct);
             fill.setPrefHeight(12);
-            barra.getChildren().add(fill);
+            HBox barra = new HBox(fill);
+            barra.setMinWidth(220);
+            barra.setStyle("-fx-background-color:#16213e; -fx-background-radius:4;");
+            barra.setAlignment(Pos.CENTER_LEFT);
 
             row.getChildren().addAll(info, barra);
             root.getChildren().add(row);
         }
-
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -548,14 +652,12 @@ public class MainAdminController implements Initializable {
         Label titulo = new Label("⭐ Juegos Mejor Valorados");
         titulo.getStyleClass().add("label-title");
         root.getChildren().add(titulo);
-
         int pos = 1;
         for (Juego j : gd.getJuegosMejorValorados()) {
             HBox row = new HBox(15);
             row.getStyleClass().add("card");
             row.setAlignment(Pos.CENTER_LEFT);
             row.setPadding(new Insets(10));
-
             Label lblPos = new Label("#" + pos++); lblPos.getStyleClass().add("label-gold"); lblPos.setMinWidth(30);
             VBox info = new VBox(3);
             Label lblT = new Label(j.getTitulo()); lblT.getStyleClass().add("label-section");
@@ -566,7 +668,6 @@ public class MainAdminController implements Initializable {
             row.getChildren().addAll(lblPos, info);
             root.getChildren().add(row);
         }
-
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -576,25 +677,23 @@ public class MainAdminController implements Initializable {
         Label titulo = new Label("🔥 Juegos Más Vendidos");
         titulo.getStyleClass().add("label-title");
         root.getChildren().add(titulo);
-
         int pos = 1;
         for (Juego j : gd.getJuegosMasVendidos()) {
             HBox row = new HBox(15);
             row.getStyleClass().add("card");
             row.setAlignment(Pos.CENTER_LEFT);
             row.setPadding(new Insets(10));
-
             Label lblPos = new Label("#" + pos++); lblPos.getStyleClass().add("label-gold"); lblPos.setMinWidth(30);
             VBox info = new VBox(3);
             Label lblT = new Label(j.getTitulo()); lblT.getStyleClass().add("label-section");
             int ventas = gd.getVentasJuego(j);
-            Label lblV = new Label("🔥 " + ventas + " uds  |  " + String.format("%.2f€ ingresos", ventas * j.getPrecio()));
+            Label lblV = new Label("🔥 " + ventas + " uds  |  "
+                    + String.format("%.2f€ ingresos", ventas * j.getPrecio()));
             lblV.getStyleClass().add("label-normal");
             info.getChildren().addAll(lblT, lblV);
             row.getChildren().addAll(lblPos, info);
             root.getChildren().add(row);
         }
-
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -606,23 +705,24 @@ public class MainAdminController implements Initializable {
         root.getChildren().add(titulo);
 
         String[] idiomas = {"Español", "English", "Français", "Deutsch", "Português", "Italiano"};
+        boolean hayAlguna = false;
         for (String idioma : idiomas) {
             List<Resena> lista = gd.getResenasPorIdioma(idioma);
             if (lista.isEmpty()) continue;
-
+            hayAlguna = true;
             VBox card = new VBox(6); card.getStyleClass().add("card"); card.setPadding(new Insets(10));
-            Label lblIdioma = new Label("🌐 " + idioma + "  (" + lista.size() + " reseñas)");
-            lblIdioma.getStyleClass().add("label-section");
-            card.getChildren().add(lblIdioma);
+            Label lblI = new Label("🌐 " + idioma + "  (" + lista.size() + " reseñas)");
+            lblI.getStyleClass().add("label-section");
+            card.getChildren().add(lblI);
             for (Resena r : lista) {
-                Label lbl = new Label("• " + r.getJuego().getTitulo() + " – " + r.getAutor().getNombreCompleto()
-                        + "  ⭐" + r.getPuntuacion());
+                Label lbl = new Label("• " + r.getJuego().getTitulo() + " – "
+                        + r.getAutor().getNombreCompleto() + "  ⭐" + r.getPuntuacion());
                 lbl.getStyleClass().add("label-normal");
                 card.getChildren().add(lbl);
             }
             root.getChildren().add(card);
         }
-
+        if (!hayAlguna) root.getChildren().add(new Label("No hay reseñas registradas."));
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -638,12 +738,12 @@ public class MainAdminController implements Initializable {
             Label lblEst = new Label("🏢 " + est.getNombre()); lblEst.getStyleClass().add("label-section");
             card.getChildren().add(lblEst);
 
-            Juego mejorValorado = gd.getJuegoMejorValoradoEstudio(est);
-            Juego masVendido    = gd.getJuegoMasVendidoEstudio(est);
+            Juego mejorVal  = gd.getJuegoMejorValoradoEstudio(est);
+            Juego masVendido = gd.getJuegoMasVendidoEstudio(est);
 
-            if (mejorValorado != null) {
-                Label lbl = new Label("⭐ Mejor valorado: " + mejorValorado.getTitulo()
-                        + String.format("  (%.1f/10)", mejorValorado.getPuntuacionMedia()));
+            if (mejorVal != null) {
+                Label lbl = new Label("⭐ Mejor valorado: " + mejorVal.getTitulo()
+                        + String.format("  (%.1f/10)", mejorVal.getPuntuacionMedia()));
                 lbl.getStyleClass().add("label-normal");
                 card.getChildren().add(lbl);
             }
@@ -654,23 +754,77 @@ public class MainAdminController implements Initializable {
                 card.getChildren().add(lbl);
             }
 
-            // Desarrolladores notables
             if (!est.getDesarrolladores().isEmpty()) {
-                Label lblDevs = new Label("👨‍💻 Desarrolladores notables:"); lblDevs.getStyleClass().add("label-muted");
-                card.getChildren().add(lblDevs);
+                Label lblDevsTit = new Label("👨‍💻 Desarrolladores notables:");
+                lblDevsTit.getStyleClass().add("label-muted");
+                card.getChildren().add(lblDevsTit);
                 for (Desarrollador d : est.getDesarrolladores()) {
-                    Juego mejorDev = gd.getJuegoMejorValoradoDesarrollador(d);
-                    Juego masVDev  = gd.getJuegoMasVendidoDesarrollador(d);
-                    StringBuilder sb = new StringBuilder("  • " + d.getNombreCompleto() + " (" + d.getPuestoActual() + ")");
-                    if (mejorDev != null) sb.append("  |  ⭐").append(mejorDev.getTitulo());
-                    if (masVDev  != null) sb.append("  |  🔥").append(masVDev.getTitulo());
+                    Juego mejorDev  = gd.getJuegoMejorValoradoDesarrollador(d);
+                    Juego masVDev   = gd.getJuegoMasVendidoDesarrollador(d);
+                    StringBuilder sb = new StringBuilder("  • " + d.getNombreCompleto()
+                            + " (" + d.getPuestoActual() + ")");
+                    if (mejorDev != null) sb.append("  |  ⭐ ").append(mejorDev.getTitulo());
+                    if (masVDev  != null) sb.append("  |  🔥 ").append(masVDev.getTitulo());
                     Label lblD = new Label(sb.toString()); lblD.getStyleClass().add("label-muted");
                     card.getChildren().add(lblD);
                 }
             }
             root.getChildren().add(card);
         }
+        setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
+    }
 
+    // ── Consulta: juegos comprados por usuario ─────────────
+    @FXML public void estadJuegosPorUsuario() {
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(10));
+        Label titulo = new Label("🛒 Juegos Comprados por Usuario");
+        titulo.getStyleClass().add("label-title");
+        root.getChildren().add(titulo);
+
+        for (Usuario u : gd.getUsuarios()) {
+            VBox card = new VBox(6); card.getStyleClass().add("card"); card.setPadding(new Insets(10));
+            Label lblU = new Label("👤 " + u.getNombreCompleto() + "  <" + u.getCorreo() + ">");
+            lblU.getStyleClass().add("label-section");
+            card.getChildren().add(lblU);
+            if (u.getBiblioteca().isEmpty()) {
+                card.getChildren().add(new Label("  Sin compras."));
+            } else {
+                for (Juego j : u.getBiblioteca()) {
+                    Label lbl = new Label("  • " + j.getTitulo() + " (" + j.getGenero() + ")");
+                    lbl.getStyleClass().add("label-normal");
+                    card.getChildren().add(lbl);
+                }
+            }
+            root.getChildren().add(card);
+        }
+        setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
+    }
+
+    // ── Consulta: reseñas por usuario ─────────────────────
+    @FXML public void estadResenasPorUsuario() {
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(10));
+        Label titulo = new Label("✍ Reseñas por Usuario");
+        titulo.getStyleClass().add("label-title");
+        root.getChildren().add(titulo);
+
+        for (Usuario u : gd.getUsuarios()) {
+            List<Resena> lista = gd.getResenasPorUsuario(u);
+            if (lista.isEmpty()) continue;
+            VBox card = new VBox(6); card.getStyleClass().add("card"); card.setPadding(new Insets(10));
+            Label lblU = new Label("👤 " + u.getNombreCompleto() + "  (" + lista.size() + " reseñas)");
+            lblU.getStyleClass().add("label-section");
+            card.getChildren().add(lblU);
+            for (Resena r : lista) {
+                Label lbl = new Label("  • " + r.getJuego().getTitulo()
+                        + "  ⭐" + r.getPuntuacion() + "/10  –  " + r.getComentario());
+                lbl.getStyleClass().add("label-normal");
+                lbl.setWrapText(true);
+                card.getChildren().add(lbl);
+            }
+            root.getChildren().add(card);
+        }
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -703,9 +857,5 @@ public class MainAdminController implements Initializable {
 
     private Label lbl(String txt) {
         Label l = new Label(txt); l.getStyleClass().add("label-normal"); return l;
-    }
-
-    private void addRows(VBox form, Node... nodes) {
-        form.getChildren().addAll(nodes);
     }
 }

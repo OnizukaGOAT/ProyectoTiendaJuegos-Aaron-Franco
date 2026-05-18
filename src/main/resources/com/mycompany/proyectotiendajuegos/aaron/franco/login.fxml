@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/11"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controlador.LoginController"
+           styleClass="main-pane">
+
+    <VBox alignment="CENTER" spacing="0">
+        <!-- Título superior -->
+        <Label text="🎮 GAME PYRAMID" styleClass="login-title"
+               style="-fx-padding:0 0 4 0;"/>
+        <Label text="Tienda de Videojuegos con Reseñas" styleClass="login-subtitle"
+               style="-fx-padding:0 0 24 0;"/>
+
+        <!-- Caja de login -->
+        <VBox styleClass="login-box" spacing="14" alignment="CENTER">
+
+            <Label text="Iniciar Sesión" styleClass="label-section"/>
+
+            <TextField fx:id="txCorreo" promptText="Correo electrónico"
+                       styleClass="text-field" maxWidth="300"/>
+            <PasswordField fx:id="txPassword" promptText="Contraseña"
+                           styleClass="password-field" maxWidth="300"/>
+
+            <Label fx:id="lblError" styleClass="label-accent" visible="false"
+                   wrapText="true" maxWidth="300"/>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Entrar como Usuario"       styleClass="btn-primary"   onAction="#loginUsuario"/>
+                <Button text="Entrar como Administrador" styleClass="btn-secondary"  onAction="#loginAdmin"/>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="¿No tienes cuenta?" styleClass="label-muted"/>
+            <Button text="Crear cuenta nueva" styleClass="btn-gold" onAction="#irARegistro"/>
+
+            <VBox spacing="4" alignment="CENTER" style="-fx-padding:10 0 0 0;">
+                <Label text="Demo – Usuario: carlos@email.com / pass123" styleClass="label-muted"/>
+                <Label text="Demo – Admin:   admin@gamepyramid.com / admin123" styleClass="label-muted"/>
+            </VBox>
+        </VBox>
+    </VBox>
+</StackPane>

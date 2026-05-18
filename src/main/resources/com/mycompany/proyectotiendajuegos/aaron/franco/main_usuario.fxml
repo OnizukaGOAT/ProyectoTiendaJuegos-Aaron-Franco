@@ -25,21 +25,20 @@
             <Label text="MENÚ PRINCIPAL" styleClass="label-muted" style="-fx-padding: 0 0 10 0;"/>
 
             <Label text="── Catálogo ──" styleClass="label-muted"/>
-            <Button text="🔍 Buscar Juegos"       fx:id="btnBuscar"    styleClass="nav-btn" onAction="#mostrarBuscarJuegos"/>
-            <Button text="🎮 Todos los Juegos"    fx:id="btnCatalogo"  styleClass="nav-btn" onAction="#mostrarCatalogo"/>
+            <Button text="🔍 Buscar Juegos"    styleClass="nav-btn" onAction="#mostrarBuscarJuegos"/>
+            <Button text="🎮 Todos los Juegos" styleClass="nav-btn" onAction="#mostrarCatalogo"/>
 
             <Label text="── Mi Cuenta ──" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
-            <Button text="🛒 Mis Compras"         fx:id="btnCompras"   styleClass="nav-btn" onAction="#mostrarHistorialCompras"/>
-            <Button text="📚 Mi Biblioteca"       fx:id="btnBiblio"    styleClass="nav-btn" onAction="#mostrarBiblioteca"/>
-            <Button text="✍ Mis Reseñas"          fx:id="btnResenas"   styleClass="nav-btn" onAction="#mostrarMisResenas"/>
-            <Button text="👤 Mi Perfil"            fx:id="btnPerfil"    styleClass="nav-btn" onAction="#mostrarPerfil"/>
+            <Button text="🛒 Mis Compras"      styleClass="nav-btn" onAction="#mostrarHistorialCompras"/>
+            <Button text="📚 Mi Biblioteca"    styleClass="nav-btn" onAction="#mostrarBiblioteca"/>
+            <Button text="✍ Mis Reseñas"       styleClass="nav-btn" onAction="#mostrarMisResenas"/>
+            <Button text="👤 Mi Perfil"         styleClass="nav-btn" onAction="#mostrarPerfil"/>
 
-            <Label text="── Estadísticas ──" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
-            <Button text="⭐ Mejor Valorados"     fx:id="btnMejorVal"  styleClass="nav-btn" onAction="#mostrarMejorValorados"/>
-            <Button text="🔥 Más Vendidos"        fx:id="btnMasVend"   styleClass="nav-btn" onAction="#mostrarMasVendidos"/>
+            <Label text="── Consultas ──" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+            <Button text="📊 Estadísticas"     styleClass="nav-btn" onAction="#mostrarEstadisticas"/>
 
             <Label text="── Info ──" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
-            <Button text="❓ Ayuda"               fx:id="btnAyuda"     styleClass="nav-btn" onAction="#mostrarAyuda"/>
+            <Button text="❓ Ayuda"            styleClass="nav-btn" onAction="#mostrarAyuda"/>
         </VBox>
     </left>
 

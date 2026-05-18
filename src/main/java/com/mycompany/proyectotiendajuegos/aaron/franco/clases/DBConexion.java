@@ -38,9 +38,7 @@ public class DBConexion {
         return instancia;
     }
 
-    /**
-     * Devuelve la conexión activa; la reconecta automáticamente si se cerró.
-     */
+    
     public Connection getConexion() {
         try {
             if (conexion == null || conexion.isClosed()) {
@@ -52,7 +50,6 @@ public class DBConexion {
         return conexion;
     }
 
-    /** Cierra la conexión (llamar al salir de la app si se desea). */
     public void cerrar() {
         try {
             if (conexion != null && !conexion.isClosed()) conexion.close();

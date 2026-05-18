@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controlador.MainUsuarioController"
+            styleClass="main-pane">
+
+    <!-- HEADER -->
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="🎮 GAME PYRAMID" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblBienvenida" styleClass="header-subtitle"/>
+            <Label fx:id="lblSaldo" styleClass="label-gold"/>
+            <Button text="Cerrar sesión" styleClass="btn-danger" onAction="#cerrarSesion"/>
+        </HBox>
+    </top>
+
+    <!-- MENÚ LATERAL -->
+    <left>
+        <VBox styleClass="side-panel" spacing="5" prefWidth="200">
+            <Label text="MENÚ PRINCIPAL" styleClass="label-muted" style="-fx-padding: 0 0 10 0;"/>
+
+            <Label text="── Catálogo ──" styleClass="label-muted"/>
+            <Button text="🔍 Buscar Juegos"       fx:id="btnBuscar"    styleClass="nav-btn" onAction="#mostrarBuscarJuegos"/>
+            <Button text="🎮 Todos los Juegos"    fx:id="btnCatalogo"  styleClass="nav-btn" onAction="#mostrarCatalogo"/>
+
+            <Label text="── Mi Cuenta ──" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+            <Button text="🛒 Mis Compras"         fx:id="btnCompras"   styleClass="nav-btn" onAction="#mostrarHistorialCompras"/>
+            <Button text="📚 Mi Biblioteca"       fx:id="btnBiblio"    styleClass="nav-btn" onAction="#mostrarBiblioteca"/>
+            <Button text="✍ Mis Reseñas"          fx:id="btnResenas"   styleClass="nav-btn" onAction="#mostrarMisResenas"/>
+            <Button text="👤 Mi Perfil"            fx:id="btnPerfil"    styleClass="nav-btn" onAction="#mostrarPerfil"/>
+
+            <Label text="── Estadísticas ──" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+            <Button text="⭐ Mejor Valorados"     fx:id="btnMejorVal"  styleClass="nav-btn" onAction="#mostrarMejorValorados"/>
+            <Button text="🔥 Más Vendidos"        fx:id="btnMasVend"   styleClass="nav-btn" onAction="#mostrarMasVendidos"/>
+
+            <Label text="── Info ──" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+            <Button text="❓ Ayuda"               fx:id="btnAyuda"     styleClass="nav-btn" onAction="#mostrarAyuda"/>
+        </VBox>
+    </left>
+
+    <!-- ÁREA DE CONTENIDO -->
+    <center>
+        <StackPane fx:id="contentPane" styleClass="content-area"/>
+    </center>
+
+</BorderPane>

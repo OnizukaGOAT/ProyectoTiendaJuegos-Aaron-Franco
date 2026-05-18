@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controlador.MainAdminController"
+            styleClass="main-pane">
+
+    <!-- HEADER -->
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="🎮 GAME PYRAMID" styleClass="header-title"/>
+            <Label text="[Panel de Administración]" style="-fx-text-fill:#f5a623; -fx-font-size:13px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblAdminNombre" styleClass="header-subtitle"/>
+            <Button text="Cerrar sesión" styleClass="btn-danger" onAction="#cerrarSesion"/>
+        </HBox>
+    </top>
+
+    <!-- MENÚ LATERAL -->
+    <left>
+        <VBox styleClass="side-panel" spacing="5" prefWidth="210">
+            <Label text="MANTENIMIENTO" styleClass="label-muted"/>
+            <Button text="👤 Usuarios"          styleClass="nav-btn" onAction="#gestionUsuarios"/>
+            <Button text="🔑 Administradores"   styleClass="nav-btn" onAction="#gestionAdmins"/>
+            <Button text="🎮 Juegos"            styleClass="nav-btn" onAction="#gestionJuegos"/>
+            <Button text="🏢 Estudios"          styleClass="nav-btn" onAction="#gestionEstudios"/>
+
+            <Label text="GESTIÓN" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
+            <Button text="✍ Reseñas"            styleClass="nav-btn" onAction="#gestionResenas"/>
+            <Button text="🛒 Compras"           styleClass="nav-btn" onAction="#verCompras"/>
+
+            <Label text="ESTADÍSTICAS" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
+            <Button text="📊 Ventas por Juego"      styleClass="nav-btn" onAction="#estadVentas"/>
+            <Button text="⭐ Mejor Valorados"        styleClass="nav-btn" onAction="#estadMejorVal"/>
+            <Button text="🔥 Más Vendidos"           styleClass="nav-btn" onAction="#estadMasVend"/>
+            <Button text="💬 Reseñas por Idioma"    styleClass="nav-btn" onAction="#estadResIdioma"/>
+            <Button text="🏢 Stats por Estudio"     styleClass="nav-btn" onAction="#estadEstudio"/>
+        </VBox>
+    </left>
+
+    <!-- CONTENIDO -->
+    <center>
+        <StackPane fx:id="contentPane" styleClass="content-area"/>
+    </center>
+
+</BorderPane>

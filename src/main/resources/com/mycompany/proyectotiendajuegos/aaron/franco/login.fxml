@@ -5,7 +5,7 @@
 
 <StackPane xmlns="http://javafx.com/javafx/11"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controlador.LoginController"
+           fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.LoginController"
            styleClass="main-pane">
 
     <VBox alignment="CENTER" spacing="0">

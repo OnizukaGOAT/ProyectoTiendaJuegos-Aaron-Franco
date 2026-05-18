@@ -70,13 +70,16 @@ public class MainAdminController implements Initializable {
         col(tabla, "Juegos",   u -> String.valueOf(u.getBiblioteca().size()), 70);
 
         TableColumn<Usuario, Void> acciones = new TableColumn<>("Acciones");
-        acciones.setPrefWidth(160);
+        acciones.setPrefWidth(200);
         acciones.setCellFactory(tc -> new TableCell<>() {
+            final Button btnVer  = new Button("🔍 Ver");
             final Button btnEdit = new Button("✏ Editar");
             final Button btnDel  = new Button("🗑 Baja");
             {
+                btnVer.getStyleClass().add("btn-gold");
                 btnEdit.getStyleClass().add("btn-secondary");
                 btnDel.getStyleClass().add("btn-danger");
+                btnVer.setOnAction(e -> consultarUsuario(getTableView().getItems().get(getIndex())));
                 btnEdit.setOnAction(e -> formUsuario(getTableView().getItems().get(getIndex())));
                 btnDel.setOnAction(e -> {
                     Usuario u = getTableView().getItems().get(getIndex());
@@ -88,11 +91,67 @@ public class MainAdminController implements Initializable {
             }
             @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : new HBox(5, btnEdit, btnDel));
+                setGraphic(empty ? null : new HBox(5, btnVer, btnEdit, btnDel));
             }
         });
         tabla.getColumns().add(acciones);
         return tabla;
+    }
+
+    private void consultarUsuario(Usuario u) {
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(10));
+        root.setMaxWidth(560);
+
+        Label titulo = new Label("🔍 Detalle de Usuario");
+        titulo.getStyleClass().add("label-title");
+
+        VBox card = new VBox(10);
+        card.getStyleClass().add("card");
+        card.setPadding(new Insets(16));
+        card.getChildren().addAll(
+            parLabel("ID:",                  String.valueOf(u.getIdUsuario())),
+            parLabel("Nombre completo:",     u.getNombreCompleto()),
+            parLabel("Correo:",              u.getCorreo()),
+            parLabel("Idioma:",              u.getIdioma()),
+            parLabel("Saldo:",               String.format("%.2f€", u.getSaldo())),
+            parLabel("Juegos en biblioteca:",String.valueOf(u.getBiblioteca().size())),
+            parLabel("Compras realizadas:",  String.valueOf(u.getHistorialCompras().size()))
+        );
+
+        // Biblioteca
+        if (!u.getBiblioteca().isEmpty()) {
+            Label lblBib = new Label("📚 Biblioteca:");
+            lblBib.getStyleClass().add("label-section");
+            card.getChildren().add(lblBib);
+            for (Juego j : u.getBiblioteca()) {
+                Label lbl = new Label("  • " + j.getTitulo() + " – " + j.getGenero());
+                lbl.getStyleClass().add("label-normal");
+                card.getChildren().add(lbl);
+            }
+        }
+
+        // Reseñas del usuario
+        List<Resena> resenas = gd.getResenasPorUsuario(u);
+        if (!resenas.isEmpty()) {
+            Label lblRes = new Label("✍ Reseñas (" + resenas.size() + "):");
+            lblRes.getStyleClass().add("label-section");
+            card.getChildren().add(lblRes);
+            for (Resena r : resenas) {
+                Label lbl = new Label("  • " + r.getJuego().getTitulo()
+                        + "  ⭐" + r.getPuntuacion() + "/10 – " + r.getComentario());
+                lbl.getStyleClass().add("label-normal");
+                lbl.setWrapText(true);
+                card.getChildren().add(lbl);
+            }
+        }
+
+        Button btnVolver = new Button("← Volver");
+        btnVolver.getStyleClass().add("btn-secondary");
+        btnVolver.setOnAction(e -> gestionUsuarios());
+
+        root.getChildren().addAll(titulo, card, btnVolver);
+        setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
     private void formUsuario(Usuario editar) {
@@ -177,9 +236,12 @@ public class MainAdminController implements Initializable {
 
         TableColumn<Administrador, Void> acciones = new TableColumn<>("Acciones");
         acciones.setCellFactory(tc -> new TableCell<>() {
-            final Button btnDel = new Button("🗑 Baja");
+            final Button btnEdit = new Button("✏ Editar");
+            final Button btnDel  = new Button("🗑 Baja");
             {
+                btnEdit.getStyleClass().add("btn-secondary");
                 btnDel.getStyleClass().add("btn-danger");
+                btnEdit.setOnAction(e -> formAdmin(getTableView().getItems().get(getIndex())));
                 btnDel.setOnAction(e -> {
                     Administrador a = getTableView().getItems().get(getIndex());
                     if (DialogUtil.confirmar("¿Dar de baja al admin " + a.getNombreCompleto() + "?")) {
@@ -190,7 +252,7 @@ public class MainAdminController implements Initializable {
             }
             @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : btnDel);
+                setGraphic(empty ? null : new HBox(5, btnEdit, btnDel));
             }
         });
         tabla.getColumns().add(acciones);
@@ -265,13 +327,16 @@ public class MainAdminController implements Initializable {
         col(tabla, "Director",   j -> j.getDirector(), 150);
 
         TableColumn<Juego, Void> acciones = new TableColumn<>("Acciones");
-        acciones.setPrefWidth(160);
+        acciones.setPrefWidth(200);
         acciones.setCellFactory(tc -> new TableCell<>() {
+            final Button btnVer  = new Button("🔍");
             final Button btnEdit = new Button("✏");
             final Button btnDel  = new Button("🗑");
             {
+                btnVer.getStyleClass().add("btn-gold");
                 btnEdit.getStyleClass().add("btn-secondary");
                 btnDel.getStyleClass().add("btn-danger");
+                btnVer.setOnAction(e -> consultarJuego(getTableView().getItems().get(getIndex())));
                 btnEdit.setOnAction(e -> formJuego(getTableView().getItems().get(getIndex())));
                 btnDel.setOnAction(e -> {
                     Juego j = getTableView().getItems().get(getIndex());
@@ -282,11 +347,57 @@ public class MainAdminController implements Initializable {
             }
             @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : new HBox(5, btnEdit, btnDel));
+                setGraphic(empty ? null : new HBox(5, btnVer, btnEdit, btnDel));
             }
         });
         tabla.getColumns().add(acciones);
         root.getChildren().addAll(titulo, btnNuevo, tabla);
+        setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
+    }
+
+    private void consultarJuego(Juego j) {
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(10));
+        root.setMaxWidth(560);
+
+        Label titulo = new Label("🔍 Detalle del Juego");
+        titulo.getStyleClass().add("label-title");
+
+        VBox card = new VBox(10);
+        card.getStyleClass().add("card");
+        card.setPadding(new Insets(16));
+        card.getChildren().addAll(
+            parLabel("ID:",          String.valueOf(j.getIdJuego())),
+            parLabel("Título:",      j.getTitulo()),
+            parLabel("Género:",      j.getGenero()),
+            parLabel("Plataforma:",  j.getPlataforma()),
+            parLabel("Precio:",      String.format("%.2f€", j.getPrecio())),
+            parLabel("Stock:",       String.valueOf(j.getStock())),
+            parLabel("Director:",    j.getDirector()),
+            parLabel("Valoración media:", j.getResenas().isEmpty() ? "Sin reseñas"
+                                          : String.format("⭐ %.1f/10", j.getPuntuacionMedia())),
+            parLabel("Ventas totales:",   String.valueOf(gd.getVentasJuego(j)))
+        );
+
+        // Reseñas
+        if (!j.getResenas().isEmpty()) {
+            Label lblResTitle = new Label("✍ Reseñas (" + j.getResenas().size() + "):");
+            lblResTitle.getStyleClass().add("label-section");
+            card.getChildren().add(lblResTitle);
+            for (Resena r : j.getResenas()) {
+                Label lbl = new Label("  • " + r.getAutor().getNombreCompleto()
+                        + "  ⭐" + r.getPuntuacion() + " – " + r.getComentario());
+                lbl.getStyleClass().add("label-normal");
+                lbl.setWrapText(true);
+                card.getChildren().add(lbl);
+            }
+        }
+
+        Button btnVolver = new Button("← Volver");
+        btnVolver.getStyleClass().add("btn-secondary");
+        btnVolver.setOnAction(e -> gestionJuegos());
+
+        root.getChildren().addAll(titulo, card, btnVolver);
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
@@ -309,7 +420,6 @@ public class MainAdminController implements Initializable {
         ComboBox<Estudio> cbEstudio = new ComboBox<>(FXCollections.observableArrayList(gd.getEstudios()));
         cbEstudio.setPromptText("Asignar a estudio (opcional)");
         cbEstudio.getStyleClass().add("combo-box");
-        // Preseleccionar el estudio actual si existe
         if (editar != null) {
             gd.getEstudios().stream()
                 .filter(e -> e.getJuegos().contains(editar))
@@ -375,9 +485,9 @@ public class MainAdminController implements Initializable {
             Label lblNombre = new Label("🏢 " + est.getNombre());
             lblNombre.getStyleClass().add("label-section");
             Region sp = new Region(); HBox.setHgrow(sp, Priority.ALWAYS);
-            Button btnEdit = new Button("✏ Editar"); btnEdit.getStyleClass().add("btn-secondary");
-            Button btnDel  = new Button("🗑 Baja");  btnDel.getStyleClass().add("btn-danger");
-            Button btnAddDev = new Button("+ Dev");  btnAddDev.getStyleClass().add("btn-gold");
+            Button btnEdit   = new Button("✏ Editar");    btnEdit.getStyleClass().add("btn-secondary");
+            Button btnDel    = new Button("🗑 Baja");     btnDel.getStyleClass().add("btn-danger");
+            Button btnAddDev = new Button("+ Dev");        btnAddDev.getStyleClass().add("btn-gold");
             btnEdit.setOnAction(e -> formEstudio(est));
             btnDel.setOnAction(e -> {
                 if (DialogUtil.confirmar("¿Eliminar estudio '" + est.getNombre() + "'?")) {
@@ -388,7 +498,8 @@ public class MainAdminController implements Initializable {
             cabecera.getChildren().addAll(lblNombre, sp, btnAddDev, btnEdit, btnDel);
 
             Label lblJuegos = new Label("Juegos (" + est.getJuegos().size() + "): "
-                    + est.getJuegos().stream().map(Juego::getTitulo).reduce("", (a, b) -> a.isEmpty() ? b : a + ", " + b));
+                    + est.getJuegos().stream().map(Juego::getTitulo)
+                        .reduce("", (a, b) -> a.isEmpty() ? b : a + ", " + b));
             lblJuegos.getStyleClass().add("label-normal");
             lblJuegos.setWrapText(true);
             card.getChildren().addAll(cabecera, lblJuegos);
@@ -462,11 +573,10 @@ public class MainAdminController implements Initializable {
         TextField txPuesto    = tf(editar != null ? editar.getPuestoActual() : "");
         TextField txAnos      = tf(editar != null ? String.valueOf(editar.getAnosExperiencia()) : "");
 
-        // Checkboxes con juegos que ha trabajado
         Label lblJuegosTitle = new Label("Juegos en los que ha trabajado:");
         lblJuegosTitle.getStyleClass().add("label-muted");
         VBox juegosBox = new VBox(4);
-        List<CheckBox> checkBoxes = new java.util.ArrayList<>();
+        java.util.List<CheckBox> checkBoxes = new java.util.ArrayList<>();
         for (Juego j : gd.getJuegos()) {
             CheckBox cb = new CheckBox(j.getTitulo());
             cb.setStyle("-fx-text-fill:#eaeaea;");
@@ -726,6 +836,38 @@ public class MainAdminController implements Initializable {
         setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
     }
 
+    // ── Reseñas por Juego (nueva consulta del PDF sección 3.2.2) ──
+    @FXML public void estadResenasPorJuego() {
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(10));
+        Label titulo = new Label("🎮 Reseñas por Juego");
+        titulo.getStyleClass().add("label-title");
+        root.getChildren().add(titulo);
+
+        boolean hayAlguna = false;
+        for (Juego j : gd.getJuegos()) {
+            List<Resena> lista = gd.getResenasPorJuego(j);
+            if (lista.isEmpty()) continue;
+            hayAlguna = true;
+
+            VBox card = new VBox(6); card.getStyleClass().add("card"); card.setPadding(new Insets(10));
+            Label lblJ = new Label("🎮 " + j.getTitulo()
+                    + String.format("  ⭐ %.1f/10  (%d reseñas)", j.getPuntuacionMedia(), lista.size()));
+            lblJ.getStyleClass().add("label-section");
+            card.getChildren().add(lblJ);
+            for (Resena r : lista) {
+                Label lbl = new Label("  • " + r.getAutor().getNombreCompleto()
+                        + "  ⭐" + r.getPuntuacion() + "/10  [" + r.getIdioma() + "]  – " + r.getComentario());
+                lbl.getStyleClass().add("label-normal");
+                lbl.setWrapText(true);
+                card.getChildren().add(lbl);
+            }
+            root.getChildren().add(card);
+        }
+        if (!hayAlguna) root.getChildren().add(new Label("No hay reseñas registradas."));
+        setContent(new ScrollPane(root) {{ setFitToWidth(true); getStyleClass().add("scroll-pane"); }});
+    }
+
     @FXML public void estadEstudio() {
         VBox root = new VBox(15);
         root.setPadding(new Insets(10));
@@ -738,7 +880,7 @@ public class MainAdminController implements Initializable {
             Label lblEst = new Label("🏢 " + est.getNombre()); lblEst.getStyleClass().add("label-section");
             card.getChildren().add(lblEst);
 
-            Juego mejorVal  = gd.getJuegoMejorValoradoEstudio(est);
+            Juego mejorVal   = gd.getJuegoMejorValoradoEstudio(est);
             Juego masVendido = gd.getJuegoMasVendidoEstudio(est);
 
             if (mejorVal != null) {
@@ -759,8 +901,8 @@ public class MainAdminController implements Initializable {
                 lblDevsTit.getStyleClass().add("label-muted");
                 card.getChildren().add(lblDevsTit);
                 for (Desarrollador d : est.getDesarrolladores()) {
-                    Juego mejorDev  = gd.getJuegoMejorValoradoDesarrollador(d);
-                    Juego masVDev   = gd.getJuegoMasVendidoDesarrollador(d);
+                    Juego mejorDev = gd.getJuegoMejorValoradoDesarrollador(d);
+                    Juego masVDev  = gd.getJuegoMasVendidoDesarrollador(d);
                     StringBuilder sb = new StringBuilder("  • " + d.getNombreCompleto()
                             + " (" + d.getPuestoActual() + ")");
                     if (mejorDev != null) sb.append("  |  ⭐ ").append(mejorDev.getTitulo());
@@ -857,5 +999,13 @@ public class MainAdminController implements Initializable {
 
     private Label lbl(String txt) {
         Label l = new Label(txt); l.getStyleClass().add("label-normal"); return l;
+    }
+
+    private HBox parLabel(String etiqueta, String valor) {
+        HBox row = new HBox(10);
+        Label lEtiq = new Label(etiqueta); lEtiq.getStyleClass().add("label-muted"); lEtiq.setMinWidth(180);
+        Label lVal  = new Label(valor);    lVal.getStyleClass().add("label-normal");
+        row.getChildren().addAll(lEtiq, lVal);
+        return row;
     }
 }

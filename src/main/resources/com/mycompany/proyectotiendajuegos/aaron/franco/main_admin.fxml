@@ -5,7 +5,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/11"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controlador.MainAdminController"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.MainAdminController"
             styleClass="main-pane">
 
     <!-- HEADER -->
@@ -21,24 +21,29 @@
 
     <!-- MENÚ LATERAL -->
     <left>
-        <VBox styleClass="side-panel" spacing="5" prefWidth="210">
-            <Label text="MANTENIMIENTO" styleClass="label-muted"/>
-            <Button text="👤 Usuarios"          styleClass="nav-btn" onAction="#gestionUsuarios"/>
-            <Button text="🔑 Administradores"   styleClass="nav-btn" onAction="#gestionAdmins"/>
-            <Button text="🎮 Juegos"            styleClass="nav-btn" onAction="#gestionJuegos"/>
-            <Button text="🏢 Estudios"          styleClass="nav-btn" onAction="#gestionEstudios"/>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane" prefWidth="225">
+            <VBox styleClass="side-panel" spacing="5">
+                <Label text="MANTENIMIENTO" styleClass="label-muted"/>
+                <Button text="👤 Usuarios"          styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionUsuarios"/>
+                <Button text="🔑 Administradores"   styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionAdmins"/>
+                <Button text="🎮 Juegos"            styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionJuegos"/>
+                <Button text="🏢 Estudios"          styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionEstudios"/>
 
-            <Label text="GESTIÓN" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
-            <Button text="✍ Reseñas"            styleClass="nav-btn" onAction="#gestionResenas"/>
-            <Button text="🛒 Compras"           styleClass="nav-btn" onAction="#verCompras"/>
+                <Label text="GESTIÓN" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
+                <Button text="✍ Reseñas"            styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionResenas"/>
+                <Button text="🛒 Compras"           styleClass="nav-btn" maxWidth="Infinity" onAction="#verCompras"/>
 
-            <Label text="ESTADÍSTICAS" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
-            <Button text="📊 Ventas por Juego"      styleClass="nav-btn" onAction="#estadVentas"/>
-            <Button text="⭐ Mejor Valorados"        styleClass="nav-btn" onAction="#estadMejorVal"/>
-            <Button text="🔥 Más Vendidos"           styleClass="nav-btn" onAction="#estadMasVend"/>
-            <Button text="💬 Reseñas por Idioma"    styleClass="nav-btn" onAction="#estadResIdioma"/>
-            <Button text="🏢 Stats por Estudio"     styleClass="nav-btn" onAction="#estadEstudio"/>
-        </VBox>
+                <Label text="ESTADÍSTICAS" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
+                <Button text="📊 Ventas por Juego"      styleClass="nav-btn" maxWidth="Infinity" onAction="#estadVentas"/>
+                <Button text="⭐ Mejor Valorados"        styleClass="nav-btn" maxWidth="Infinity" onAction="#estadMejorVal"/>
+                <Button text="🔥 Más Vendidos"           styleClass="nav-btn" maxWidth="Infinity" onAction="#estadMasVend"/>
+                <Button text="💬 Reseñas por Idioma"    styleClass="nav-btn" maxWidth="Infinity" onAction="#estadResIdioma"/>
+                <Button text="🎮 Reseñas por Juego"     styleClass="nav-btn" maxWidth="Infinity" onAction="#estadResenasPorJuego"/>
+                <Button text="🏢 Stats por Estudio"     styleClass="nav-btn" maxWidth="Infinity" onAction="#estadEstudio"/>
+                <Button text="🛒 Juegos por Usuario"    styleClass="nav-btn" maxWidth="Infinity" onAction="#estadJuegosPorUsuario"/>
+                <Button text="✍ Reseñas por Usuario"   styleClass="nav-btn" maxWidth="Infinity" onAction="#estadResenasPorUsuario"/>
+            </VBox>
+        </ScrollPane>
     </left>
 
     <!-- CONTENIDO -->

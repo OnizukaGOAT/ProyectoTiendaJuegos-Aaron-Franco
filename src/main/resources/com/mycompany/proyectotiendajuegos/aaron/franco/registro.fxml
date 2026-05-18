@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/11"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.RegistroController"
+           styleClass="main-pane">
+
+    <VBox alignment="CENTER" spacing="0">
+        <Label text="🎮 GAME PYRAMID" styleClass="login-title"
+               style="-fx-padding:0 0 4 0;"/>
+        <Label text="Crear nueva cuenta" styleClass="login-subtitle"
+               style="-fx-padding:0 0 20 0;"/>
+
+        <VBox styleClass="login-box" spacing="12" alignment="CENTER" maxWidth="400">
+
+            <Label text="Registro de Usuario" styleClass="label-section"/>
+
+            <TextField fx:id="txNombre"    promptText="Nombre *"          styleClass="text-field" maxWidth="320"/>
+            <TextField fx:id="txApellidos" promptText="Apellidos *"        styleClass="text-field" maxWidth="320"/>
+            <TextField fx:id="txCorreo"    promptText="Correo electrónico *" styleClass="text-field" maxWidth="320"/>
+            <PasswordField fx:id="txPassword" promptText="Contraseña (mín. 6 caracteres) *"
+                           styleClass="password-field" maxWidth="320"/>
+            <TextField fx:id="txSaldo"     promptText="Saldo inicial € (por defecto 50)"
+                       styleClass="text-field" maxWidth="320"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT" maxWidth="320">
+                <Label text="Idioma:" styleClass="label-normal"/>
+                <ComboBox fx:id="cbIdioma" styleClass="combo-box" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <Label fx:id="lblError" styleClass="label-accent" visible="false"
+                   wrapText="true" maxWidth="320"/>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Registrarse" styleClass="btn-primary"   onAction="#registrar"/>
+                <Button text="← Volver"   styleClass="btn-secondary"  onAction="#volver"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</StackPane>

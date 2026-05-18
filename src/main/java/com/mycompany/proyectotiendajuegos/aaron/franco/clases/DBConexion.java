@@ -15,7 +15,7 @@ public class DBConexion {
                                          + "&allowPublicKeyRetrieval=true&useUnicode=true"
                                          + "&characterEncoding=UTF-8";
     private static final String USER     = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "CookieClicker2005";
 
     private static DBConexion instancia;
     private Connection conexion;

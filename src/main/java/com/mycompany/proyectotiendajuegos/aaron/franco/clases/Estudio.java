@@ -4,36 +4,32 @@ import java.util.ArrayList;
 
 public class Estudio {
 
-    private static int contadorId = 1;
-
-    private int                   idEstudio;
-    private String                nombre;
+    private int                      idEstudio;
+    private String                   nombre;
     private ArrayList<Desarrollador> desarrolladores;
     private ArrayList<Juego>         juegos;
 
     public Estudio() {
-        this.idEstudio      = contadorId++;
         this.desarrolladores = new ArrayList<>();
         this.juegos          = new ArrayList<>();
     }
 
     public Estudio(String nombre) {
-        this.idEstudio      = contadorId++;
         this.nombre         = nombre;
         this.desarrolladores = new ArrayList<>();
         this.juegos          = new ArrayList<>();
     }
 
-    // ── Getters ────────────────────────────────────────────
+    // ── Getters ───────────────────────────────────────────
     public int                      getIdEstudio()       { return idEstudio; }
     public String                   getNombre()          { return nombre; }
     public ArrayList<Desarrollador> getDesarrolladores() { return desarrolladores; }
     public ArrayList<Juego>         getJuegos()          { return juegos; }
 
-    // ── Setters ────────────────────────────────────────────
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    // ── Setters ───────────────────────────────────────────
+    public void setIdEstudio(int idEstudio) { this.idEstudio = idEstudio; }
+    public void setNombre(String nombre)    { this.nombre    = nombre; }
 
-    // ── Lógica ────────────────────────────────────────────
     public void addDesarrollador(Desarrollador d) {
         if (!desarrolladores.contains(d)) desarrolladores.add(d);
     }
@@ -50,12 +46,6 @@ public class Estudio {
         juegos.removeIf(j -> j.getIdJuego() == id);
     }
 
-    public static void resetContador(int valor) { contadorId = valor; }
-
     @Override
     public String toString() { return nombre; }
-
-    void setIdEstudio(int aInt) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }

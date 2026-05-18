@@ -4,45 +4,49 @@ import java.util.ArrayList;
 
 public class Usuario extends Persona {
 
-    private static int contadorId = 1;
-
     private int               idUsuario;
     private String            correo;
     private String            contrasena;
     private double            saldo;
     private String            idioma;
-    private ArrayList<Compra> historialCompras;
-    private ArrayList<Juego>  biblioteca;
 
     public Usuario() {
         super();
-        this.idUsuario       = contadorId++;
-        this.historialCompras = new ArrayList<>();
-        this.biblioteca       = new ArrayList<>();
+        this.idUsuario = 0;
     }
 
     public Usuario(String nombre, String apellidos, String correo,
                    String contrasena, double saldo, String idioma) {
         super(nombre, apellidos);
-        this.idUsuario        = contadorId++;
-        this.correo           = correo;
-        this.contrasena       = contrasena;
-        this.saldo            = saldo;
-        this.idioma           = idioma;
-        this.historialCompras = new ArrayList<>();
-        this.biblioteca       = new ArrayList<>();
+        this.correo      = correo;
+        this.contrasena  = contrasena;
+        this.saldo       = saldo;
+        this.idioma      = idioma;
     }
 
     // ── Getters ────────────────────────────────────────────
-    public int               getIdUsuario()       { return idUsuario; }
-    public String            getCorreo()          { return correo; }
-    public String            getContrasena()      { return contrasena; }
-    public double            getSaldo()           { return saldo; }
-    public String            getIdioma()          { return idioma; }
-    public ArrayList<Compra> getHistorialCompras() { return historialCompras; }
-    public ArrayList<Juego>  getBiblioteca()       { return biblioteca; }
+    public int    getIdUsuario()  { return idUsuario; }
+    public String getCorreo()     { return correo; }
+    public String getContrasena() { return contrasena; }
+    public double getSaldo()      { return saldo; }
+    public String getIdioma()     { return idioma; }
+
+    /**
+     * Estos métodos delegan en GestorDatos para consultar la BD.
+     * Se mantienen por compatibilidad con el código existente del controlador.
+     */
+    public ArrayList<Juego> getBiblioteca() {
+        if (idUsuario == 0) return new ArrayList<>();
+        return GestorDatos.getInstance().getBibliotecaUsuario(idUsuario);
+    }
+
+    public ArrayList<Compra> getHistorialCompras() {
+        if (idUsuario == 0) return new ArrayList<>();
+        return GestorDatos.getInstance().getComprasUsuario(idUsuario);
+    }
 
     // ── Setters ────────────────────────────────────────────
+    public void setIdUsuario(int idUsuario)       { this.idUsuario  = idUsuario; }
     public void setCorreo(String correo)          { this.correo     = correo; }
     public void setContrasena(String contrasena)  { this.contrasena = contrasena; }
     public void setSaldo(double saldo)            { this.saldo      = saldo; }
@@ -53,23 +57,12 @@ public class Usuario extends Persona {
         return contrasena != null && contrasena.equals(pass);
     }
 
+    /** Comprueba en BD si el usuario posee el juego. */
     public boolean poseeJuego(Juego j) {
-        return biblioteca.contains(j);
+        if (idUsuario == 0) return false;
+        return GestorDatos.getInstance().usuarioPoseeJuego(idUsuario, j.getIdJuego());
     }
-
-    public void addCompra(Compra c) {
-        historialCompras.add(c);
-        if (!biblioteca.contains(c.getJuego())) {
-            biblioteca.add(c.getJuego());
-        }
-    }
-
-    public static void resetContador(int valor) { contadorId = valor; }
 
     @Override
     public String toString() { return getNombreCompleto() + " <" + correo + ">"; }
-
-    void setIdUsuario(int aInt) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }

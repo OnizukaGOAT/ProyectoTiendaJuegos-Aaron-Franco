@@ -1,18 +1,19 @@
 package com.mycompany.proyectotiendajuegos.aaron.franco.clases;
 
-
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Singleton que gestiona todas las colecciones de datos y la lógica de negocio
- * de la aplicación GamePyramid.
+ * Singleton que gestiona todas las operaciones de datos mediante JDBC (MySQL).
+ * Sustituye por completo la versión anterior basada en listas en memoria.
  */
 public class GestorDatos {
 
-    // ── Instancia única (Singleton) ────────────────────────
+    // ── Singleton ──────────────────────────────────────────
     private static GestorDatos instancia;
 
     public static GestorDatos getInstance() {
@@ -20,389 +21,828 @@ public class GestorDatos {
         return instancia;
     }
 
-    // ── Colecciones principales ────────────────────────────
-    private final ArrayList<Usuario>       usuarios         = new ArrayList<>();
-    private final ArrayList<Administrador> administradores  = new ArrayList<>();
-    private final ArrayList<Juego>         juegos           = new ArrayList<>();
-    private final ArrayList<Resena>        resenas          = new ArrayList<>();
-    private final ArrayList<Compra>        historialComprasGlobal = new ArrayList<>();
-    private final ArrayList<Estudio>       estudios         = new ArrayList<>();
-    private final ArrayList<Desarrollador> desarrolladores  = new ArrayList<>();
+    // ── Sesión activa (solo en memoria) ───────────────────
+    private Usuario       usuarioActual;
+    private Administrador adminActual;
 
-    // ── Sesión activa ──────────────────────────────────────
-    private Usuario        usuarioActual;
-    private Administrador  adminActual;
+    private GestorDatos() { /* conexión lazy a través de DBConexion */ }
 
-    // ══════════════════════════════════════════════════════
-    // CONSTRUCTOR – carga datos de demo
-    // ══════════════════════════════════════════════════════
-    private GestorDatos() {
-        cargarDatosDemo();
-    }
-
-    private void cargarDatosDemo() {
-        // ── Administradores ────────────────────────────────
-        Administrador a1 = new Administrador("Admin", "Principal", "admin@gamepyramid.com", "admin123");
-        administradores.add(a1);
-
-        // ── Estudios ───────────────────────────────────────
-        Estudio e1 = new Estudio("Rockstar Games");
-        Estudio e2 = new Estudio("CD Projekt Red");
-        Estudio e3 = new Estudio("Nintendo EPD");
-        estudios.add(e1);
-        estudios.add(e2);
-        estudios.add(e3);
-
-        // ── Desarrolladores notables ───────────────────────
-        Desarrollador d1 = new Desarrollador("Dan", "Houser", 20, "Director Creativo");
-        Desarrollador d2 = new Desarrollador("Sam", "Houser", 20, "Productor");
-        Desarrollador d3 = new Desarrollador("Adam", "Badowski", 18, "Director de Juego");
-        Desarrollador d4 = new Desarrollador("Shigeru", "Miyamoto", 40, "Productor");
-        desarrolladores.add(d1); desarrolladores.add(d2);
-        desarrolladores.add(d3); desarrolladores.add(d4);
-
-        e1.addDesarrollador(d1); e1.addDesarrollador(d2);
-        e2.addDesarrollador(d3);
-        e3.addDesarrollador(d4);
-
-        // ── Juegos ─────────────────────────────────────────
-        Juego j1 = new Juego("Grand Theft Auto V",    "Acción",     "PC / PS5 / Xbox", 29.99, 50, "Dan Houser");
-        Juego j2 = new Juego("Red Dead Redemption 2", "Aventura",   "PC / PS4 / Xbox", 39.99, 30, "Dan Houser");
-        Juego j3 = new Juego("The Witcher 3",         "RPG",        "PC / PS5 / Xbox", 19.99, 45, "Adam Badowski");
-        Juego j4 = new Juego("Cyberpunk 2077",        "RPG",        "PC / PS5 / Xbox", 34.99, 40, "Adam Badowski");
-        Juego j5 = new Juego("The Legend of Zelda: BotW", "Aventura", "Switch",         59.99, 20, "Shigeru Miyamoto");
-        Juego j6 = new Juego("Mario Kart 8 Deluxe",  "Carreras",   "Switch",          49.99, 35, "Shigeru Miyamoto");
-        juegos.add(j1); juegos.add(j2); juegos.add(j3);
-        juegos.add(j4); juegos.add(j5); juegos.add(j6);
-
-        e1.addJuego(j1); e1.addJuego(j2);
-        e2.addJuego(j3); e2.addJuego(j4);
-        e3.addJuego(j5); e3.addJuego(j6);
-
-        d1.addJuego(j1); d1.addJuego(j2);
-        d2.addJuego(j1); d2.addJuego(j2);
-        d3.addJuego(j3); d3.addJuego(j4);
-        d4.addJuego(j5); d4.addJuego(j6);
-
-        // ── Usuarios demo ──────────────────────────────────
-        Usuario u1 = new Usuario("Carlos",  "García",   "carlos@email.com",  "pass123", 200.0, "Español");
-        Usuario u2 = new Usuario("Ana",     "Martínez", "ana@email.com",     "pass123", 150.0, "Español");
-        Usuario u3 = new Usuario("John",    "Smith",    "john@email.com",    "pass123", 300.0, "English");
-        usuarios.add(u1); usuarios.add(u2); usuarios.add(u3);
-
-        // ── Compras demo ───────────────────────────────────
-        realizarCompraDemo(u1, j1, 1);
-        realizarCompraDemo(u1, j3, 1);
-        realizarCompraDemo(u2, j5, 1);
-        realizarCompraDemo(u3, j1, 1);
-        realizarCompraDemo(u3, j4, 1);
-
-        // ── Reseñas demo ───────────────────────────────────
-        addResenaDemo(u1, j1, "Increíble juego, horas y horas de entretenimiento.", 9, "Español");
-        addResenaDemo(u1, j3, "El mejor RPG que he jugado nunca.", 10, "Español");
-        addResenaDemo(u2, j5, "Una obra maestra de Nintendo.", 10, "Español");
-        addResenaDemo(u3, j1, "Fantastic open world experience!", 8, "English");
-        addResenaDemo(u3, j4, "Buggy at launch but now great.", 7, "English");
-    }
-
-    private void realizarCompraDemo(Usuario u, Juego j, int cantidad) {
-        Compra c = new Compra(u, j, cantidad);
-        u.addCompra(c);
-        j.setStock(j.getStock() - cantidad);
-        historialComprasGlobal.add(c);
-    }
-
-    private void addResenaDemo(Usuario autor, Juego juego, String comentario, int puntuacion, String idioma) {
-        Resena r = new Resena(autor, juego, comentario, puntuacion, idioma);
-        resenas.add(r);
-        juego.addResena(r);
+    private Connection con() {
+        return DBConexion.getInstance().getConexion();
     }
 
     // ══════════════════════════════════════════════════════
     // SESIÓN
     // ══════════════════════════════════════════════════════
     public Usuario loginUsuario(String correo, String pass) {
-        for (Usuario u : usuarios) {
-            if (u.getCorreo().equalsIgnoreCase(correo) && u.verificarContrasena(pass)) {
-                usuarioActual = u;
-                return u;
+        String sql = "SELECT * FROM usuario WHERE correo = ?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, correo);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Usuario u = mapUsuario(rs);
+                if (u.verificarContrasena(pass)) {
+                    usuarioActual = u;
+                    return u;
+                }
             }
-        }
+        } catch (SQLException e) { manejarError(e); }
         return null;
     }
 
     public Administrador loginAdmin(String correo, String pass) {
-        for (Administrador a : administradores) {
-            if (a.getCorreo().equalsIgnoreCase(correo) && a.verificarContrasena(pass)) {
-                adminActual = a;
-                return a;
+        String sql = "SELECT * FROM administrador WHERE correo = ?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, correo);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Administrador a = mapAdmin(rs);
+                if (a.verificarContrasena(pass)) {
+                    adminActual = a;
+                    return a;
+                }
             }
-        }
+        } catch (SQLException e) { manejarError(e); }
         return null;
     }
 
-    public void cerrarSesion() {
-        usuarioActual = null;
-        adminActual   = null;
-    }
+    public void cerrarSesion() { usuarioActual = null; adminActual = null; }
 
     public Usuario       getUsuarioActual() { return usuarioActual; }
     public Administrador getAdminActual()   { return adminActual; }
 
     // ══════════════════════════════════════════════════════
-    // ALTA / BAJA / MODIFICACIÓN – USUARIOS
+    // USUARIOS
     // ══════════════════════════════════════════════════════
+    public ArrayList<Usuario> getUsuarios() {
+        ArrayList<Usuario> lista = new ArrayList<>();
+        String sql = "SELECT * FROM usuario ORDER BY id_usuario";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) lista.add(mapUsuario(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
+
     public boolean altaUsuario(String nombre, String apellidos, String correo,
                                String pass, double saldo, String idioma) {
         if (buscarUsuarioPorCorreo(correo) != null) return false;
-        usuarios.add(new Usuario(nombre, apellidos, correo, pass, saldo, idioma));
-        return true;
+        String sql = "INSERT INTO usuario (nombre,apellidos,correo,contrasena,saldo,idioma) VALUES (?,?,?,?,?,?)";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, nombre); ps.setString(2, apellidos);
+            ps.setString(3, correo); ps.setString(4, pass);
+            ps.setDouble(5, saldo);  ps.setString(6, idioma);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) { manejarError(e); return false; }
     }
 
     public boolean bajaUsuario(int id) {
-        return usuarios.removeIf(u -> u.getIdUsuario() == id);
+        try (PreparedStatement ps = con().prepareStatement("DELETE FROM usuario WHERE id_usuario=?")) {
+            ps.setInt(1, id); return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
+
+    public boolean actualizarUsuario(Usuario u) {
+        String sql = "UPDATE usuario SET nombre=?,apellidos=?,correo=?,contrasena=?,saldo=?,idioma=? WHERE id_usuario=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, u.getNombre());    ps.setString(2, u.getApellidos());
+            ps.setString(3, u.getCorreo());    ps.setString(4, u.getContrasena());
+            ps.setDouble(5, u.getSaldo());     ps.setString(6, u.getIdioma());
+            ps.setInt(7, u.getIdUsuario());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
     }
 
     public Usuario buscarUsuarioPorCorreo(String correo) {
-        return usuarios.stream()
-                .filter(u -> u.getCorreo().equalsIgnoreCase(correo))
-                .findFirst().orElse(null);
+        String sql = "SELECT * FROM usuario WHERE correo=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, correo);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapUsuario(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     public Usuario buscarUsuarioPorId(int id) {
-        return usuarios.stream().filter(u -> u.getIdUsuario() == id).findFirst().orElse(null);
+        String sql = "SELECT * FROM usuario WHERE id_usuario=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapUsuario(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
-    public ArrayList<Usuario> getUsuarios() { return usuarios; }
+    /** Biblioteca: juegos que el usuario ha comprado. */
+    public ArrayList<Juego> getBibliotecaUsuario(int idUsuario) {
+        ArrayList<Juego> lista = new ArrayList<>();
+        String sql = "SELECT DISTINCT j.* FROM juego j "
+                   + "JOIN compra c ON c.id_juego = j.id_juego "
+                   + "WHERE c.id_usuario = ?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
+
+    /** Compras de un usuario. */
+    public ArrayList<Compra> getComprasUsuario(int idUsuario) {
+        ArrayList<Compra> lista = new ArrayList<>();
+        String sql = "SELECT c.*, u.nombre u_nombre, u.apellidos u_ap, u.correo u_correo, "
+                   + "u.contrasena u_pass, u.saldo u_saldo, u.idioma u_idioma, "
+                   + "j.titulo j_titulo, j.genero j_gen, j.plataforma j_plat, "
+                   + "j.precio j_precio, j.stock j_stock, j.director j_dir, j.id_estudio j_est "
+                   + "FROM compra c "
+                   + "JOIN usuario u ON u.id_usuario = c.id_usuario "
+                   + "JOIN juego  j ON j.id_juego   = c.id_juego "
+                   + "WHERE c.id_usuario = ? ORDER BY c.fecha DESC";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapCompraCompleta(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
 
     // ══════════════════════════════════════════════════════
-    // ALTA / BAJA – ADMINISTRADORES
+    // ADMINISTRADORES
     // ══════════════════════════════════════════════════════
+    public ArrayList<Administrador> getAdministradores() {
+        ArrayList<Administrador> lista = new ArrayList<>();
+        String sql = "SELECT * FROM administrador ORDER BY id_admin";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) lista.add(mapAdmin(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
+
     public boolean altaAdmin(String nombre, String apellidos, String correo, String pass) {
-        boolean existe = administradores.stream()
-                .anyMatch(a -> a.getCorreo().equalsIgnoreCase(correo));
-        if (existe) return false;
-        administradores.add(new Administrador(nombre, apellidos, correo, pass));
-        return true;
+        String chk = "SELECT id_admin FROM administrador WHERE correo=?";
+        try (PreparedStatement ps = con().prepareStatement(chk)) {
+            ps.setString(1, correo);
+            if (ps.executeQuery().next()) return false;
+        } catch (SQLException e) { manejarError(e); return false; }
+
+        String sql = "INSERT INTO administrador (nombre,apellidos,correo,contrasena) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, nombre); ps.setString(2, apellidos);
+            ps.setString(3, correo); ps.setString(4, pass);
+            ps.executeUpdate(); return true;
+        } catch (SQLException e) { manejarError(e); return false; }
     }
 
     public boolean bajaAdmin(int id) {
-        return administradores.removeIf(a -> a.getIdAdmin() == id);
+        try (PreparedStatement ps = con().prepareStatement("DELETE FROM administrador WHERE id_admin=?")) {
+            ps.setInt(1, id); return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
     }
 
-    public ArrayList<Administrador> getAdministradores() { return administradores; }
+    public boolean actualizarAdmin(Administrador a) {
+        String sql = "UPDATE administrador SET nombre=?,apellidos=?,correo=?,contrasena=? WHERE id_admin=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, a.getNombre()); ps.setString(2, a.getApellidos());
+            ps.setString(3, a.getCorreo()); ps.setString(4, a.getContrasena());
+            ps.setInt(5, a.getIdAdmin());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
 
     // ══════════════════════════════════════════════════════
-    // ALTA / BAJA / MODIFICACIÓN – JUEGOS
+    // JUEGOS
     // ══════════════════════════════════════════════════════
+    public ArrayList<Juego> getJuegos() {
+        ArrayList<Juego> lista = new ArrayList<>();
+        String sql = "SELECT * FROM juego ORDER BY titulo";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
+
     public Juego altaJuego(String titulo, String genero, String plataforma,
                            double precio, int stock, String director) {
-        Juego j = new Juego(titulo, genero, plataforma, precio, stock, director);
-        juegos.add(j);
-        return j;
+        String sql = "INSERT INTO juego (titulo,genero,plataforma,precio,stock,director) VALUES (?,?,?,?,?,?)";
+        try (PreparedStatement ps = con().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, titulo); ps.setString(2, genero);
+            ps.setString(3, plataforma); ps.setDouble(4, precio);
+            ps.setInt(5, stock); ps.setString(6, director);
+            ps.executeUpdate();
+            ResultSet gen = ps.getGeneratedKeys();
+            if (gen.next()) return buscarJuegoPorId(gen.getInt(1));
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     public boolean bajaJuego(int id) {
-        Juego j = buscarJuegoPorId(id);
-        if (j == null) return false;
-        // Eliminar también de estudios
-        estudios.forEach(e -> e.removeJuego(id));
-        // Eliminar sus reseñas
-        resenas.removeIf(r -> r.getJuego().getIdJuego() == id);
-        return juegos.removeIf(jj -> jj.getIdJuego() == id);
+        try (PreparedStatement ps = con().prepareStatement("DELETE FROM juego WHERE id_juego=?")) {
+            ps.setInt(1, id); return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
+
+    public boolean actualizarJuego(Juego j) {
+        String sql = "UPDATE juego SET titulo=?,genero=?,plataforma=?,precio=?,stock=?,director=? WHERE id_juego=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1,j.getTitulo());    ps.setString(2,j.getGenero());
+            ps.setString(3,j.getPlataforma()); ps.setDouble(4,j.getPrecio());
+            ps.setInt(5,j.getStock());         ps.setString(6,j.getDirector());
+            ps.setInt(7,j.getIdJuego());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
+
+    public boolean asignarJuegoAEstudio(int idJuego, int idEstudio) {
+        String sql = "UPDATE juego SET id_estudio=? WHERE id_juego=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idEstudio); ps.setInt(2, idJuego);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
     }
 
     public Juego buscarJuegoPorId(int id) {
-        return juegos.stream().filter(j -> j.getIdJuego() == id).findFirst().orElse(null);
+        String sql = "SELECT * FROM juego WHERE id_juego=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapJuego(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     public List<Juego> buscarJuegosPorNombre(String texto) {
-        String t = texto.toLowerCase();
-        return juegos.stream()
-                .filter(j -> j.getTitulo().toLowerCase().contains(t))
-                .collect(Collectors.toList());
+        return buscarJuegosConFiltro("titulo", texto);
+    }
+    public List<Juego> buscarJuegosPorGenero(String texto) {
+        return buscarJuegosConFiltro("genero", texto);
+    }
+    public List<Juego> buscarJuegosPorDirector(String texto) {
+        return buscarJuegosConFiltro("director", texto);
     }
 
-    public List<Juego> buscarJuegosPorGenero(String genero) {
-        String t = genero.toLowerCase();
-        return juegos.stream()
-                .filter(j -> j.getGenero().toLowerCase().contains(t))
-                .collect(Collectors.toList());
+    private List<Juego> buscarJuegosConFiltro(String campo, String texto) {
+        List<Juego> lista = new ArrayList<>();
+        String sql = "SELECT * FROM juego WHERE " + campo + " LIKE ? ORDER BY titulo";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, "%" + texto + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
     }
 
-    public List<Juego> buscarJuegosPorDirector(String director) {
-        String t = director.toLowerCase();
-        return juegos.stream()
-                .filter(j -> j.getDirector().toLowerCase().contains(t))
-                .collect(Collectors.toList());
+    public List<Juego> buscarJuegosPorEstudio(String nombreEstudio) {
+        List<Juego> lista = new ArrayList<>();
+        String sql = "SELECT j.* FROM juego j "
+                   + "JOIN estudio e ON e.id_estudio = j.id_estudio "
+                   + "WHERE e.nombre LIKE ? ORDER BY j.titulo";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, "%" + nombreEstudio + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
     }
 
-    public List<Juego> buscarJuegosPorEstudio(String estudio) {
-        String t = estudio.toLowerCase();
-        return estudios.stream()
-                .filter(e -> e.getNombre().toLowerCase().contains(t))
-                .flatMap(e -> e.getJuegos().stream())
-                .distinct()
-                .collect(Collectors.toList());
+    /** Comprueba si un usuario ya tiene un juego (por compra). */
+    public boolean usuarioPoseeJuego(int idUsuario, int idJuego) {
+        String sql = "SELECT 1 FROM compra WHERE id_usuario=? AND id_juego=? LIMIT 1";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idUsuario); ps.setInt(2, idJuego);
+            return ps.executeQuery().next();
+        } catch (SQLException e) { manejarError(e); return false; }
     }
-
-    public ArrayList<Juego> getJuegos() { return juegos; }
 
     // ══════════════════════════════════════════════════════
-    // COMPRA DE JUEGOS
+    // COMPRAS
     // ══════════════════════════════════════════════════════
     public String comprarJuego(Usuario u, Juego j, int cantidad) {
-        if (j.getStock() < cantidad)             return "Stock insuficiente.";
-        if (u.getSaldo() < j.getPrecio() * cantidad) return "Saldo insuficiente.";
-        if (u.poseeJuego(j))                      return "Ya tienes este juego en tu biblioteca.";
+        if (j.getStock() < cantidad)                  return "Stock insuficiente.";
+        if (u.getSaldo() < j.getPrecio() * cantidad)  return "Saldo insuficiente.";
+        if (usuarioPoseeJuego(u.getIdUsuario(), j.getIdJuego())) return "Ya tienes este juego en tu biblioteca.";
 
-        u.setSaldo(u.getSaldo() - j.getPrecio() * cantidad);
-        j.setStock(j.getStock() - cantidad);
+        String sqlCompra  = "INSERT INTO compra (id_usuario,id_juego,cantidad,coste,fecha) VALUES (?,?,?,?,?)";
+        String sqlStock   = "UPDATE juego  SET stock  = stock  - ? WHERE id_juego  = ?";
+        String sqlSaldo   = "UPDATE usuario SET saldo  = saldo  - ? WHERE id_usuario = ?";
+        try {
+            con().setAutoCommit(false);
+            try (PreparedStatement p1 = con().prepareStatement(sqlCompra);
+                 PreparedStatement p2 = con().prepareStatement(sqlStock);
+                 PreparedStatement p3 = con().prepareStatement(sqlSaldo)) {
 
-        Compra c = new Compra(u, j, cantidad);
-        u.addCompra(c);
-        historialComprasGlobal.add(c);
-        return "OK";
+                double coste = j.getPrecio() * cantidad;
+                p1.setInt(1, u.getIdUsuario()); p1.setInt(2, j.getIdJuego());
+                p1.setInt(3, cantidad);          p1.setDouble(4, coste);
+                p1.setDate(5, Date.valueOf(LocalDate.now()));
+                p1.executeUpdate();
+
+                p2.setInt(1, cantidad); p2.setInt(2, j.getIdJuego());
+                p2.executeUpdate();
+
+                p3.setDouble(1, coste); p3.setInt(2, u.getIdUsuario());
+                p3.executeUpdate();
+
+                con().commit();
+                // Actualizar el objeto en memoria de la sesión activa
+                u.setSaldo(u.getSaldo() - coste);
+                j.setStock(j.getStock() - cantidad);
+                return "OK";
+            } catch (SQLException ex) {
+                con().rollback();
+                throw ex;
+            } finally {
+                con().setAutoCommit(true);
+            }
+        } catch (SQLException e) { manejarError(e); return "Error al procesar la compra."; }
     }
 
-    public ArrayList<Compra> getHistorialComprasGlobal() { return historialComprasGlobal; }
+    public ArrayList<Compra> getHistorialComprasGlobal() {
+        ArrayList<Compra> lista = new ArrayList<>();
+        String sql = "SELECT c.*, "
+                   + "u.nombre u_nombre, u.apellidos u_ap, u.correo u_correo, "
+                   + "u.contrasena u_pass, u.saldo u_saldo, u.idioma u_idioma, "
+                   + "j.titulo j_titulo, j.genero j_gen, j.plataforma j_plat, "
+                   + "j.precio j_precio, j.stock j_stock, j.director j_dir, j.id_estudio j_est "
+                   + "FROM compra c "
+                   + "JOIN usuario u ON u.id_usuario = c.id_usuario "
+                   + "JOIN juego  j ON j.id_juego   = c.id_juego "
+                   + "ORDER BY c.fecha DESC, c.cod_compra DESC";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) lista.add(mapCompraCompleta(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
 
     // ══════════════════════════════════════════════════════
     // RESEÑAS
     // ══════════════════════════════════════════════════════
-    public String anadirResena(Usuario autor, Juego juego, String comentario,
-                               int puntuacion, String idioma) {
-        if (!autor.poseeJuego(juego))
-            return "Solo puedes reseñar juegos que posees.";
-        boolean yaReseñado = resenas.stream()
-                .anyMatch(r -> r.getAutor() == autor && r.getJuego() == juego);
-        if (yaReseñado)
-            return "Ya has escrito una reseña para este juego.";
-
-        Resena r = new Resena(autor, juego, comentario, puntuacion, idioma);
-        resenas.add(r);
-        juego.addResena(r);
-        return "OK";
-    }
-
-    public boolean eliminarResena(int id) {
-        Resena r = resenas.stream().filter(rr -> rr.getIdResena() == id).findFirst().orElse(null);
-        if (r == null) return false;
-        r.getJuego().removeResena(id);
-        return resenas.removeIf(rr -> rr.getIdResena() == id);
+    public ArrayList<Resena> getResenas() {
+        return getResenasPorFiltro(null, null, null);
     }
 
     public List<Resena> getResenasPorUsuario(Usuario u) {
-        return resenas.stream().filter(r -> r.getAutor() == u).collect(Collectors.toList());
+        return getResenasPorFiltro("r.id_usuario", String.valueOf(u.getIdUsuario()), null);
     }
 
     public List<Resena> getResenasPorJuego(Juego j) {
-        return resenas.stream().filter(r -> r.getJuego() == j).collect(Collectors.toList());
+        return getResenasPorFiltro("r.id_juego", String.valueOf(j.getIdJuego()), null);
     }
 
     public List<Resena> getResenasPorIdioma(String idioma) {
-        return resenas.stream()
-                .filter(r -> idioma.equalsIgnoreCase(r.getIdioma()))
-                .collect(Collectors.toList());
+        return getResenasPorFiltro(null, null, idioma);
     }
 
-    public ArrayList<Resena> getResenas() { return resenas; }
+    private ArrayList<Resena> getResenasPorFiltro(String campo, String valor, String idioma) {
+        ArrayList<Resena> lista = new ArrayList<>();
+        StringBuilder sb = new StringBuilder(
+            "SELECT r.*, "
+          + "u.nombre u_nombre, u.apellidos u_ap, u.correo u_correo, "
+          + "u.contrasena u_pass, u.saldo u_saldo, u.idioma u_idioma, "
+          + "j.id_juego j_id, j.titulo j_titulo, j.genero j_gen, j.plataforma j_plat, "
+          + "j.precio j_precio, j.stock j_stock, j.director j_dir, j.id_estudio j_est "
+          + "FROM resena r "
+          + "JOIN usuario u ON u.id_usuario = r.id_usuario "
+          + "JOIN juego  j ON j.id_juego   = r.id_juego WHERE 1=1");
+
+        if (campo != null)  sb.append(" AND ").append(campo).append(" = ?");
+        if (idioma != null) sb.append(" AND r.idioma = ?");
+        sb.append(" ORDER BY r.fecha DESC, r.id_resena DESC");
+
+        try (PreparedStatement ps = con().prepareStatement(sb.toString())) {
+            int idx = 1;
+            if (campo  != null) ps.setString(idx++, valor);
+            if (idioma != null) ps.setString(idx, idioma);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapResenaCompleta(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
+
+    public String anadirResena(Usuario autor, Juego juego, String comentario,
+                               int puntuacion, String idioma) {
+        if (!usuarioPoseeJuego(autor.getIdUsuario(), juego.getIdJuego()))
+            return "Solo puedes reseñar juegos que posees.";
+
+        String chk = "SELECT 1 FROM resena WHERE id_usuario=? AND id_juego=? LIMIT 1";
+        try (PreparedStatement ps = con().prepareStatement(chk)) {
+            ps.setInt(1, autor.getIdUsuario()); ps.setInt(2, juego.getIdJuego());
+            if (ps.executeQuery().next()) return "Ya has escrito una reseña para este juego.";
+        } catch (SQLException e) { manejarError(e); return "Error de base de datos."; }
+
+        String sql = "INSERT INTO resena (id_usuario,id_juego,comentario,puntuacion,idioma,fecha) VALUES (?,?,?,?,?,?)";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, autor.getIdUsuario()); ps.setInt(2, juego.getIdJuego());
+            ps.setString(3, comentario);        ps.setInt(4, Math.max(1, Math.min(10, puntuacion)));
+            ps.setString(5, idioma);            ps.setDate(6, Date.valueOf(LocalDate.now()));
+            ps.executeUpdate();
+            return "OK";
+        } catch (SQLException e) { manejarError(e); return "Error al guardar la reseña."; }
+    }
+
+    public boolean actualizarResena(Resena r) {
+        String sql = "UPDATE resena SET comentario=?,puntuacion=?,idioma=? WHERE id_resena=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, r.getComentario()); ps.setInt(2, r.getPuntuacion());
+            ps.setString(3, r.getIdioma());     ps.setInt(4, r.getIdResena());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
+
+    public boolean eliminarResena(int id) {
+        try (PreparedStatement ps = con().prepareStatement("DELETE FROM resena WHERE id_resena=?")) {
+            ps.setInt(1, id); return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
 
     // ══════════════════════════════════════════════════════
     // ESTADÍSTICAS
     // ══════════════════════════════════════════════════════
     public List<Juego> getJuegosMejorValorados() {
-        return juegos.stream()
-                .filter(j -> !j.getResenas().isEmpty())
-                .sorted(Comparator.comparingDouble(Juego::getPuntuacionMedia).reversed())
-                .collect(Collectors.toList());
+        List<Juego> lista = new ArrayList<>();
+        String sql = "SELECT j.*, AVG(r.puntuacion) AS media "
+                   + "FROM juego j JOIN resena r ON r.id_juego = j.id_juego "
+                   + "GROUP BY j.id_juego ORDER BY media DESC";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
     }
 
     public List<Juego> getJuegosMasVendidos() {
-        return juegos.stream()
-                .sorted(Comparator.comparingInt(this::getVentasJuego).reversed())
-                .collect(Collectors.toList());
+        List<Juego> lista = new ArrayList<>();
+        String sql = "SELECT j.*, COALESCE(SUM(c.cantidad),0) AS total_ventas "
+                   + "FROM juego j LEFT JOIN compra c ON c.id_juego = j.id_juego "
+                   + "GROUP BY j.id_juego ORDER BY total_ventas DESC";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
     }
 
     public int getVentasJuego(Juego j) {
-        return historialComprasGlobal.stream()
-                .filter(c -> c.getJuego() == j)
-                .mapToInt(Compra::getCantidad)
-                .sum();
+        String sql = "SELECT COALESCE(SUM(cantidad),0) FROM compra WHERE id_juego=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, j.getIdJuego());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) { manejarError(e); }
+        return 0;
     }
 
-    // ── Estadísticas por estudio ───────────────────────────
+    public double getPuntuacionMediaJuego(int idJuego) {
+        String sql = "SELECT AVG(puntuacion) FROM resena WHERE id_juego=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idJuego);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getDouble(1);
+        } catch (SQLException e) { manejarError(e); }
+        return 0.0;
+    }
+
+    // ── Por estudio ────────────────────────────────────────
     public Juego getJuegoMejorValoradoEstudio(Estudio est) {
-        return est.getJuegos().stream()
-                .filter(j -> !j.getResenas().isEmpty())
-                .max(Comparator.comparingDouble(Juego::getPuntuacionMedia))
-                .orElse(null);
+        String sql = "SELECT j.*, AVG(r.puntuacion) AS media "
+                   + "FROM juego j JOIN resena r ON r.id_juego = j.id_juego "
+                   + "WHERE j.id_estudio = ? "
+                   + "GROUP BY j.id_juego ORDER BY media DESC LIMIT 1";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, est.getIdEstudio());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapJuego(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     public Juego getJuegoMasVendidoEstudio(Estudio est) {
-        return est.getJuegos().stream()
-                .max(Comparator.comparingInt(this::getVentasJuego))
-                .orElse(null);
+        String sql = "SELECT j.*, COALESCE(SUM(c.cantidad),0) AS total_ventas "
+                   + "FROM juego j LEFT JOIN compra c ON c.id_juego = j.id_juego "
+                   + "WHERE j.id_estudio = ? "
+                   + "GROUP BY j.id_juego ORDER BY total_ventas DESC LIMIT 1";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, est.getIdEstudio());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapJuego(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
-    // ── Estadísticas por desarrollador ────────────────────
+    // ── Por desarrollador ──────────────────────────────────
     public Juego getJuegoMejorValoradoDesarrollador(Desarrollador d) {
-        return d.getJuegosEnLosQueHaTrabajado().stream()
-                .filter(j -> !j.getResenas().isEmpty())
-                .max(Comparator.comparingDouble(Juego::getPuntuacionMedia))
-                .orElse(null);
+        String sql = "SELECT j.*, AVG(r.puntuacion) AS media "
+                   + "FROM juego j "
+                   + "JOIN desarrollador_juego dj ON dj.id_juego = j.id_juego "
+                   + "JOIN resena r ON r.id_juego = j.id_juego "
+                   + "WHERE dj.id_desarrollador = ? "
+                   + "GROUP BY j.id_juego ORDER BY media DESC LIMIT 1";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, d.getIdDesarrollador());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapJuego(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     public Juego getJuegoMasVendidoDesarrollador(Desarrollador d) {
-        return d.getJuegosEnLosQueHaTrabajado().stream()
-                .max(Comparator.comparingInt(this::getVentasJuego))
-                .orElse(null);
+        String sql = "SELECT j.*, COALESCE(SUM(c.cantidad),0) AS total_ventas "
+                   + "FROM juego j "
+                   + "JOIN desarrollador_juego dj ON dj.id_juego = j.id_juego "
+                   + "LEFT JOIN compra c ON c.id_juego = j.id_juego "
+                   + "WHERE dj.id_desarrollador = ? "
+                   + "GROUP BY j.id_juego ORDER BY total_ventas DESC LIMIT 1";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, d.getIdDesarrollador());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapJuego(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     // ══════════════════════════════════════════════════════
-    // ESTUDIOS Y DESARROLLADORES
+    // ESTUDIOS
     // ══════════════════════════════════════════════════════
+    public ArrayList<Estudio> getEstudios() {
+        ArrayList<Estudio> lista = new ArrayList<>();
+        String sql = "SELECT * FROM estudio ORDER BY nombre";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                Estudio e = mapEstudio(rs);
+                e.getDesarrolladores().addAll(getDesarrolladoresDeEstudio(e));
+                e.getJuegos().addAll(getJuegosDeEstudio(e));
+                lista.add(e);
+            }
+        } catch (SQLException ex) { manejarError(ex); }
+        return lista;
+    }
+
     public Estudio altaEstudio(String nombre) {
-        Estudio e = new Estudio(nombre);
-        estudios.add(e);
-        return e;
+        String sql = "INSERT INTO estudio (nombre) VALUES (?)";
+        try (PreparedStatement ps = con().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, nombre);
+            ps.executeUpdate();
+            ResultSet gen = ps.getGeneratedKeys();
+            if (gen.next()) return buscarEstudioPorId(gen.getInt(1));
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     public boolean bajaEstudio(int id) {
-        return estudios.removeIf(e -> e.getIdEstudio() == id);
+        try (PreparedStatement ps = con().prepareStatement("DELETE FROM estudio WHERE id_estudio=?")) {
+            ps.setInt(1, id); return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
+
+    public boolean actualizarEstudio(Estudio e) {
+        String sql = "UPDATE estudio SET nombre=? WHERE id_estudio=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1, e.getNombre()); ps.setInt(2, e.getIdEstudio());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) { manejarError(ex); return false; }
     }
 
     public Estudio buscarEstudioPorId(int id) {
-        return estudios.stream().filter(e -> e.getIdEstudio() == id).findFirst().orElse(null);
+        String sql = "SELECT * FROM estudio WHERE id_estudio=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapEstudio(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
-    public ArrayList<Estudio> getEstudios() { return estudios; }
+    private List<Juego> getJuegosDeEstudio(Estudio e) {
+        List<Juego> lista = new ArrayList<>();
+        String sql = "SELECT * FROM juego WHERE id_estudio=? ORDER BY titulo";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, e.getIdEstudio());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException ex) { manejarError(ex); }
+        return lista;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // DESARROLLADORES
+    // ══════════════════════════════════════════════════════
+    public ArrayList<Desarrollador> getDesarrolladores() {
+        ArrayList<Desarrollador> lista = new ArrayList<>();
+        String sql = "SELECT * FROM desarrollador ORDER BY nombre";
+        try (Statement st = con().createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) lista.add(mapDesarrollador(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
+
+    public List<Desarrollador> getDesarrolladoresDeEstudio(Estudio est) {
+        List<Desarrollador> lista = new ArrayList<>();
+        String sql = "SELECT * FROM desarrollador WHERE id_estudio=? ORDER BY nombre";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, est.getIdEstudio());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapDesarrollador(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
 
     public Desarrollador altaDesarrollador(String nombre, String apellidos,
                                            int anos, String puesto, Estudio estudio) {
-        Desarrollador d = new Desarrollador(nombre, apellidos, anos, puesto);
-        desarrolladores.add(d);
-        if (estudio != null) estudio.addDesarrollador(d);
-        return d;
+        String sql = "INSERT INTO desarrollador (nombre,apellidos,anos_experiencia,puesto_actual,id_estudio) VALUES (?,?,?,?,?)";
+        try (PreparedStatement ps = con().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, nombre); ps.setString(2, apellidos);
+            ps.setInt(3, anos);      ps.setString(4, puesto);
+            if (estudio != null) ps.setInt(5, estudio.getIdEstudio());
+            else ps.setNull(5, Types.INTEGER);
+            ps.executeUpdate();
+            ResultSet gen = ps.getGeneratedKeys();
+            if (gen.next()) return buscarDesarrolladorPorId(gen.getInt(1));
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
     public boolean bajaDesarrollador(int id) {
-        Desarrollador d = buscarDesarrolladorPorId(id);
-        if (d == null) return false;
-        estudios.forEach(e -> e.removeDesarrollador(id));
-        return desarrolladores.removeIf(dd -> dd.getIdDesarrollador() == id);
+        try (PreparedStatement ps = con().prepareStatement("DELETE FROM desarrollador WHERE id_desarrollador=?")) {
+            ps.setInt(1, id); return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
+    }
+
+    public boolean actualizarDesarrollador(Desarrollador d) {
+        String sql = "UPDATE desarrollador SET nombre=?,apellidos=?,anos_experiencia=?,puesto_actual=? WHERE id_desarrollador=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setString(1,d.getNombre());  ps.setString(2,d.getApellidos());
+            ps.setInt(3,d.getAnosExperiencia()); ps.setString(4,d.getPuestoActual());
+            ps.setInt(5,d.getIdDesarrollador());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { manejarError(e); return false; }
     }
 
     public Desarrollador buscarDesarrolladorPorId(int id) {
-        return desarrolladores.stream()
-                .filter(d -> d.getIdDesarrollador() == id)
-                .findFirst().orElse(null);
+        String sql = "SELECT * FROM desarrollador WHERE id_desarrollador=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapDesarrollador(rs);
+        } catch (SQLException e) { manejarError(e); }
+        return null;
     }
 
-    public ArrayList<Desarrollador> getDesarrolladores() { return desarrolladores; }
+    /** Juegos de un desarrollador (tabla relacional). */
+    public ArrayList<Juego> getJuegosDesarrollador(int idDesarrollador) {
+        ArrayList<Juego> lista = new ArrayList<>();
+        String sql = "SELECT j.* FROM juego j "
+                   + "JOIN desarrollador_juego dj ON dj.id_juego = j.id_juego "
+                   + "WHERE dj.id_desarrollador = ?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idDesarrollador);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapJuego(rs));
+        } catch (SQLException e) { manejarError(e); }
+        return lista;
+    }
 
-    /** Devuelve los desarrolladores que pertenecen a un estudio concreto. */
-    public List<Desarrollador> getDesarrolladoresDeEstudio(Estudio est) {
-        return est.getDesarrolladores();
+    public void asignarJuegoADesarrollador(int idDev, int idJuego) {
+        String sql = "INSERT IGNORE INTO desarrollador_juego (id_desarrollador,id_juego) VALUES (?,?)";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idDev); ps.setInt(2, idJuego);
+            ps.executeUpdate();
+        } catch (SQLException e) { manejarError(e); }
+    }
+
+    public void quitarJuegoADesarrollador(int idDev, int idJuego) {
+        String sql = "DELETE FROM desarrollador_juego WHERE id_desarrollador=? AND id_juego=?";
+        try (PreparedStatement ps = con().prepareStatement(sql)) {
+            ps.setInt(1, idDev); ps.setInt(2, idJuego);
+            ps.executeUpdate();
+        } catch (SQLException e) { manejarError(e); }
+    }
+
+    public void setJuegosDesarrollador(int idDev, List<Integer> idsJuegos) {
+        String del = "DELETE FROM desarrollador_juego WHERE id_desarrollador=?";
+        String ins = "INSERT IGNORE INTO desarrollador_juego (id_desarrollador,id_juego) VALUES (?,?)";
+        try {
+            con().setAutoCommit(false);
+            try (PreparedStatement psDel = con().prepareStatement(del);
+                 PreparedStatement psIns = con().prepareStatement(ins)) {
+                psDel.setInt(1, idDev); psDel.executeUpdate();
+                for (int idJ : idsJuegos) {
+                    psIns.setInt(1, idDev); psIns.setInt(2, idJ);
+                    psIns.executeUpdate();
+                }
+                con().commit();
+            } catch (SQLException ex) { con().rollback(); throw ex; }
+            finally { con().setAutoCommit(true); }
+        } catch (SQLException e) { manejarError(e); }
+    }
+
+    // ══════════════════════════════════════════════════════
+    // MAPPERS – ResultSet → Objetos
+    // ══════════════════════════════════════════════════════
+    private Usuario mapUsuario(ResultSet rs) throws SQLException {
+        Usuario u = new Usuario();
+        u.setIdUsuario(rs.getInt("id_usuario"));
+        u.setNombre(rs.getString("nombre"));
+        u.setApellidos(rs.getString("apellidos"));
+        u.setCorreo(rs.getString("correo"));
+        u.setContrasena(rs.getString("contrasena"));
+        u.setSaldo(rs.getDouble("saldo"));
+        u.setIdioma(rs.getString("idioma"));
+        return u;
+    }
+
+    private Administrador mapAdmin(ResultSet rs) throws SQLException {
+        Administrador a = new Administrador();
+        a.setIdAdmin(rs.getInt("id_admin"));
+        a.setNombre(rs.getString("nombre"));
+        a.setApellidos(rs.getString("apellidos"));
+        a.setCorreo(rs.getString("correo"));
+        a.setContrasena(rs.getString("contrasena"));
+        return a;
+    }
+
+    private Juego mapJuego(ResultSet rs) throws SQLException {
+        Juego j = new Juego();
+        j.setIdJuego(rs.getInt("id_juego"));
+        j.setTitulo(rs.getString("titulo"));
+        j.setGenero(rs.getString("genero"));
+        j.setPlataforma(rs.getString("plataforma"));
+        j.setPrecio(rs.getDouble("precio"));
+        j.setStock(rs.getInt("stock"));
+        j.setDirector(rs.getString("director"));
+        return j;
+    }
+
+    private Estudio mapEstudio(ResultSet rs) throws SQLException {
+        Estudio e = new Estudio();
+        e.setIdEstudio(rs.getInt("id_estudio"));
+        e.setNombre(rs.getString("nombre"));
+        return e;
+    }
+
+    private Desarrollador mapDesarrollador(ResultSet rs) throws SQLException {
+        Desarrollador d = new Desarrollador();
+        d.setIdDesarrollador(rs.getInt("id_desarrollador"));
+        d.setNombre(rs.getString("nombre"));
+        d.setApellidos(rs.getString("apellidos"));
+        d.setAnosExperiencia(rs.getInt("anos_experiencia"));
+        d.setPuestoActual(rs.getString("puesto_actual"));
+        return d;
+    }
+
+    private Compra mapCompraCompleta(ResultSet rs) throws SQLException {
+        Compra c = new Compra();
+        c.setCodCompra(rs.getInt("cod_compra"));
+        c.setCantidad(rs.getInt("cantidad"));
+        c.setCoste(rs.getDouble("coste"));
+        c.setFecha(rs.getDate("fecha").toLocalDate());
+
+        Usuario u = new Usuario();
+        u.setNombre(rs.getString("u_nombre")); u.setApellidos(rs.getString("u_ap"));
+        u.setCorreo(rs.getString("u_correo")); u.setContrasena(rs.getString("u_pass"));
+        u.setSaldo(rs.getDouble("u_saldo"));   u.setIdioma(rs.getString("u_idioma"));
+        c.setUsuario(u);
+
+        Juego j = new Juego();
+        j.setTitulo(rs.getString("j_titulo")); j.setGenero(rs.getString("j_gen"));
+        j.setPlataforma(rs.getString("j_plat")); j.setPrecio(rs.getDouble("j_precio"));
+        j.setStock(rs.getInt("j_stock"));      j.setDirector(rs.getString("j_dir"));
+        c.setJuego(j);
+        return c;
+    }
+
+    private Resena mapResenaCompleta(ResultSet rs) throws SQLException {
+        Resena r = new Resena();
+        r.setIdResena(rs.getInt("id_resena"));
+        r.setComentario(rs.getString("comentario"));
+        r.setPuntuacion(rs.getInt("puntuacion"));
+        r.setIdioma(rs.getString("idioma"));
+        r.setFecha(rs.getDate("fecha").toLocalDate());
+
+        Usuario u = new Usuario();
+        u.setNombre(rs.getString("u_nombre")); u.setApellidos(rs.getString("u_ap"));
+        u.setCorreo(rs.getString("u_correo")); u.setContrasena(rs.getString("u_pass"));
+        u.setSaldo(rs.getDouble("u_saldo"));   u.setIdioma(rs.getString("u_idioma"));
+        r.setAutor(u);
+
+        Juego j = new Juego();
+        j.setIdJuego(rs.getInt("j_id"));
+        j.setTitulo(rs.getString("j_titulo")); j.setGenero(rs.getString("j_gen"));
+        j.setPlataforma(rs.getString("j_plat")); j.setPrecio(rs.getDouble("j_precio"));
+        j.setStock(rs.getInt("j_stock"));      j.setDirector(rs.getString("j_dir"));
+        r.setJuego(j);
+        return r;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // ERROR HANDLING
+    // ══════════════════════════════════════════════════════
+    private void manejarError(SQLException e) {
+        System.err.println("[GestorDatos SQL] " + e.getMessage());
+        e.printStackTrace();
     }
 }

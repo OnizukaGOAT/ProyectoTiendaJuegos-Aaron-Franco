@@ -68,4 +68,8 @@ public class Usuario extends Persona {
 
     @Override
     public String toString() { return getNombreCompleto() + " <" + correo + ">"; }
+
+    void setIdUsuario(int aInt) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

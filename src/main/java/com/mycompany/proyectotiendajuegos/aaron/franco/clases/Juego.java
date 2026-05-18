@@ -66,4 +66,8 @@ public class Juego {
 
     @Override
     public String toString() { return titulo; }
+
+    void setIdJuego(int aInt) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

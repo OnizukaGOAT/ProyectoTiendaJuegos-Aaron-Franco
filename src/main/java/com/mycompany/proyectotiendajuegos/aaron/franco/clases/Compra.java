@@ -47,4 +47,12 @@ public class Compra {
     }
 
     public static void resetContador(int valor) { contadorId = valor; }
+
+    void setCodCompra(int aInt) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    void setFecha(LocalDate toLocalDate) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

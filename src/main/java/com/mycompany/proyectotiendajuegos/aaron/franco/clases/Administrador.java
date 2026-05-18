@@ -33,4 +33,8 @@ public class Administrador extends Persona {
 
     /** Reinicia el contador (útil para tests o carga de datos). */
     public static void resetContador(int valor) { contadorId = valor; }
+
+    void setIdAdmin(int aInt) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

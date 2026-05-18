@@ -823,18 +823,18 @@ public class GestorDatos {
         r.setIdioma(rs.getString("idioma"));
         r.setFecha(rs.getDate("fecha").toLocalDate());
 
-        Usuario u = new Usuario();
-        u.setNombre(rs.getString("u_nombre")); u.setApellidos(rs.getString("u_ap"));
-        u.setCorreo(rs.getString("u_correo")); u.setContrasena(rs.getString("u_pass"));
-        u.setSaldo(rs.getDouble("u_saldo"));   u.setIdioma(rs.getString("u_idioma"));
-        r.setAutor(u);
+        Usuario us = new Usuario();
+        us.setNombre(rs.getString("u_nombre")); us.setApellidos(rs.getString("u_ap"));
+        us.setCorreo(rs.getString("u_correo")); us.setContrasena(rs.getString("u_pass"));
+        us.setSaldo(rs.getDouble("u_saldo"));   us.setIdioma(rs.getString("u_idioma"));
+        r.setAutor(us);
 
-        Juego j = new Juego();
-        j.setIdJuego(rs.getInt("j_id"));
-        j.setTitulo(rs.getString("j_titulo")); j.setGenero(rs.getString("j_gen"));
-        j.setPlataforma(rs.getString("j_plat")); j.setPrecio(rs.getDouble("j_precio"));
-        j.setStock(rs.getInt("j_stock"));      j.setDirector(rs.getString("j_dir"));
-        r.setJuego(j);
+        Juego ju = new Juego();
+        ju.setIdJuego(rs.getInt("j_id"));
+        ju.setTitulo(rs.getString("j_titulo")); ju.setGenero(rs.getString("j_gen"));
+        ju.setPlataforma(rs.getString("j_plat")); ju.setPrecio(rs.getDouble("j_precio"));
+        ju.setStock(rs.getInt("j_stock"));      ju.setDirector(rs.getString("j_dir"));
+        r.setJuego(ju);
         return r;
     }
 

@@ -1,7 +1,8 @@
-package com.mycompany.proyectotiendajuegos.aaron.franco;
+package com.mycompany.proyectotiendajuegos.aaron.franco.controladores;
 
 import com.mycompany.proyectotiendajuegos.aaron.franco.DialogUtil;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.*;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,36 +15,33 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class GestionEstudiosController implements Initializable {
 
-    // ── Tabla estudios ─────────────────────────────────────
-    @FXML private TableView<Estudio>         tablaEstudios;
-    @FXML private TableColumn<Estudio,String> colEstId, colEstNombre, colEstJuegos, colEstDevs;
-    @FXML private TableColumn<Estudio,Void>   colEstAcc;
+    // Tabla estudios
+    @FXML private TableView<Estudio>          tablaEstudios;
+    @FXML private TableColumn<Estudio, String> colEstId, colEstNombre, colEstJuegos, colEstDevs;
+    @FXML private TableColumn<Estudio, Void>   colEstAcc;
 
-    // ── Tabla desarrolladores ──────────────────────────────
-    @FXML private TableView<Desarrollador>         tablaDevs;
-    @FXML private TableColumn<Desarrollador,String> colDevId, colDevNombre, colDevPuesto, colDevAnos;
-    @FXML private TableColumn<Desarrollador,Void>   colDevAcc;
+    // Tabla desarrolladores
+    @FXML private TableView<Desarrollador>          tablaDevs;
+    @FXML private TableColumn<Desarrollador, String> colDevId, colDevNombre, colDevPuesto, colDevAnos;
+    @FXML private TableColumn<Desarrollador, Void>   colDevAcc;
     @FXML private Label lblDevEstudio;
 
-    // ── Formulario ─────────────────────────────────────────
+    // Formulario
     @FXML private Label   lblFormTitulo, lblError;
     @FXML private VBox    panelEstudio, panelDev;
-
-    // Campos estudio
     @FXML private TextField txEstNombre;
-
-    // Campos desarrollador
     @FXML private TextField txDevNombre, txDevApellidos, txDevPuesto, txDevAnos;
-    @FXML private ListView<String> lstJuegosDev;   // muestra títulos, selección múltiple
+    @FXML private ListView<String> lstJuegosDev;
 
     private final GestorDatos gd = GestorDatos.getInstance();
     private Estudio     estudioSeleccionado = null;
     private Estudio     estudioEnEdicion    = null;
     private Desarrollador devEnEdicion      = null;
-    private boolean modoEstudio = true;  // true = form para estudio, false = form para dev
+    private boolean modoEstudio = true;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -53,16 +51,15 @@ public class GestionEstudiosController implements Initializable {
         mostrarFormEstudio();
     }
 
-    // ── Configuración de tablas ────────────────────────────
     private void configurarTablaEstudios() {
         colEstId.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getIdEstudio())));
+                new SimpleStringProperty(String.valueOf(c.getValue().getIdEstudio())));
         colEstNombre.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getNombre()));
+                new SimpleStringProperty(c.getValue().getNombre()));
         colEstJuegos.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getJuegos().size())));
+                new SimpleStringProperty(String.valueOf(c.getValue().getJuegos().size())));
         colEstDevs.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getDesarrolladores().size())));
+                new SimpleStringProperty(String.valueOf(c.getValue().getDesarrolladores().size())));
 
         colEstAcc.setCellFactory(tc -> new TableCell<>() {
             final Button btnEdit = new Button("✏");
@@ -85,7 +82,6 @@ public class GestionEstudiosController implements Initializable {
             }
         });
 
-        // Al seleccionar un estudio se cargan sus devs
         tablaEstudios.getSelectionModel().selectedItemProperty().addListener((obs, ant, nuevo) -> {
             if (nuevo != null) {
                 estudioSeleccionado = nuevo;
@@ -97,13 +93,13 @@ public class GestionEstudiosController implements Initializable {
 
     private void configurarTablaDevs() {
         colDevId.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getIdDesarrollador())));
+                new SimpleStringProperty(String.valueOf(c.getValue().getIdDesarrollador())));
         colDevNombre.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getNombreCompleto()));
+                new SimpleStringProperty(c.getValue().getNombreCompleto()));
         colDevPuesto.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getPuestoActual()));
+                new SimpleStringProperty(c.getValue().getPuestoActual()));
         colDevAnos.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getAnosExperiencia())));
+                new SimpleStringProperty(String.valueOf(c.getValue().getAnosExperiencia())));
 
         colDevAcc.setCellFactory(tc -> new TableCell<>() {
             final Button btnEdit = new Button("✏");
@@ -127,12 +123,10 @@ public class GestionEstudiosController implements Initializable {
         });
     }
 
-    // ── Carga de datos ─────────────────────────────────────
     private void cargarEstudios() {
         List<Estudio> lista = gd.getEstudios();
         tablaEstudios.setItems(FXCollections.observableArrayList(lista));
         tablaDevs.getItems().clear();
-        // Restaurar selección si la había
         if (estudioSeleccionado != null) {
             lista.stream().filter(e -> e.getIdEstudio() == estudioSeleccionado.getIdEstudio())
                     .findFirst().ifPresent(e -> {
@@ -142,7 +136,6 @@ public class GestionEstudiosController implements Initializable {
         }
     }
 
-    // ── Formulario ESTUDIO ─────────────────────────────────
     @FXML public void prepararAltaEstudio() {
         estudioEnEdicion = null;
         mostrarFormEstudio();
@@ -159,16 +152,12 @@ public class GestionEstudiosController implements Initializable {
         lblError.setText("");
     }
 
-    // ── Formulario DESARROLLADOR ───────────────────────────
     @FXML public void prepararAltaDev() {
-        if (estudioSeleccionado == null) {
-            DialogUtil.info("Selecciona primero un estudio.");
-            return;
-        }
+        if (estudioSeleccionado == null) { DialogUtil.info("Selecciona primero un estudio."); return; }
         devEnEdicion = null;
         mostrarFormDev();
         txDevNombre.clear(); txDevApellidos.clear(); txDevPuesto.clear(); txDevAnos.clear();
-        cargarCheckboxJuegos(null);
+        cargarComboJuegos(null);
         lblFormTitulo.setText("Nuevo Desarrollador");
         lblError.setText("");
     }
@@ -180,15 +169,14 @@ public class GestionEstudiosController implements Initializable {
         txDevApellidos.setText(d.getApellidos());
         txDevPuesto.setText(d.getPuestoActual());
         txDevAnos.setText(String.valueOf(d.getAnosExperiencia()));
-        cargarCheckboxJuegos(gd.getJuegosDesarrollador(d.getIdDesarrollador()));
+        cargarComboJuegos(gd.getJuegosDesarrollador(d.getIdDesarrollador()));
         lblFormTitulo.setText("Editar Desarrollador");
         lblError.setText("");
     }
 
-    private void cargarCheckboxJuegos(List<Juego> seleccionados) {
-        // Usamos ListView con selección múltiple
+    private void cargarComboJuegos(List<Juego> seleccionados) {
         lstJuegosDev.setItems(FXCollections.observableArrayList(
-                gd.getJuegos().stream().map(Juego::getTitulo).collect(java.util.stream.Collectors.toList())));
+                gd.getJuegos().stream().map(Juego::getTitulo).collect(Collectors.toList())));
         lstJuegosDev.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         if (seleccionados != null) {
             List<Juego> todos = gd.getJuegos();
@@ -200,7 +188,6 @@ public class GestionEstudiosController implements Initializable {
         }
     }
 
-    // ── Guardar (estudio o dev según modo) ─────────────────
     @FXML public void guardar() {
         if (modoEstudio) guardarEstudio();
         else             guardarDev();
@@ -227,7 +214,6 @@ public class GestionEstudiosController implements Initializable {
         int anos = 0;
         try { anos = Integer.parseInt(txDevAnos.getText()); } catch (Exception ignored) {}
 
-        // Ids de juegos seleccionados
         List<Juego> todosJuegos = gd.getJuegos();
         List<Integer> idsJuegos = new ArrayList<>();
         for (int idx : lstJuegosDev.getSelectionModel().getSelectedIndices())
@@ -256,12 +242,12 @@ public class GestionEstudiosController implements Initializable {
     private void limpiar() {
         estudioEnEdicion = null; devEnEdicion = null;
         txEstNombre.clear(); txDevNombre.clear(); txDevApellidos.clear();
-        txDevPuesto.clear(); txDevAnos.clear(); lstJuegosDev.getSelectionModel().clearSelection();
+        txDevPuesto.clear(); txDevAnos.clear();
+        lstJuegosDev.getSelectionModel().clearSelection();
         lblError.setText("");
         mostrarFormEstudio();
     }
 
-    // ── Cambio de formulario visible ───────────────────────
     private void mostrarFormEstudio() {
         modoEstudio = true;
         panelEstudio.setVisible(true);  panelEstudio.setManaged(true);

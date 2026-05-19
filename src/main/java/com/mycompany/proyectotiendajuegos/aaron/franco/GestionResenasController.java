@@ -1,8 +1,9 @@
-package com.mycompany.proyectotiendajuegos.aaron.franco;
+package com.mycompany.proyectotiendajuegos.aaron.franco.controladores;
 
 import com.mycompany.proyectotiendajuegos.aaron.franco.DialogUtil;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.GestorDatos;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Resena;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,13 +13,14 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class GestionResenasController implements Initializable {
 
-    @FXML private TableView<Resena>         tablaResenas;
-    @FXML private TableColumn<Resena,String> colId, colJuego, colAutor, colPunt,
+    @FXML private TableView<Resena>          tablaResenas;
+    @FXML private TableColumn<Resena, String> colId, colJuego, colAutor, colPunt,
                                               colIdioma, colFecha, colCom;
-    @FXML private TableColumn<Resena,Void>   colAcciones;
+    @FXML private TableColumn<Resena, Void>   colAcciones;
     @FXML private TextField txFiltro;
     @FXML private Label     lblTotal;
 
@@ -27,19 +29,19 @@ public class GestionResenasController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         colId.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getIdResena())));
+                new SimpleStringProperty(String.valueOf(c.getValue().getIdResena())));
         colJuego.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getJuego().getTitulo()));
+                new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
         colAutor.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getAutor().getNombreCompleto()));
+                new SimpleStringProperty(c.getValue().getAutor().getNombreCompleto()));
         colPunt.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getPuntuacion())));
+                new SimpleStringProperty(String.valueOf(c.getValue().getPuntuacion())));
         colIdioma.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getIdioma()));
+                new SimpleStringProperty(c.getValue().getIdioma()));
         colFecha.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getFechaFormateada()));
+                new SimpleStringProperty(c.getValue().getFechaFormateada()));
         colCom.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getComentario()));
+                new SimpleStringProperty(c.getValue().getComentario()));
 
         colAcciones.setCellFactory(tc -> new TableCell<>() {
             final Button btnDel = new Button("🗑 Eliminar");
@@ -69,13 +71,13 @@ public class GestionResenasController implements Initializable {
             todas = todas.stream()
                     .filter(r -> r.getJuego().getTitulo().toLowerCase().contains(f)
                             || r.getAutor().getNombreCompleto().toLowerCase().contains(f))
-                    .collect(java.util.stream.Collectors.toList());
+                    .collect(Collectors.toList());
         }
         tablaResenas.setItems(FXCollections.observableArrayList(todas));
         lblTotal.setText("Total reseñas: " + todas.size());
     }
 
-    @FXML public void filtrar()     { cargar(txFiltro.getText()); }
+    @FXML public void filtrar()      { cargar(txFiltro.getText()); }
     @FXML public void mostrarTodas() { txFiltro.clear(); cargar(null); }
 
     @FXML public void cerrar() {

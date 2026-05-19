@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.GestionResenasController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="✍ Gestión de Reseñas" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12" styleClass="content-area">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <!-- Barra de filtro -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Filtrar:" styleClass="label-normal"/>
+                <TextField fx:id="txFiltro" promptText="Juego o usuario..." styleClass="text-field" prefWidth="280"/>
+                <Button text="Filtrar"         styleClass="btn-secondary" onAction="#filtrar"/>
+                <Button text="Mostrar todas"   styleClass="btn-secondary" onAction="#mostrarTodas"/>
+            </HBox>
+
+            <!-- Tabla -->
+            <TableView fx:id="tablaResenas" VBox.vgrow="ALWAYS" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colId"       text="ID"          prefWidth="45"/>
+                    <TableColumn fx:id="colJuego"    text="Juego"       prefWidth="180"/>
+                    <TableColumn fx:id="colAutor"    text="Usuario"     prefWidth="160"/>
+                    <TableColumn fx:id="colPunt"     text="⭐"           prefWidth="50"/>
+                    <TableColumn fx:id="colIdioma"   text="Idioma"      prefWidth="90"/>
+                    <TableColumn fx:id="colFecha"    text="Fecha"       prefWidth="90"/>
+                    <TableColumn fx:id="colCom"      text="Comentario"  prefWidth="250"/>
+                    <TableColumn fx:id="colAcciones" text="Acciones"    prefWidth="120"/>
+                </columns>
+                <placeholder><Label text="No hay reseñas." styleClass="label-muted"/></placeholder>
+            </TableView>
+
+            <Label fx:id="lblTotal" styleClass="label-gold"/>
+        </VBox>
+    </center>
+</BorderPane>

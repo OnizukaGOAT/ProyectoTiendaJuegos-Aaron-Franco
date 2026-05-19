@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.EstadisticasAdminController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="📊 Estadísticas y Consultas" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
+        </HBox>
+    </top>
+
+    <!-- Pestañas para cada tipo de estadística -->
+    <center>
+        <TabPane fx:id="tabPane" styleClass="content-area" tabClosingPolicy="UNAVAILABLE">
+
+            <Tab text="📊 Ventas por Juego">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelVentas" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <Tab text="⭐ Mejor Valorados">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelMejorVal" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <Tab text="🔥 Más Vendidos">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelMasVend" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <Tab text="💬 Reseñas / Idioma">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelResIdioma" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <Tab text="🎮 Reseñas / Juego">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelResJuego" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <Tab text="🏢 Por Estudio">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelEstudio" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <Tab text="🛒 Juegos / Usuario">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelJuegosUsuario" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <Tab text="✍ Reseñas / Usuario">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="panelResenasUsuario" spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+        </TabPane>
+    </center>
+</BorderPane>

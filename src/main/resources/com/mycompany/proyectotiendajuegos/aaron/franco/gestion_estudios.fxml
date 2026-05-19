@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.GestionEstudiosController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="🏢 Gestión de Estudios y Desarrolladores" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="15" styleClass="content-area">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <!-- Lista de estudios -->
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Estudios" styleClass="label-section"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nuevo Estudio" styleClass="btn-primary" onAction="#prepararAltaEstudio"/>
+                </HBox>
+                <TableView fx:id="tablaEstudios" prefHeight="200" styleClass="table-view">
+                    <columns>
+                        <TableColumn fx:id="colEstId"      text="ID"     prefWidth="50"/>
+                        <TableColumn fx:id="colEstNombre"  text="Nombre" prefWidth="200"/>
+                        <TableColumn fx:id="colEstJuegos"  text="Juegos" prefWidth="60"/>
+                        <TableColumn fx:id="colEstDevs"    text="Devs"   prefWidth="60"/>
+                        <TableColumn fx:id="colEstAcc"     text="Acciones" prefWidth="160"/>
+                    </columns>
+                    <placeholder><Label text="No hay estudios." styleClass="label-muted"/></placeholder>
+                </TableView>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label fx:id="lblDevEstudio" text="Desarrolladores de: (selecciona un estudio)" styleClass="label-section"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nuevo Dev" styleClass="btn-gold" onAction="#prepararAltaDev"/>
+                </HBox>
+                <TableView fx:id="tablaDevs" VBox.vgrow="ALWAYS" styleClass="table-view">
+                    <columns>
+                        <TableColumn fx:id="colDevId"      text="ID"       prefWidth="45"/>
+                        <TableColumn fx:id="colDevNombre"  text="Nombre"   prefWidth="160"/>
+                        <TableColumn fx:id="colDevPuesto"  text="Puesto"   prefWidth="130"/>
+                        <TableColumn fx:id="colDevAnos"    text="Años exp" prefWidth="70"/>
+                        <TableColumn fx:id="colDevAcc"     text="Acciones" prefWidth="140"/>
+                    </columns>
+                    <placeholder><Label text="Selecciona un estudio para ver sus desarrolladores." styleClass="label-muted"/></placeholder>
+                </TableView>
+            </VBox>
+
+            <!-- Formulario lateral (estudio o dev según el estado) -->
+            <ScrollPane fitToWidth="true" prefWidth="300" minWidth="270" styleClass="scroll-pane">
+                <VBox spacing="10" styleClass="card">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label fx:id="lblFormTitulo" text="Nuevo Estudio" styleClass="label-section"/>
+
+                    <!-- Campos estudio -->
+                    <VBox fx:id="panelEstudio" spacing="8">
+                        <Label text="Nombre del estudio *" styleClass="label-normal"/>
+                        <TextField fx:id="txEstNombre" promptText="Nombre" styleClass="text-field"/>
+                    </VBox>
+
+                    <!-- Campos desarrollador (se muestran/ocultan) -->
+                    <VBox fx:id="panelDev" spacing="8" visible="false" managed="false">
+                        <Label text="Nombre *"          styleClass="label-normal"/>
+                        <TextField fx:id="txDevNombre"    promptText="Nombre"   styleClass="text-field"/>
+                        <Label text="Apellidos"         styleClass="label-normal"/>
+                        <TextField fx:id="txDevApellidos" promptText="Apellidos" styleClass="text-field"/>
+                        <Label text="Puesto"            styleClass="label-normal"/>
+                        <TextField fx:id="txDevPuesto"    promptText="Puesto actual" styleClass="text-field"/>
+                        <Label text="Años experiencia"  styleClass="label-normal"/>
+                        <TextField fx:id="txDevAnos"      promptText="0"         styleClass="text-field"/>
+                        <Label text="Juegos (selecciona)" styleClass="label-normal"/>
+                        <ListView fx:id="lstJuegosDev" prefHeight="120" styleClass="list-view"/>
+                    </VBox>
+
+                    <Label fx:id="lblError" styleClass="label-accent" wrapText="true"/>
+                    <HBox spacing="8">
+                        <Button text="Guardar"  styleClass="btn-primary"  onAction="#guardar"  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelar" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </HBox>
+    </center>
+</BorderPane>

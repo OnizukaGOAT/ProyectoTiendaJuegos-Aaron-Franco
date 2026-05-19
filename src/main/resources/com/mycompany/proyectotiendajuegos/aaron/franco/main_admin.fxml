@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11"
+<BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.MainAdminController"
             styleClass="main-pane">
@@ -23,25 +23,31 @@
     <left>
         <ScrollPane fitToWidth="true" styleClass="scroll-pane" prefWidth="225">
             <VBox styleClass="side-panel" spacing="5">
+
                 <Label text="MANTENIMIENTO" styleClass="label-muted"/>
-                <Button text="👤 Usuarios"        styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionUsuarios"/>
-                <Button text="🔑 Administradores" styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionAdmins"/>
-                <Button text="🎮 Juegos"          styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionJuegos"/>
-                <Button text="🏢 Estudios"        styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionEstudios"/>
+                <Button text="👤 Usuarios"         styleClass="nav-btn" maxWidth="Infinity" onAction="#abrirGestionUsuarios"/>
+                <Button text="🔑 Administradores"  styleClass="nav-btn" maxWidth="Infinity" onAction="#abrirGestionAdmins"/>
+                <Button text="🎮 Juegos"           styleClass="nav-btn" maxWidth="Infinity" onAction="#abrirGestionJuegos"/>
+                <Button text="🏢 Estudios"         styleClass="nav-btn" maxWidth="Infinity" onAction="#abrirGestionEstudios"/>
 
                 <Label text="GESTIÓN" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
-                <Button text="✍ Reseñas"          styleClass="nav-btn" maxWidth="Infinity" onAction="#gestionResenas"/>
-                <Button text="🛒 Compras"         styleClass="nav-btn" maxWidth="Infinity" onAction="#verCompras"/>
+                <Button text="✍ Reseñas"           styleClass="nav-btn" maxWidth="Infinity" onAction="#abrirGestionResenas"/>
+                <Button text="🛒 Compras"          styleClass="nav-btn" maxWidth="Infinity" onAction="#abrirVerCompras"/>
 
                 <Label text="CONSULTAS" styleClass="label-muted" style="-fx-padding:15 0 0 0;"/>
-                <Button text="📊 Estadísticas"    styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarEstadisticasAdmin"/>
+                <Button text="📊 Estadísticas"     styleClass="nav-btn" maxWidth="Infinity" onAction="#abrirEstadisticas"/>
+
             </VBox>
         </ScrollPane>
     </left>
 
-    <!-- CONTENIDO -->
+    <!-- CONTENIDO CENTRAL: bienvenida -->
     <center>
-        <StackPane fx:id="contentPane" styleClass="content-area"/>
+        <VBox alignment="CENTER" spacing="20" styleClass="content-area">
+            <Label text="Panel de Administración" styleClass="label-title"/>
+            <Label text="Selecciona una opción del menú lateral para comenzar."
+                   styleClass="label-muted"/>
+        </VBox>
     </center>
 
 </BorderPane>

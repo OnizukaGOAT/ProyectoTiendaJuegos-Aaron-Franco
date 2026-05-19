@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.HistorialComprasAdminController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="🛒 Historial de Compras Global" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12" styleClass="content-area">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <TableView fx:id="tablaCompras" VBox.vgrow="ALWAYS" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colId"       text="ID"       prefWidth="55"/>
+                    <TableColumn fx:id="colUsuario"  text="Usuario"  prefWidth="180"/>
+                    <TableColumn fx:id="colJuego"    text="Juego"    prefWidth="190"/>
+                    <TableColumn fx:id="colFecha"    text="Fecha"    prefWidth="100"/>
+                    <TableColumn fx:id="colCantidad" text="Uds"      prefWidth="55"/>
+                    <TableColumn fx:id="colCoste"    text="Coste"    prefWidth="90"/>
+                </columns>
+                <placeholder><Label text="No hay compras registradas." styleClass="label-muted"/></placeholder>
+            </TableView>
+
+            <Label fx:id="lblTotal" styleClass="label-gold"/>
+        </VBox>
+    </center>
+</BorderPane>

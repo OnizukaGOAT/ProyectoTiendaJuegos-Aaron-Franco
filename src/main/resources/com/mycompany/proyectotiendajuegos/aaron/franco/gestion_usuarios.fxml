@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.GestionUsuariosController"
+            styleClass="main-pane">
+
+    <!-- CABECERA -->
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="👤 Gestión de Usuarios" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
+        </HBox>
+    </top>
+
+    <!-- CONTENIDO PRINCIPAL: tabla izquierda + panel derecho -->
+    <center>
+        <HBox spacing="15" styleClass="content-area">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <!-- COLUMNA IZQUIERDA: tabla + botón nuevo -->
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Usuarios registrados" styleClass="label-section"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nuevo Usuario" styleClass="btn-primary"
+                            onAction="#prepararAlta"/>
+                </HBox>
+
+                <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS" styleClass="table-view">
+                    <columns>
+                        <TableColumn fx:id="colId"       text="ID"      prefWidth="50"/>
+                        <TableColumn fx:id="colNombre"   text="Nombre"  prefWidth="180"/>
+                        <TableColumn fx:id="colCorreo"   text="Correo"  prefWidth="200"/>
+                        <TableColumn fx:id="colSaldo"    text="Saldo"   prefWidth="90"/>
+                        <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="200"/>
+                    </columns>
+                    <placeholder><Label text="No hay usuarios registrados." styleClass="label-muted"/></placeholder>
+                </TableView>
+            </VBox>
+
+            <!-- COLUMNA DERECHA: detalle + formulario -->
+            <VBox spacing="12" prefWidth="320" minWidth="280">
+
+                <!-- DETALLE DEL USUARIO SELECCIONADO -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                    <Label text="📋 Detalle del usuario seleccionado" styleClass="label-section"/>
+                    <HBox spacing="8">
+                        <Label text="Nombre:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetNombre" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Correo:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetCorreo" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Idioma:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetIdioma" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Saldo:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetSaldo" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Juegos:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetJuegos" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Compras:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetCompras" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Reseñas:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetResenas" styleClass="label-normal"/>
+                    </HBox>
+                </VBox>
+
+                <!-- FORMULARIO ALTA / EDICIÓN -->
+                <VBox styleClass="card" spacing="8" VBox.vgrow="ALWAYS">
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                    <Label fx:id="lblTituloForm" text="Nuevo Usuario" styleClass="label-section"/>
+
+                    <Label text="Nombre *" styleClass="label-normal"/>
+                    <TextField fx:id="txNombre" promptText="Nombre" styleClass="text-field"/>
+
+                    <Label text="Apellidos" styleClass="label-normal"/>
+                    <TextField fx:id="txApellidos" promptText="Apellidos" styleClass="text-field"/>
+
+                    <Label text="Correo *" styleClass="label-normal"/>
+                    <TextField fx:id="txCorreo" promptText="correo@ejemplo.com" styleClass="text-field"/>
+
+                    <Label text="Contraseña" styleClass="label-normal"/>
+                    <PasswordField fx:id="txContrasena" styleClass="password-field"/>
+
+                    <Label text="Saldo (€)" styleClass="label-normal"/>
+                    <TextField fx:id="txSaldo" promptText="50" styleClass="text-field"/>
+
+                    <Label text="Idioma" styleClass="label-normal"/>
+                    <ComboBox fx:id="cbIdioma" styleClass="combo-box" maxWidth="Infinity"/>
+
+                    <Label fx:id="lblError" styleClass="label-accent" wrapText="true"/>
+
+                    <HBox spacing="8">
+                        <Button fx:id="btnGuardar"  text="Guardar"  styleClass="btn-primary"   onAction="#guardar"  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button fx:id="btnCancelar" text="Cancelar" styleClass="btn-secondary"  onAction="#cancelar" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

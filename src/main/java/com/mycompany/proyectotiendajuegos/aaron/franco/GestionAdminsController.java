@@ -1,6 +1,5 @@
-package com.mycompany.proyectotiendajuegos.aaron.franco.controladores;
+package com.mycompany.proyectotiendajuegos.aaron.franco;
 
-import com.mycompany.proyectotiendajuegos.aaron.franco.DialogUtil;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Administrador;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.GestorDatos;
 import javafx.collections.FXCollections;
@@ -13,27 +12,44 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controlador de la ventana de Gestión de Administradores.
+ */
 public class GestionAdminsController implements Initializable {
 
-    @FXML private TableView<Administrador>         tablaAdmins;
-    @FXML private TableColumn<Administrador,String> colId, colNombre, colCorreo;
-    @FXML private TableColumn<Administrador,Void>   colAcciones;
+    // ── Tabla ──────────────────────────────────────────────
+    @FXML private TableView<Administrador>          tablaAdmins;
+    @FXML private TableColumn<Administrador, String> colId;
+    @FXML private TableColumn<Administrador, String> colNombre;
+    @FXML private TableColumn<Administrador, String> colCorreo;
+    @FXML private TableColumn<Administrador, Void>   colAcciones;
 
-    @FXML private Label         lblTitulo, lblError;
-    @FXML private TextField     txNombre, txApellidos, txCorreo;
+    // ── Formulario ─────────────────────────────────────────
+    @FXML private Label         lblTituloForm;
+    @FXML private TextField     txNombre;
+    @FXML private TextField     txApellidos;
+    @FXML private TextField     txCorreo;
     @FXML private PasswordField txContrasena;
+    @FXML private Label         lblError;
 
     private final GestorDatos gd = GestorDatos.getInstance();
-    private Administrador enEdicion = null;
+    private Administrador adminEnEdicion = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        configurarTabla();
+        cargarAdmins();
+        limpiarFormulario();
+    }
+
+    private void configurarTabla() {
         colId.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getIdAdmin())));
+            new javafx.beans.property.SimpleStringProperty(
+                String.valueOf(c.getValue().getIdAdmin())));
         colNombre.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getNombreCompleto()));
+            new javafx.beans.property.SimpleStringProperty(c.getValue().getNombreCompleto()));
         colCorreo.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().getCorreo()));
+            new javafx.beans.property.SimpleStringProperty(c.getValue().getCorreo()));
 
         colAcciones.setCellFactory(tc -> new TableCell<>() {
             final Button btnEditar = new Button("✏ Editar");
@@ -42,38 +58,31 @@ public class GestionAdminsController implements Initializable {
                 btnEditar.getStyleClass().add("btn-secondary");
                 btnBaja.getStyleClass().add("btn-danger");
                 btnEditar.setOnAction(e -> prepararEdicion(getTableView().getItems().get(getIndex())));
-                btnBaja.setOnAction(e -> {
-                    Administrador a = getTableView().getItems().get(getIndex());
-                    if (DialogUtil.confirmar("¿Dar de baja a " + a.getNombreCompleto() + "?")) {
-                        gd.bajaAdmin(a.getIdAdmin());
-                        cargar();
-                    }
-                });
+                btnBaja.setOnAction(e   -> darDeBaja(getTableView().getItems().get(getIndex())));
             }
-            @Override protected void updateItem(Void item, boolean vacio) {
+            @Override
+            protected void updateItem(Void item, boolean vacio) {
                 super.updateItem(item, vacio);
                 setGraphic(vacio ? null : new HBox(5, btnEditar, btnBaja));
             }
         });
-
-        cargar();
-        limpiar();
     }
 
-    private void cargar() {
+    private void cargarAdmins() {
         tablaAdmins.setItems(FXCollections.observableArrayList(gd.getAdministradores()));
     }
 
-    @FXML public void prepararAlta() {
-        enEdicion = null;
-        lblTitulo.setText("Nuevo Administrador");
-        txNombre.clear(); txApellidos.clear(); txCorreo.clear(); txContrasena.clear();
-        lblError.setText("");
+    // ── Formulario alta / edición ──────────────────────────
+    @FXML
+    public void prepararAlta() {
+        adminEnEdicion = null;
+        limpiarFormulario();
+        lblTituloForm.setText("Nuevo Administrador");
     }
 
     private void prepararEdicion(Administrador a) {
-        enEdicion = a;
-        lblTitulo.setText("Editar Administrador");
+        adminEnEdicion = a;
+        lblTituloForm.setText("Editar Administrador");
         txNombre.setText(a.getNombre());
         txApellidos.setText(a.getApellidos());
         txCorreo.setText(a.getCorreo());
@@ -82,39 +91,53 @@ public class GestionAdminsController implements Initializable {
         lblError.setText("");
     }
 
-    @FXML public void guardar() {
-        String nombre = txNombre.getText().trim();
+    @FXML
+    public void guardar() {
+        String nombre    = txNombre.getText().trim();
+        String apellidos = txApellidos.getText().trim();
+        String correo    = txCorreo.getText().trim();
+        String pass      = txContrasena.getText();
+
         if (nombre.isEmpty()) { lblError.setText("El nombre es obligatorio."); return; }
 
-        if (enEdicion == null) {
-            if (txContrasena.getText().isEmpty()) { lblError.setText("La contraseña es obligatoria."); return; }
-            boolean ok = gd.altaAdmin(nombre, txApellidos.getText().trim(),
-                    txCorreo.getText().trim(), txContrasena.getText());
+        if (adminEnEdicion == null) {
+            if (pass.isEmpty()) { lblError.setText("La contraseña es obligatoria."); return; }
+            boolean ok = gd.altaAdmin(nombre, apellidos, correo, pass);
             if (!ok) { lblError.setText("El correo ya existe."); return; }
-            DialogUtil.info("Administrador creado.");
+            DialogUtil.info("Administrador creado correctamente.");
         } else {
-            enEdicion.setNombre(nombre);
-            enEdicion.setApellidos(txApellidos.getText().trim());
-            enEdicion.setCorreo(txCorreo.getText().trim());
-            if (!txContrasena.getText().isEmpty()) enEdicion.setContrasena(txContrasena.getText());
-            gd.actualizarAdmin(enEdicion);
-            DialogUtil.info("Administrador actualizado.");
+            adminEnEdicion.setNombre(nombre);
+            adminEnEdicion.setApellidos(apellidos);
+            adminEnEdicion.setCorreo(correo);
+            if (!pass.isEmpty()) adminEnEdicion.setContrasena(pass);
+            gd.actualizarAdmin(adminEnEdicion);
+            DialogUtil.info("Administrador actualizado correctamente.");
         }
-        limpiar();
-        cargar();
+        limpiarFormulario();
+        cargarAdmins();
     }
 
-    @FXML public void cancelar() { limpiar(); }
+    private void darDeBaja(Administrador a) {
+        if (DialogUtil.confirmar("¿Dar de baja a " + a.getNombreCompleto() + "?")) {
+            gd.bajaAdmin(a.getIdAdmin());
+            cargarAdmins();
+            limpiarFormulario();
+        }
+    }
 
-    private void limpiar() {
-        enEdicion = null;
-        lblTitulo.setText("Nuevo Administrador");
-        txNombre.clear(); txApellidos.clear(); txCorreo.clear();
-        txContrasena.clear(); txContrasena.setPromptText("Contraseña");
+    @FXML
+    public void cancelar() { limpiarFormulario(); }
+
+    private void limpiarFormulario() {
+        adminEnEdicion = null;
+        lblTituloForm.setText("Nuevo Administrador");
+        txNombre.clear(); txApellidos.clear(); txCorreo.clear(); txContrasena.clear();
+        txContrasena.setPromptText("Contraseña (obligatoria)");
         lblError.setText("");
     }
 
-    @FXML public void cerrar() {
+    @FXML
+    public void cerrar() {
         ((Stage) tablaAdmins.getScene().getWindow()).close();
     }
 }

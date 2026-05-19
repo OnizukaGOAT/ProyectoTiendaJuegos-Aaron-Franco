@@ -1,6 +1,5 @@
-package com.mycompany.proyectotiendajuegos.aaron.franco.controladores;
+package com.mycompany.proyectotiendajuegos.aaron.franco;
 
-import com.mycompany.proyectotiendajuegos.aaron.franco.DialogUtil;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Estudio;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.GestorDatos;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.Juego;
@@ -14,126 +13,203 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controlador de la ventana de Gestión de Juegos.
+ */
 public class GestionJuegosController implements Initializable {
 
-    @FXML private TableView<Juego>         tablaJuegos;
-    @FXML private TableColumn<Juego,String> colId, colTitulo, colGenero, colPlat,
-                                             colPrecio, colStock, colDirector;
-    @FXML private TableColumn<Juego,Void>   colAcciones;
+    // ── Tabla ──────────────────────────────────────────────
+    @FXML private TableView<Juego>          tablaJuegos;
+    @FXML private TableColumn<Juego, String> colId;
+    @FXML private TableColumn<Juego, String> colTitulo;
+    @FXML private TableColumn<Juego, String> colGenero;
+    @FXML private TableColumn<Juego, String> colPlataforma;
+    @FXML private TableColumn<Juego, String> colPrecio;
+    @FXML private TableColumn<Juego, String> colStock;
+    @FXML private TableColumn<Juego, String> colDirector;
+    @FXML private TableColumn<Juego, Void>   colAcciones;
 
-    @FXML private Label         lblTitulo, lblError;
-    @FXML private TextField     txTitulo, txGenero, txPlat, txPrecio, txStock, txDirector;
+    // ── Panel detalle ──────────────────────────────────────
+    @FXML private Label lblDetTitulo;
+    @FXML private Label lblDetGenero;
+    @FXML private Label lblDetPlataforma;
+    @FXML private Label lblDetPrecio;
+    @FXML private Label lblDetStock;
+    @FXML private Label lblDetDirector;
+    @FXML private Label lblDetMedia;
+    @FXML private Label lblDetVentas;
+
+    // ── Formulario ─────────────────────────────────────────
+    @FXML private Label            lblTituloForm;
+    @FXML private TextField        txTitulo;
+    @FXML private TextField        txGenero;
+    @FXML private TextField        txPlataforma;
+    @FXML private TextField        txPrecio;
+    @FXML private TextField        txStock;
+    @FXML private TextField        txDirector;
     @FXML private ComboBox<Estudio> cbEstudio;
+    @FXML private Label            lblError;
 
     private final GestorDatos gd = GestorDatos.getInstance();
-    private Juego enEdicion = null;
+    private Juego juegoEnEdicion = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        colId.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getIdJuego())));
-        colTitulo.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getTitulo()));
-        colGenero.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getGenero()));
-        colPlat.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getPlataforma()));
-        colPrecio.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(String.format("%.2f€", c.getValue().getPrecio())));
-        colStock.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getStock())));
-        colDirector.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDirector()));
+        cbEstudio.setItems(FXCollections.observableArrayList(gd.getEstudios()));
+        cbEstudio.setPromptText("Asignar a estudio (opcional)");
+        configurarTabla();
+        cargarJuegos();
+        limpiarFormulario();
+    }
+
+    private void configurarTabla() {
+        colId.setCellValueFactory(c ->
+            new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getIdJuego())));
+        colTitulo.setCellValueFactory(c ->
+            new javafx.beans.property.SimpleStringProperty(c.getValue().getTitulo()));
+        colGenero.setCellValueFactory(c ->
+            new javafx.beans.property.SimpleStringProperty(c.getValue().getGenero()));
+        colPlataforma.setCellValueFactory(c ->
+            new javafx.beans.property.SimpleStringProperty(c.getValue().getPlataforma()));
+        colPrecio.setCellValueFactory(c ->
+            new javafx.beans.property.SimpleStringProperty(
+                String.format("%.2f€", c.getValue().getPrecio())));
+        colStock.setCellValueFactory(c ->
+            new javafx.beans.property.SimpleStringProperty(String.valueOf(c.getValue().getStock())));
+        colDirector.setCellValueFactory(c ->
+            new javafx.beans.property.SimpleStringProperty(c.getValue().getDirector()));
 
         colAcciones.setCellFactory(tc -> new TableCell<>() {
-            final Button btnEdit = new Button("✏");
-            final Button btnDel  = new Button("🗑");
+            final Button btnVer    = new Button("🔍 Ver");
+            final Button btnEditar = new Button("✏ Editar");
+            final Button btnBaja   = new Button("🗑 Eliminar");
             {
-                btnEdit.getStyleClass().add("btn-secondary");
-                btnDel.getStyleClass().add("btn-danger");
-                btnEdit.setOnAction(e -> prepararEdicion(getTableView().getItems().get(getIndex())));
-                btnDel.setOnAction(e -> {
-                    Juego j = getTableView().getItems().get(getIndex());
-                    if (DialogUtil.confirmar("¿Eliminar '" + j.getTitulo() + "'?")) {
-                        gd.bajaJuego(j.getIdJuego()); cargar();
-                    }
-                });
+                btnVer.getStyleClass().add("btn-gold");
+                btnEditar.getStyleClass().add("btn-secondary");
+                btnBaja.getStyleClass().add("btn-danger");
+                btnVer.setOnAction(e    -> mostrarDetalle(getTableView().getItems().get(getIndex())));
+                btnEditar.setOnAction(e -> prepararEdicion(getTableView().getItems().get(getIndex())));
+                btnBaja.setOnAction(e   -> darDeBaja(getTableView().getItems().get(getIndex())));
             }
-            @Override protected void updateItem(Void i, boolean vacio) {
-                super.updateItem(i, vacio);
-                setGraphic(vacio ? null : new HBox(5, btnEdit, btnDel));
+            @Override
+            protected void updateItem(Void item, boolean vacio) {
+                super.updateItem(item, vacio);
+                setGraphic(vacio ? null : new HBox(5, btnVer, btnEditar, btnBaja));
             }
         });
 
-        cbEstudio.setItems(FXCollections.observableArrayList(gd.getEstudios()));
-        cargar();
-        limpiar();
+        tablaJuegos.getSelectionModel().selectedItemProperty().addListener(
+            (obs, ant, nuevo) -> { if (nuevo != null) mostrarDetalle(nuevo); });
     }
 
-    private void cargar() {
+    private void cargarJuegos() {
         tablaJuegos.setItems(FXCollections.observableArrayList(gd.getJuegos()));
     }
 
-    @FXML public void prepararAlta() {
-        enEdicion = null;
-        lblTitulo.setText("Nuevo Juego");
-        txTitulo.clear(); txGenero.clear(); txPlat.clear();
-        txPrecio.clear(); txStock.clear(); txDirector.clear();
-        cbEstudio.getSelectionModel().clearSelection();
-        lblError.setText("");
+    private void mostrarDetalle(Juego j) {
+        lblDetTitulo.setText(j.getTitulo());
+        lblDetGenero.setText(j.getGenero());
+        lblDetPlataforma.setText(j.getPlataforma());
+        lblDetPrecio.setText(String.format("%.2f€", j.getPrecio()));
+        lblDetStock.setText(String.valueOf(j.getStock()));
+        lblDetDirector.setText(j.getDirector());
+        double media = gd.getPuntuacionMediaJuego(j.getIdJuego());
+        lblDetMedia.setText(media > 0 ? String.format("⭐ %.1f/10", media) : "Sin valoraciones");
+        lblDetVentas.setText(String.valueOf(gd.getVentasJuego(j)) + " unidades");
+    }
+
+    // ── Formulario ─────────────────────────────────────────
+    @FXML
+    public void prepararAlta() {
+        juegoEnEdicion = null;
+        limpiarFormulario();
+        lblTituloForm.setText("Nuevo Juego");
     }
 
     private void prepararEdicion(Juego j) {
-        enEdicion = j;
-        lblTitulo.setText("Editar Juego");
+        juegoEnEdicion = j;
+        lblTituloForm.setText("Editar Juego");
         txTitulo.setText(j.getTitulo());
         txGenero.setText(j.getGenero());
-        txPlat.setText(j.getPlataforma());
+        txPlataforma.setText(j.getPlataforma());
         txPrecio.setText(String.valueOf(j.getPrecio()));
         txStock.setText(String.valueOf(j.getStock()));
         txDirector.setText(j.getDirector());
-        // Seleccionar estudio actual
+        // Preseleccionar estudio
         gd.getEstudios().stream()
-                .filter(e -> e.getJuegos().stream().anyMatch(jj -> jj.getIdJuego() == j.getIdJuego()))
-                .findFirst().ifPresent(cbEstudio.getSelectionModel()::select);
+            .filter(e -> e.getJuegos().stream()
+                .anyMatch(jj -> jj.getIdJuego() == j.getIdJuego()))
+            .findFirst().ifPresent(cbEstudio.getSelectionModel()::select);
         lblError.setText("");
     }
 
-    @FXML public void guardar() {
-        if (txTitulo.getText().trim().isEmpty()) { lblError.setText("El título es obligatorio."); return; }
-        double precio; int stock;
-        try { precio = Double.parseDouble(txPrecio.getText().replace(",", ".")); }
-        catch (Exception e) { lblError.setText("Precio inválido."); return; }
-        try { stock = Integer.parseInt(txStock.getText()); }
-        catch (Exception e) { lblError.setText("Stock inválido."); return; }
+    @FXML
+    public void guardar() {
+        String titulo    = txTitulo.getText().trim();
+        String genero    = txGenero.getText().trim();
+        String plat      = txPlataforma.getText().trim();
+        String director  = txDirector.getText().trim();
 
-        if (enEdicion == null) {
-            Juego j = gd.altaJuego(txTitulo.getText().trim(), txGenero.getText().trim(),
-                    txPlat.getText().trim(), precio, stock, txDirector.getText().trim());
-            if (j != null && cbEstudio.getValue() != null)
-                gd.asignarJuegoAEstudio(j.getIdJuego(), cbEstudio.getValue().getIdEstudio());
-            DialogUtil.info("Juego creado.");
+        if (titulo.isEmpty()) { lblError.setText("El título es obligatorio."); return; }
+
+        double precio;
+        int    stock;
+        try { precio = Double.parseDouble(txPrecio.getText().replace(",", ".")); }
+        catch (NumberFormatException ex) { lblError.setText("Precio inválido."); return; }
+        try { stock = Integer.parseInt(txStock.getText()); }
+        catch (NumberFormatException ex) { lblError.setText("Stock inválido."); return; }
+
+        if (juegoEnEdicion == null) {
+            Juego nuevo = gd.altaJuego(titulo, genero, plat, precio, stock, director);
+            if (nuevo != null && cbEstudio.getValue() != null) {
+                gd.asignarJuegoAEstudio(nuevo.getIdJuego(),
+                    cbEstudio.getValue().getIdEstudio());
+            }
+            DialogUtil.info("Juego creado correctamente.");
         } else {
-            enEdicion.setTitulo(txTitulo.getText().trim());
-            enEdicion.setGenero(txGenero.getText().trim());
-            enEdicion.setPlataforma(txPlat.getText().trim());
-            enEdicion.setPrecio(precio);
-            enEdicion.setStock(stock);
-            enEdicion.setDirector(txDirector.getText().trim());
-            gd.actualizarJuego(enEdicion);
-            if (cbEstudio.getValue() != null)
-                gd.asignarJuegoAEstudio(enEdicion.getIdJuego(), cbEstudio.getValue().getIdEstudio());
-            DialogUtil.info("Juego actualizado.");
+            juegoEnEdicion.setTitulo(titulo);
+            juegoEnEdicion.setGenero(genero);
+            juegoEnEdicion.setPlataforma(plat);
+            juegoEnEdicion.setPrecio(precio);
+            juegoEnEdicion.setStock(stock);
+            juegoEnEdicion.setDirector(director);
+            gd.actualizarJuego(juegoEnEdicion);
+            if (cbEstudio.getValue() != null) {
+                gd.asignarJuegoAEstudio(juegoEnEdicion.getIdJuego(),
+                    cbEstudio.getValue().getIdEstudio());
+            }
+            DialogUtil.info("Juego actualizado correctamente.");
         }
-        limpiar();
-        cargar();
+        limpiarFormulario();
+        cargarJuegos();
     }
 
-    @FXML public void cancelar() { limpiar(); }
+    private void darDeBaja(Juego j) {
+        if (DialogUtil.confirmar("¿Eliminar el juego '" + j.getTitulo() + "'?")) {
+            gd.bajaJuego(j.getIdJuego());
+            cargarJuegos();
+            limpiarFormulario();
+        }
+    }
 
-    private void limpiar() {
-        enEdicion = null;
-        lblTitulo.setText("Nuevo Juego");
-        txTitulo.clear(); txGenero.clear(); txPlat.clear();
+    @FXML
+    public void cancelar() { limpiarFormulario(); }
+
+    private void limpiarFormulario() {
+        juegoEnEdicion = null;
+        lblTituloForm.setText("Nuevo Juego");
+        txTitulo.clear(); txGenero.clear(); txPlataforma.clear();
         txPrecio.clear(); txStock.clear(); txDirector.clear();
         cbEstudio.getSelectionModel().clearSelection();
         lblError.setText("");
+        lblDetTitulo.setText("–"); lblDetGenero.setText("–");
+        lblDetPlataforma.setText("–"); lblDetPrecio.setText("–");
+        lblDetStock.setText("–"); lblDetDirector.setText("–");
+        lblDetMedia.setText("–"); lblDetVentas.setText("–");
     }
 
-    @FXML public void cerrar() {
+    @FXML
+    public void cerrar() {
         ((Stage) tablaJuegos.getScene().getWindow()).close();
     }
 }

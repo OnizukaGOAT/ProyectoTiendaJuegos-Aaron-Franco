@@ -70,8 +70,8 @@ public class MainUsuarioController implements Initializable {
     // ── CONSULTAS ────────────────────────────────────────────────────────
     @FXML
     public void mostrarEstadisticas() {
-        // Reutiliza la misma ventana de estadísticas del admin
-        VentanaUtil.abrirVentana("estadisticas_admin", "Estadísticas", 950, 700);
+        // Vista de estadísticas dedicada al usuario (EstadisticasController)
+        VentanaUtil.abrirVentana("estadisticas_usuario", "Estadísticas", 950, 700);
     }
 
     // Compatibilidad con botones FXML heredados

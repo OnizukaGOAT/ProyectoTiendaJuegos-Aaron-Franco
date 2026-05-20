@@ -1,6 +1,5 @@
 package com.mycompany.proyectotiendajuegos.aaron.franco;
 
-import com.mycompany.proyectotiendajuegos.aaron.franco.VentanaUtil;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -8,13 +7,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de la ventana Mi Biblioteca (usuario).
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class BibliotecaController implements Initializable {
 
@@ -80,11 +82,15 @@ public class BibliotecaController implements Initializable {
         Button btnResenar = new Button("✍ Reseñar");
         btnResenar.getStyleClass().add("btn-gold");
         btnResenar.setOnAction(e ->
-                VentanaUtil.abrirVentana("mis_resenas_usuario",
-                        "Mis Reseñas", 800, 600));
+                VentanaUtil.abrirVentana("mis_resenas_usuario", "Mis Reseñas", 900, 650));
 
         panelAccion.getChildren().addAll(btnVerResenas, btnResenar);
         tarjeta.getChildren().addAll(info, panelAccion);
         return tarjeta;
+    }
+
+    @FXML
+    public void cerrar() {
+        ((Stage) vboxJuegos.getScene().getWindow()).close();
     }
 }

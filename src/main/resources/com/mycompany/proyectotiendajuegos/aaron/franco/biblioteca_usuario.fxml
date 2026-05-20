@@ -5,7 +5,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.BibliotecaController"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.BibliotecaController"
             styleClass="main-pane">
 
     <top>

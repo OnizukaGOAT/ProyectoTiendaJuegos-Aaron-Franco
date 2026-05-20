@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de la ventana Historial de Compras (usuario).
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class HistorialComprasUsuarioController implements Initializable {
 

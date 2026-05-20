@@ -13,7 +13,11 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+/**
+ * FXML Controller class
+ *
+ * @author USUARIO
+ */
 public class GestionAdminsController implements Initializable {
 
     @FXML private TableView<Administrador>           tablaAdmins;

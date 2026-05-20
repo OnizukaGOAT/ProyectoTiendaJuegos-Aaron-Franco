@@ -10,8 +10,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de la pantalla principal del Administrador.
- * Cada botón del menú lateral abre una ventana secundaria independiente.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class MainAdminController implements Initializable {
 

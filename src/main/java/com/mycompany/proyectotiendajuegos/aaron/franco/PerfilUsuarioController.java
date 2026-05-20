@@ -11,8 +11,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de la ventana Mi Perfil (usuario).
- * Muestra estadísticas personales y permite editar datos y recargar saldo.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class PerfilUsuarioController implements Initializable {
 

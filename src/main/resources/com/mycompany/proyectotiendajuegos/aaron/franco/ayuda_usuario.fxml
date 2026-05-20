@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.AyudaUsuarioController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="❓ Ayuda – GamePyramid" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnCerrar" text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="12">
+                <padding><Insets top="20" right="25" bottom="20" left="25"/></padding>
+
+                <!-- Buscar Juegos -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="🔍 Buscar Juegos" styleClass="label-section"/>
+                    <Label styleClass="label-normal" wrapText="true"
+                           text="Filtra el catálogo por nombre, género, director o estudio de desarrollo. Pulsa Buscar o presiona Enter para lanzar la búsqueda. Usa Limpiar para volver a ver todos los juegos."/>
+                </VBox>
+
+                <!-- Catálogo -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="🎮 Todos los Juegos" styleClass="label-section"/>
+                    <Label styleClass="label-normal" wrapText="true"
+                           text="Muestra el catálogo completo con precio, stock y valoración media. Si tienes saldo suficiente y el juego tiene stock, puedes comprarlo directamente con el botón 'Comprar'. Los juegos que ya posees aparecen marcados como 'En biblioteca'."/>
+                </VBox>
+
+                <!-- Historial -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="🛒 Mis Compras" styleClass="label-section"/>
+                    <Label styleClass="label-normal" wrapText="true"
+                           text="Consulta el historial completo de tus compras con fecha, cantidad y coste. Al pie de la tabla se muestra el total gastado."/>
+                </VBox>
+
+                <!-- Biblioteca -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="📚 Mi Biblioteca" styleClass="label-section"/>
+                    <Label styleClass="label-normal" wrapText="true"
+                           text="Lista todos los juegos que has comprado. Desde aquí puedes ver las reseñas de cada juego o acceder a escribir la tuya propia. Solo puedes reseñar juegos que posees."/>
+                </VBox>
+
+                <!-- Mis Reseñas -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="✍ Mis Reseñas" styleClass="label-section"/>
+                    <Label styleClass="label-normal" wrapText="true"
+                           text="Escribe, edita o elimina tus reseñas. Puntúa cada juego del 1 al 10, elige el idioma del comentario y guarda tu opinión. Solo puedes escribir una reseña por juego."/>
+                </VBox>
+
+                <!-- Perfil -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="👤 Mi Perfil" styleClass="label-section"/>
+                    <Label styleClass="label-normal" wrapText="true"
+                           text="Consulta y modifica tus datos personales (nombre, correo, contraseña e idioma). También puedes añadir saldo a tu cuenta mediante botones rápidos (+5€, +10€, +20€, +50€) o introduciendo una cantidad personalizada (máximo 500€ por recarga)."/>
+                </VBox>
+
+                <!-- Estadísticas -->
+                <VBox styleClass="card" spacing="6">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="📊 Estadísticas" styleClass="label-section"/>
+                    <Label styleClass="label-normal" wrapText="true"
+                           text="Accede a rankings y estadísticas detalladas: juegos mejor valorados, más vendidos, reseñas agrupadas por idioma o por juego, estadísticas por estudio de desarrollo y juegos por usuario. Usa el menú lateral de la ventana de estadísticas para navegar entre las secciones."/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

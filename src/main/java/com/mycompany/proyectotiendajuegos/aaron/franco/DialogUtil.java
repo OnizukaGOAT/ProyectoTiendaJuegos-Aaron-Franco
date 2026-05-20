@@ -5,7 +5,7 @@ import javafx.scene.control.ButtonType;
 
 import java.util.Optional;
 
-public class DialogUtil {
+public class DialogUtil {     //Esto al final son solo alertas útiles por si fueran necesarias
 
     public static void info(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

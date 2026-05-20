@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 /**
- * Clase de utilidad para abrir ventanas secundarias (Stage).
- * Los FXMLs de ventanas están en el mismo paquete de recursos que los demás.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class VentanaUtil {
 

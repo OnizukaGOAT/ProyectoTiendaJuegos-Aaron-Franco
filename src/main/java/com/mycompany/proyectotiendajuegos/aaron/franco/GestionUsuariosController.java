@@ -13,7 +13,11 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-
+/**
+ * FXML Controller class
+ *
+ * @author USUARIO
+ */
 public class GestionUsuariosController implements Initializable {
 
     @FXML private TableView<Usuario>           tablaUsuarios;

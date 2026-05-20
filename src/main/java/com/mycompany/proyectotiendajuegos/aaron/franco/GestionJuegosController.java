@@ -14,7 +14,11 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+/**
+ * FXML Controller class
+ *
+ * @author USUARIO
+ */
 public class GestionJuegosController implements Initializable {
 
     @FXML private TableView<Juego>          tablaJuegos;

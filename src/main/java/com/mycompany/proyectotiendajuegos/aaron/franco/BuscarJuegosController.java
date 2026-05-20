@@ -1,6 +1,5 @@
 package com.mycompany.proyectotiendajuegos.aaron.franco;
 
-import com.mycompany.proyectotiendajuegos.aaron.franco.DialogUtil;
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -9,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.List;
@@ -19,36 +19,35 @@ import java.util.ResourceBundle;
  *
  * @author USUARIO
  */
-public class CatalogoController implements Initializable {
+public class BuscarJuegosController implements Initializable {
 
-    @FXML private VBox vboxJuegos;
-    @FXML private TextField  txBusqueda;
-    @FXML private ComboBox<String> cbTipo;
-    @FXML private Label lblResultados;
+    @FXML private VBox              vboxJuegos;
+    @FXML private TextField         txBusqueda;
+    @FXML private ComboBox<String>  cbTipo;
+    @FXML private Label             lblResultados;
+    @FXML private Button            btnCerrar;
 
     private final GestorDatos gd = GestorDatos.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cbTipo.setItems(FXCollections.observableArrayList("Nombre", "Género", "Director", "Estudio"));
+        cbTipo.setItems(FXCollections.observableArrayList(
+                "Nombre", "Género", "Director", "Estudio"));
         cbTipo.getSelectionModel().selectFirst();
-        cargarTodos();
-    }
-
-    private void cargarTodos() {
+        // Mostrar todos al abrir
         mostrarJuegos(gd.getJuegos());
     }
 
     @FXML
     public void buscar() {
         String texto = txBusqueda.getText().trim();
-        if (texto.isEmpty()) { cargarTodos(); return; }
+        if (texto.isEmpty()) { mostrarJuegos(gd.getJuegos()); return; }
         List<Juego> resultados;
         switch (cbTipo.getValue()) {
-            case "Género": resultados = gd.buscarJuegosPorGenero(texto);   break;
+            case "Género":   resultados = gd.buscarJuegosPorGenero(texto);   break;
             case "Director": resultados = gd.buscarJuegosPorDirector(texto); break;
-            case "Estudio": resultados = gd.buscarJuegosPorEstudio(texto);  break;
-            default: resultados = gd.buscarJuegosPorNombre(texto);
+            case "Estudio":  resultados = gd.buscarJuegosPorEstudio(texto);  break;
+            default:         resultados = gd.buscarJuegosPorNombre(texto);
         }
         mostrarJuegos(resultados);
     }
@@ -57,7 +56,7 @@ public class CatalogoController implements Initializable {
     public void limpiar() {
         txBusqueda.clear();
         cbTipo.getSelectionModel().selectFirst();
-        cargarTodos();
+        mostrarJuegos(gd.getJuegos());
     }
 
     private void mostrarJuegos(List<Juego> lista) {
@@ -84,9 +83,7 @@ public class CatalogoController implements Initializable {
         Label lblTitulo = new Label(j.getTitulo());
         lblTitulo.getStyleClass().add("label-section");
 
-        Label lblMeta = new Label("🎮 " + j.getPlataforma()
-                + "  |  📂 " + j.getGenero()
-                + "  |  🎬 " + j.getDirector());
+        Label lblMeta = new Label("🎮 " + j.getPlataforma() + "  |  📂 " + j.getGenero() + "  |  🎬 " + j.getDirector());
         lblMeta.getStyleClass().add("label-muted");
 
         double media = gd.getPuntuacionMediaJuego(j.getIdJuego());
@@ -94,12 +91,9 @@ public class CatalogoController implements Initializable {
                 ? String.format("⭐ %.1f/10", media) : "Sin valoraciones");
         lblMedia.getStyleClass().add("label-normal");
 
-        String textoStock = j.getStock() > 10 ? "✅ " + j.getStock() + " en stock"
-                : j.getStock() > 0 ? "⚠ Solo " + j.getStock() + " en stock"
-                : "❌ Sin stock";
+        String textoStock = j.getStock() > 10 ? "✅ " + j.getStock() + " en stock" : j.getStock() > 0 ? "⚠ Solo " + j.getStock() + " en stock": "❌ Sin stock";
         Label lblStock = new Label(textoStock);
-        lblStock.getStyleClass().add(
-                j.getStock() > 10 ? "stock-ok" : j.getStock() > 0 ? "stock-low" : "stock-out");
+        lblStock.getStyleClass().add(j.getStock() > 10 ? "stock-ok" : j.getStock() > 0 ? "stock-low" : "stock-out");
 
         info.getChildren().addAll(lblTitulo, lblMeta, lblMedia, lblStock);
 
@@ -124,7 +118,7 @@ public class CatalogoController implements Initializable {
             Button btnComprar = new Button("🛒 Comprar");
             btnComprar.getStyleClass().add("btn-primary");
             btnComprar.setDisable(j.getStock() <= 0);
-            btnComprar.setOnAction(e -> comprar(j, btnComprar));
+            btnComprar.setOnAction(e -> comprar(j));
             panelAccion.getChildren().addAll(lblPrecio, btnComprar, btnVerResenas);
         }
 
@@ -132,18 +126,23 @@ public class CatalogoController implements Initializable {
         return tarjeta;
     }
 
-    private void comprar(Juego j, Button btn) {
+    private void comprar(Juego j) {
         String resultado = gd.comprarJuego(gd.getUsuarioActual(), j, 1);
         if ("OK".equals(resultado)) {
             DialogUtil.info("¡Compra realizada! " + j.getTitulo() + " añadido a tu biblioteca.");
-            cargarTodos(); // recarga el catálogo
+            mostrarJuegos(gd.getJuegos());
         } else {
             DialogUtil.error(resultado);
         }
     }
 
     private void abrirResenas(Juego j) {
-        com.mycompany.proyectotiendajuegos.aaron.franco.VentanaUtil
-                .abrirVentanaConDato("resenas_juego", "Reseñas – " + j.getTitulo(), 750, 550, j);
+        VentanaUtil.abrirVentanaConDato("resenas_juego",
+                "Reseñas – " + j.getTitulo(), 750, 550, j);
+    }
+
+    @FXML
+    public void cerrar() {
+        ((Stage) btnCerrar.getScene().getWindow()).close();
     }
 }

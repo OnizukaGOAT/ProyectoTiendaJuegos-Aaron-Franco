@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de la ventana "Mis Reseñas" (usuario).
- * Permite ver, crear, editar y eliminar reseñas propias.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class MisResenasController implements Initializable {
 

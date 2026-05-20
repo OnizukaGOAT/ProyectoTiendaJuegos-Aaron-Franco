@@ -2,7 +2,7 @@ package com.mycompany.proyectotiendajuegos.aaron.franco.clases;
 
 public class Administrador extends Persona {
 
-    private int    idAdmin;
+    private int    idAdmin; //Se utiliza unicamente por la base de datos, que necesitaba un ID.
     private String correo;
     private String contrasena;
 

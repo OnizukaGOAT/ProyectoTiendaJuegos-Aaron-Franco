@@ -13,7 +13,11 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+/**
+ * FXML Controller class
+ *
+ * @author USUARIO
+ */
 public class HistorialComprasAdminController implements Initializable {
 
     @FXML private TextField        txFiltro;

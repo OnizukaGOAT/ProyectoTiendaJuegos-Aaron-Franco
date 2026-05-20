@@ -17,13 +17,9 @@ import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 /**
- * Controlador de la ventana de Estadísticas y Consultas (admin).
+ * FXML Controller class
  *
- * Cubre todas las consultas del PDF §3:
- *  3.1  Juegos comprados por usuario
- *  3.2  Reseñas (por usuario / por juego / por idioma)
- *  3.3  Juegos mejor valorados (global / por estudio / por desarrollador)
- *  3.4  Juegos más vendidos   (global / por estudio / por desarrollador)
+ * @author USUARIO
  */
 public class EstadisticasAdminController implements Initializable {
 
@@ -37,13 +33,7 @@ public class EstadisticasAdminController implements Initializable {
         mostrarVentas();
     }
 
-    private void setContent(Node nodo) {
-        contentPane.getChildren().setAll(nodo);
-    }
-
-    // ══════════════════════════════════════════════════════
-    // BOTONES DEL MENÚ LATERAL
-    // ══════════════════════════════════════════════════════
+    private void setContent(Node nodo) { contentPane.getChildren().setAll(nodo); }
 
     @FXML public void mostrarVentas() {
         lblSeccion.setText("📊 Ventas por Juego");
@@ -56,8 +46,7 @@ public class EstadisticasAdminController implements Initializable {
             fila.setAlignment(Pos.CENTER_LEFT); fila.setPadding(new Insets(8));
             VBox info = new VBox(3); HBox.setHgrow(info, Priority.ALWAYS);
             Label lblT = new Label(j.getTitulo()); lblT.getStyleClass().add("label-section");
-            Label lblV = new Label("Ventas: " + ventas + "  |  Ingresos: "
-                + String.format("%.2f€", ventas * j.getPrecio()));
+            Label lblV = new Label("Ventas: " + ventas + "  |  Ingresos: " + String.format("%.2f€", ventas * j.getPrecio()));
             lblV.getStyleClass().add("label-normal");
             info.getChildren().addAll(lblT, lblV);
             double pct = maxVentas > 0 ? (double) ventas / maxVentas : 0;
@@ -81,8 +70,7 @@ public class EstadisticasAdminController implements Initializable {
         for (Juego j : gd.getJuegosMejorValorados()) {
             double media = gd.getPuntuacionMediaJuego(j.getIdJuego());
             HBox fila = buildFilaRanking(pos++, j.getTitulo(),
-                String.format("⭐ %.1f/10  (%d reseñas)  |  Director: %s",
-                    media, gd.getResenasPorJuego(j).size(), j.getDirector()));
+                String.format("⭐ %.1f/10  (%d reseñas)  |  Director: %s", media, gd.getResenasPorJuego(j).size(), j.getDirector()));
             raiz.getChildren().add(fila);
         }
         if (raiz.getChildren().isEmpty())
@@ -239,17 +227,15 @@ public class EstadisticasAdminController implements Initializable {
         setContent(scroll(raiz));
     }
 
-    // ══════════════════════════════════════════════════════
-    // CERRAR
-    // ══════════════════════════════════════════════════════
+
     @FXML
     public void cerrar() {
         ((Stage) contentPane.getScene().getWindow()).close();
     }
 
-    // ══════════════════════════════════════════════════════
-    // HELPERS
-    // ══════════════════════════════════════════════════════
+//Código netamente estético para lograr que algunas estadísticas sean desplegables, que si no se encontraban bastante amontonadas. 
+
+
     private HBox buildFilaRanking(int pos, String titulo, String detalle) {
         HBox fila = new HBox(15); fila.getStyleClass().add("card");
         fila.setAlignment(Pos.CENTER_LEFT); fila.setPadding(new Insets(10));
@@ -262,8 +248,6 @@ public class EstadisticasAdminController implements Initializable {
         fila.getChildren().addAll(lblPos, info);
         return fila;
     }
-
-    /** Acordeón desplegable con cabecera clicable. */
     private VBox acordeon(String etiqueta, Supplier<Node> constructorContenido) {
         VBox panel = new VBox(0); panel.getStyleClass().add("card");
         HBox cabecera = new HBox(10);

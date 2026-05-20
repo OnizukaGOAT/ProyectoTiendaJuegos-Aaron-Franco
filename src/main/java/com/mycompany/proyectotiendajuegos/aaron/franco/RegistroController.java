@@ -10,7 +10,11 @@ import javafx.scene.control.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
+/**
+ * FXML Controller class
+ *
+ * @author USUARIO
+ */
 public class RegistroController implements Initializable {
 
     @FXML private TextField     txNombre, txApellidos, txCorreo, txSaldo;

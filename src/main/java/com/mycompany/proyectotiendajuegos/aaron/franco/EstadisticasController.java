@@ -16,9 +16,9 @@ import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 /**
- * Controlador de la ventana de Estadísticas.
- * Usada tanto desde el panel de usuario como desde el panel de administración.
- * Contiene rankings y acordeones desplegables con toda la información estadística.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class EstadisticasController implements Initializable {
 

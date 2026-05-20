@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de la ventana "Reseñas de un Juego".
- * Recibe el juego a través de VentanaUtil.abrirVentanaConDato().
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class ResenasJuegoController implements Initializable {
 

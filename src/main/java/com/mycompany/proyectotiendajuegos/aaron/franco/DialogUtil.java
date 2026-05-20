@@ -4,7 +4,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 import java.util.Optional;
-
+/**
+ * FXML Controller class
+ *
+ * @author USUARIO
+ */
 public class DialogUtil {     //Esto al final son solo alertas útiles por si fueran necesarias
 
     public static void info(String mensaje) {

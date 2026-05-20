@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador del catálogo de juegos (usuario).
- * Toda la estructura visual está declarada en catalogo_usuario.fxml;
- * este controller únicamente enlaza datos y reacciona a eventos.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class CatalogoController implements Initializable {
 

@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de "Mis Reseñas" (usuario).
- * La lista de reseñas se muestra en un TableView declarado en el FXML.
- * El formulario de nueva/editar reseña también está íntegramente en el FXML.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class MisResenasController implements Initializable {
 

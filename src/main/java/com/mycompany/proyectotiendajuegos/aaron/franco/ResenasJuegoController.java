@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de reseñas de un juego concreto.
- * Toda la estructura visual está declarada en resenas_juego.fxml;
- * este controller únicamente enlaza datos y reacciona a eventos.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class ResenasJuegoController implements Initializable {
 

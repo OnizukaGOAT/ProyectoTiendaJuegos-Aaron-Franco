@@ -30,8 +30,6 @@ public class GestionJuegosController implements Initializable {
     @FXML private TableColumn<Juego, String> colStock;
     @FXML private TableColumn<Juego, String> colDirector;
     @FXML private TableColumn<Juego, Void>   colAcciones;
-
-    // Panel detalle (lado derecho de la tabla)
     @FXML private Label lblDetTitulo;
     @FXML private Label lblDetGenero;
     @FXML private Label lblDetPlat;
@@ -40,8 +38,6 @@ public class GestionJuegosController implements Initializable {
     @FXML private Label lblDetDirector;
     @FXML private Label lblDetMedia;
     @FXML private Label lblDetVentas;
-
-    // Formulario
     @FXML private Label            lblTitulo;
     @FXML private TextField        txTitulo;
     @FXML private TextField        txGenero;

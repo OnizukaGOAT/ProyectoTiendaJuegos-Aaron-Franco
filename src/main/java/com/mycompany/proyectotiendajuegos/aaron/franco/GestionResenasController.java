@@ -14,7 +14,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-
+/**
+ * FXML Controller class
+ *
+ * @author USUARIO
+ */
 public class GestionResenasController implements Initializable {
 
     @FXML private TableView<Resena>          tablaResenas;

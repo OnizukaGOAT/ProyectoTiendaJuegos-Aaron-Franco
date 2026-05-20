@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de estadísticas (admin y usuario compartido).
- * Toda la estructura visual está declarada en estadisticas_admin.fxml (TabPane
- * con 8 pestañas). Este controller solo enlaza datos a los TableView inyectados.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class EstadisticasAdminController implements Initializable {
 

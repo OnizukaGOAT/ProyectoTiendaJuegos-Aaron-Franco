@@ -13,24 +13,20 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de la biblioteca del usuario.
- * Toda la estructura visual está declarada en biblioteca_usuario.fxml;
- * este controller únicamente enlaza datos y reacciona a eventos.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class BibliotecaController implements Initializable {
 
-    /* ── Cabecera ─────────────────────────────────────────── */
-    @FXML private Label lblContador;
 
-    /* ── Tabla ────────────────────────────────────────────── */
-    @FXML private TableView<Juego>          tablaJuegos;
+    @FXML private Label lblContador;
+    @FXML private TableView<Juego> tablaJuegos;
     @FXML private TableColumn<Juego,String> colTitulo;
     @FXML private TableColumn<Juego,String> colGenero;
     @FXML private TableColumn<Juego,String> colPlataforma;
     @FXML private TableColumn<Juego,String> colDirector;
     @FXML private TableColumn<Juego,String> colMedia;
-
-    /* ── Panel de detalle lateral ────────────────────────── */
     @FXML private javafx.scene.layout.VBox panelDetalle;
     @FXML private javafx.scene.layout.VBox panelVacio;
     @FXML private Label  lblDetTitulo;
@@ -41,15 +37,13 @@ public class BibliotecaController implements Initializable {
     @FXML private Button btnVerResenas;
     @FXML private Button btnResenar;
 
-    private final GestorDatos gd = GestorDatos.getInstance();
+    private final GestorDatos gd = GestorDatos.getInstance(); //final porque no debería poder editarse bajo ningún concepto
 
-    // ── Inicialización ────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarColumnas();
 
-        tablaJuegos.getSelectionModel().selectedItemProperty()
-                .addListener((obs, ant, nuevo) -> mostrarDetalle(nuevo));
+        tablaJuegos.getSelectionModel().selectedItemProperty().addListener((obs, ant, nuevo) -> mostrarDetalle(nuevo));
 
         cargar();
     }
@@ -69,16 +63,12 @@ public class BibliotecaController implements Initializable {
         });
     }
 
-    // ── Carga ─────────────────────────────────────────────
     private void cargar() {
-        List<Juego> biblioteca = gd.getBibliotecaUsuario(
-                gd.getUsuarioActual().getIdUsuario());
+        List<Juego> biblioteca = gd.getBibliotecaUsuario(gd.getUsuarioActual().getIdUsuario());
         tablaJuegos.setItems(FXCollections.observableArrayList(biblioteca));
         lblContador.setText(biblioteca.size() + " juego(s) en tu biblioteca");
         ocultarDetalle();
     }
-
-    // ── Panel de detalle ──────────────────────────────────
     private void mostrarDetalle(Juego j) {
         if (j == null) { ocultarDetalle(); return; }
 
@@ -102,7 +92,6 @@ public class BibliotecaController implements Initializable {
         panelVacio.setManaged(true);
     }
 
-    // ── Acciones ──────────────────────────────────────────
     @FXML
     public void verResenasSeleccionado() {
         Juego j = tablaJuegos.getSelectionModel().getSelectedItem();
@@ -112,12 +101,8 @@ public class BibliotecaController implements Initializable {
     }
 
     @FXML
-    public void resenarSeleccionado() {
-        VentanaUtil.abrirVentana("mis_resenas_usuario", "Mis Reseñas", 900, 650);
-    }
+    public void resenarSeleccionado() { VentanaUtil.abrirVentana("mis_resenas_usuario", "Mis Reseñas", 900, 650);}
 
     @FXML
-    public void cerrar() {
-        ((Stage) tablaJuegos.getScene().getWindow()).close();
-    }
+    public void cerrar() {((Stage) tablaJuegos.getScene().getWindow()).close();}
 }

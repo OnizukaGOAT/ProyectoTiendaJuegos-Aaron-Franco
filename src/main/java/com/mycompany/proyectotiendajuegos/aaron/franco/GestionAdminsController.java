@@ -51,18 +51,14 @@ public class GestionAdminsController implements Initializable {
         colCorreo.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getCorreo()));
 
-        colAcciones.setCellFactory(tc -> new TableCell<>() {
-            final Button btnEditar = new Button("✏ Editar");
-            final Button btnBaja   = new Button("🗑 Baja");
+        colAcciones.setCellFactory(tc -> new TableCell<>() {final Button btnEditar = new Button("✏ Editar"); final Button btnBaja   = new Button("🗑 Baja");
             {
                 btnEditar.getStyleClass().add("btn-secondary");
                 btnBaja.getStyleClass().add("btn-danger");
                 btnEditar.setOnAction(e -> prepararEdicion(getTableView().getItems().get(getIndex())));
                 btnBaja.setOnAction(e   -> darDeBaja(getTableView().getItems().get(getIndex())));
             }
-            @Override protected void updateItem(Void item, boolean vacio) {
-                super.updateItem(item, vacio);
-                setGraphic(vacio ? null : new HBox(5, btnEditar, btnBaja));
+            @Override protected void updateItem(Void item, boolean vacio) {super.updateItem(item, vacio); setGraphic(vacio ? null : new HBox(5, btnEditar, btnBaja));
             }
         });
     }
@@ -97,9 +93,8 @@ public class GestionAdminsController implements Initializable {
 
         if (adminEnEdicion == null) {
             if (pass.isEmpty()) { lblError.setText("La contraseña es obligatoria."); return; }
-            if (!gd.altaAdmin(nombre, apellidos, correo, pass)) {
-                lblError.setText("El correo ya existe."); return;
-            }
+            if (!gd.altaAdmin(nombre, apellidos, correo, pass)) 
+            {lblError.setText("El correo ya existe."); return;}
             DialogUtil.info("Administrador creado correctamente.");
         } else {
             adminEnEdicion.setNombre(nombre);

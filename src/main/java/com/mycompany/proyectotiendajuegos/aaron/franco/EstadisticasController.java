@@ -14,10 +14,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador de estadísticas (vista usuario).
- * Toda la estructura visual está declarada en estadisticas_usuario.fxml
- * (TabPane con 8 pestañas). Este controller solo enlaza datos a los
- * TableView inyectados — sin generación dinámica de nodos.
+ * FXML Controller class
+ *
+ * @author USUARIO
  */
 public class EstadisticasController implements Initializable {
 

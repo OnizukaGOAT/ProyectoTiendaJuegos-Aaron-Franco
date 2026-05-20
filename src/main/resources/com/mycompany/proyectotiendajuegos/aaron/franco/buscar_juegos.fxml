@@ -8,6 +8,7 @@
             fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.BuscarJuegosController"
             styleClass="main-pane">
 
+    <!-- ══ CABECERA ══════════════════════════════════════════ -->
     <top>
         <VBox styleClass="header-bar" spacing="10">
             <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
@@ -17,26 +18,95 @@
                            styleClass="text-field" prefWidth="320"
                            onAction="#buscar"/>
                 <ComboBox fx:id="cbTipo" styleClass="combo-box" prefWidth="130"/>
-                <Button text="🔍 Buscar"  styleClass="btn-primary"   onAction="#buscar"/>
-                <Button text="✕ Limpiar" styleClass="btn-secondary"  onAction="#limpiar"/>
+                <Button text="🔍 Buscar"   styleClass="btn-primary"   onAction="#buscar"/>
+                <Button text="✕ Limpiar"   styleClass="btn-secondary" onAction="#limpiar"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="lblResultados" styleClass="label-muted"/>
+                <Button fx:id="btnCerrar" text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
             </HBox>
         </VBox>
     </top>
 
+    <!-- ══ CONTENIDO CENTRAL ═════════════════════════════════ -->
     <center>
-        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-            <VBox fx:id="vboxJuegos" spacing="10">
-                <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+        <HBox spacing="15" styleClass="content-area">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <!-- Tabla de resultados -->
+            <TableView fx:id="tablaJuegos" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"
+                       styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colTitulo"     text="Título"      prefWidth="200"/>
+                    <TableColumn fx:id="colGenero"     text="Género"      prefWidth="110"/>
+                    <TableColumn fx:id="colPlataforma" text="Plataforma"  prefWidth="120"/>
+                    <TableColumn fx:id="colDirector"   text="Director"    prefWidth="120"/>
+                    <TableColumn fx:id="colMedia"      text="⭐ Media"    prefWidth="80"/>
+                    <TableColumn fx:id="colPrecio"     text="Precio"      prefWidth="80"/>
+                    <TableColumn fx:id="colStock"      text="Stock"       prefWidth="65"/>
+                </columns>
+                <placeholder>
+                    <Label text="No se encontraron juegos." styleClass="label-muted"/>
+                </placeholder>
+            </TableView>
+
+            <!-- Panel lateral de detalle y acción -->
+            <VBox spacing="12" prefWidth="270" minWidth="240">
+
+                <!-- Detalle del juego seleccionado -->
+                <VBox fx:id="panelDetalle" styleClass="card" spacing="8"
+                      visible="false" managed="false">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="📋 Detalle" styleClass="label-section"/>
+                    <HBox spacing="8">
+                        <Label text="Título:"     styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetTitulo" styleClass="label-normal" wrapText="true"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Género:"     styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetGenero" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Plataforma:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetPlat"  styleClass="label-normal" wrapText="true"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Director:"   styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetDirector" styleClass="label-normal" wrapText="true"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Valoración:" styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetMedia" styleClass="label-gold"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Precio:"     styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetPrecio" styleClass="price-badge"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Stock:"      styleClass="label-muted" minWidth="80"/>
+                        <Label fx:id="lblDetStock" styleClass="label-normal"/>
+                    </HBox>
+                    <Separator/>
+                    <Label fx:id="lblEnBiblioteca" text="✅ En biblioteca"
+                           styleClass="stock-ok" visible="false" managed="false"/>
+                    <Button fx:id="btnComprar" text="🛒 Comprar"
+                            styleClass="btn-primary" maxWidth="Infinity"
+                            onAction="#comprarSeleccionado"/>
+                    <Button fx:id="btnVerResenas" text="💬 Ver reseñas"
+                            styleClass="btn-secondary" maxWidth="Infinity"
+                            onAction="#verResenasSeleccionado"/>
+                </VBox>
+
+                <!-- Placeholder cuando no hay nada seleccionado -->
+                <VBox fx:id="panelVacio" styleClass="card" spacing="8" alignment="CENTER">
+                    <padding><Insets top="30" right="14" bottom="30" left="14"/></padding>
+                    <Label text="👈 Selecciona un juego" styleClass="label-muted"
+                           wrapText="true"/>
+                    <Label text="Haz clic sobre cualquier fila para ver detalles y opciones."
+                           styleClass="label-muted" wrapText="true"/>
+                </VBox>
+
             </VBox>
-        </ScrollPane>
+        </HBox>
     </center>
 
-    <bottom>
-        <HBox alignment="CENTER_RIGHT" styleClass="header-bar">
-            <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
-            <Button fx:id="btnCerrar" text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
-        </HBox>
-    </bottom>
 </BorderPane>

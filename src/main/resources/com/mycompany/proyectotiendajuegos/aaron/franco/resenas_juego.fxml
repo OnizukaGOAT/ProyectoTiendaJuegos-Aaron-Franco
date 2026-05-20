@@ -8,26 +8,89 @@
             fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.ResenasJuegoController"
             styleClass="main-pane">
 
+    <!-- ══ CABECERA ══════════════════════════════════════════ -->
     <top>
         <VBox styleClass="header-bar" spacing="4">
             <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
             <Label fx:id="lblTituloJuego" text="Reseñas del juego" styleClass="header-title"/>
-            <Label fx:id="lblMedia" styleClass="label-gold"/>
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label fx:id="lblMedia" styleClass="label-gold"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Idioma:" styleClass="label-muted"/>
+                <ComboBox fx:id="cbFiltroIdioma" promptText="Todos los idiomas"
+                          styleClass="combo-box" prefWidth="175"
+                          onAction="#filtrarPorIdioma"/>
+                <Button text="Mostrar todas" styleClass="btn-secondary"
+                        onAction="#mostrarTodas"/>
+            </HBox>
         </VBox>
     </top>
 
+    <!-- ══ CONTENIDO CENTRAL ═════════════════════════════════ -->
     <center>
-        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-            <VBox fx:id="vboxResenas" spacing="10">
-                <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+        <HBox spacing="15" styleClass="content-area">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <!-- Tabla de reseñas -->
+            <TableView fx:id="tablaResenas" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"
+                       styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colAutor"  text="Usuario"    prefWidth="170"/>
+                    <TableColumn fx:id="colPunt"   text="⭐"          prefWidth="55"/>
+                    <TableColumn fx:id="colIdioma" text="Idioma"     prefWidth="100"/>
+                    <TableColumn fx:id="colFecha"  text="Fecha"      prefWidth="100"/>
+                    <TableColumn fx:id="colCom"    text="Comentario" prefWidth="320"/>
+                </columns>
+                <placeholder>
+                    <Label text="Nadie ha reseñado este juego aún." styleClass="label-muted"/>
+                </placeholder>
+            </TableView>
+
+            <!-- Panel lateral: resumen de la reseña seleccionada -->
+            <VBox spacing="12" prefWidth="250" minWidth="220">
+
+                <VBox fx:id="panelResena" styleClass="card" spacing="10"
+                      visible="false" managed="false">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="💬 Reseña" styleClass="label-section"/>
+                    <HBox spacing="8">
+                        <Label text="Usuario:"    styleClass="label-muted" minWidth="75"/>
+                        <Label fx:id="lblResAutor" styleClass="label-normal" wrapText="true"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Puntuación:" styleClass="label-muted" minWidth="75"/>
+                        <Label fx:id="lblResPunt"  styleClass="label-gold"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Idioma:"     styleClass="label-muted" minWidth="75"/>
+                        <Label fx:id="lblResIdioma" styleClass="label-normal"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Fecha:"      styleClass="label-muted" minWidth="75"/>
+                        <Label fx:id="lblResFecha" styleClass="label-normal"/>
+                    </HBox>
+                    <Separator/>
+                    <Label text="Comentario:" styleClass="label-muted"/>
+                    <Label fx:id="lblResCom" styleClass="label-normal"
+                           wrapText="true"/>
+                </VBox>
+
+                <VBox fx:id="panelVacio" styleClass="card" spacing="8" alignment="CENTER">
+                    <padding><Insets top="30" right="14" bottom="30" left="14"/></padding>
+                    <Label text="👈 Selecciona una reseña para leer el comentario completo."
+                           styleClass="label-muted" wrapText="true"/>
+                </VBox>
+
             </VBox>
-        </ScrollPane>
+        </HBox>
     </center>
 
+    <!-- ══ PIE ════════════════════════════════════════════════ -->
     <bottom>
         <HBox alignment="CENTER_RIGHT" styleClass="header-bar">
             <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
             <Button fx:id="btnCerrar" text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
         </HBox>
     </bottom>
+
 </BorderPane>

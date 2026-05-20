@@ -1,12 +1,11 @@
 package com.mycompany.proyectotiendajuegos.aaron.franco;
 
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.*;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -14,83 +13,111 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * FXML Controller class
- *
- * @author USUARIO
+ * Controlador de la biblioteca del usuario.
+ * Toda la estructura visual está declarada en biblioteca_usuario.fxml;
+ * este controller únicamente enlaza datos y reacciona a eventos.
  */
 public class BibliotecaController implements Initializable {
 
-    @FXML private VBox  vboxJuegos;
+    /* ── Cabecera ─────────────────────────────────────────── */
     @FXML private Label lblContador;
+
+    /* ── Tabla ────────────────────────────────────────────── */
+    @FXML private TableView<Juego>          tablaJuegos;
+    @FXML private TableColumn<Juego,String> colTitulo;
+    @FXML private TableColumn<Juego,String> colGenero;
+    @FXML private TableColumn<Juego,String> colPlataforma;
+    @FXML private TableColumn<Juego,String> colDirector;
+    @FXML private TableColumn<Juego,String> colMedia;
+
+    /* ── Panel de detalle lateral ────────────────────────── */
+    @FXML private javafx.scene.layout.VBox panelDetalle;
+    @FXML private javafx.scene.layout.VBox panelVacio;
+    @FXML private Label  lblDetTitulo;
+    @FXML private Label  lblDetGenero;
+    @FXML private Label  lblDetPlat;
+    @FXML private Label  lblDetDirector;
+    @FXML private Label  lblDetMedia;
+    @FXML private Button btnVerResenas;
+    @FXML private Button btnResenar;
 
     private final GestorDatos gd = GestorDatos.getInstance();
 
+    // ── Inicialización ────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        configurarColumnas();
+
+        tablaJuegos.getSelectionModel().selectedItemProperty()
+                .addListener((obs, ant, nuevo) -> mostrarDetalle(nuevo));
+
         cargar();
     }
 
-    private void cargar() {
-        List<Juego> biblioteca = gd.getBibliotecaUsuario(gd.getUsuarioActual().getIdUsuario());
-        vboxJuegos.getChildren().clear();
-        lblContador.setText(biblioteca.size() + " juego(s) en tu biblioteca");
-
-        if (biblioteca.isEmpty()) {
-            Label lbl = new Label("No tienes juegos en tu biblioteca todavía.\nVisita el catálogo para comprar.");
-            lbl.getStyleClass().add("label-muted");
-            lbl.setWrapText(true);
-            vboxJuegos.getChildren().add(lbl);
-            return;
-        }
-
-        for (Juego j : biblioteca) vboxJuegos.getChildren().add(buildTarjeta(j));
+    private void configurarColumnas() {
+        colTitulo.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getTitulo()));
+        colGenero.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getGenero()));
+        colPlataforma.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getPlataforma()));
+        colDirector.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getDirector()));
+        colMedia.setCellValueFactory(c -> {
+            double m = gd.getPuntuacionMediaJuego(c.getValue().getIdJuego());
+            return new SimpleStringProperty(m > 0 ? String.format("%.1f", m) : "–");
+        });
     }
 
-    private HBox buildTarjeta(Juego j) {
-        HBox tarjeta = new HBox(15);
-        tarjeta.getStyleClass().add("card");
-        tarjeta.setAlignment(Pos.CENTER_LEFT);
-        tarjeta.setPadding(new Insets(12));
+    // ── Carga ─────────────────────────────────────────────
+    private void cargar() {
+        List<Juego> biblioteca = gd.getBibliotecaUsuario(
+                gd.getUsuarioActual().getIdUsuario());
+        tablaJuegos.setItems(FXCollections.observableArrayList(biblioteca));
+        lblContador.setText(biblioteca.size() + " juego(s) en tu biblioteca");
+        ocultarDetalle();
+    }
 
-        VBox info = new VBox(4);
-        HBox.setHgrow(info, Priority.ALWAYS);
+    // ── Panel de detalle ──────────────────────────────────
+    private void mostrarDetalle(Juego j) {
+        if (j == null) { ocultarDetalle(); return; }
 
-        Label lblTitulo = new Label(j.getTitulo());
-        lblTitulo.getStyleClass().add("label-section");
+        lblDetTitulo.setText(j.getTitulo());
+        lblDetGenero.setText(j.getGenero());
+        lblDetPlat.setText(j.getPlataforma());
+        lblDetDirector.setText(j.getDirector());
+        double m = gd.getPuntuacionMediaJuego(j.getIdJuego());
+        lblDetMedia.setText(m > 0 ? String.format("⭐ %.1f/10", m) : "Sin valoraciones");
 
-        Label lblMeta = new Label("🎮 " + j.getPlataforma()
-                + "  |  📂 " + j.getGenero()
-                + "  |  🎬 " + j.getDirector());
-        lblMeta.getStyleClass().add("label-muted");
+        panelDetalle.setVisible(true);
+        panelDetalle.setManaged(true);
+        panelVacio.setVisible(false);
+        panelVacio.setManaged(false);
+    }
 
-        double media = gd.getPuntuacionMediaJuego(j.getIdJuego());
-        Label lblMedia = new Label(media > 0
-                ? String.format("⭐ %.1f/10", media) : "Sin valoraciones");
-        lblMedia.getStyleClass().add("label-normal");
+    private void ocultarDetalle() {
+        panelDetalle.setVisible(false);
+        panelDetalle.setManaged(false);
+        panelVacio.setVisible(true);
+        panelVacio.setManaged(true);
+    }
 
-        info.getChildren().addAll(lblTitulo, lblMeta, lblMedia);
+    // ── Acciones ──────────────────────────────────────────
+    @FXML
+    public void verResenasSeleccionado() {
+        Juego j = tablaJuegos.getSelectionModel().getSelectedItem();
+        if (j == null) return;
+        VentanaUtil.abrirVentanaConDato("resenas_juego",
+                "Reseñas – " + j.getTitulo(), 850, 580, j);
+    }
 
-        VBox panelAccion = new VBox(6);
-        panelAccion.setAlignment(Pos.CENTER);
-
-        Button btnVerResenas = new Button("Ver reseñas");
-        btnVerResenas.getStyleClass().add("btn-secondary");
-        btnVerResenas.setOnAction(e ->
-                VentanaUtil.abrirVentanaConDato("resenas_juego",
-                        "Reseñas – " + j.getTitulo(), 750, 550, j));
-
-        Button btnResenar = new Button("✍ Reseñar");
-        btnResenar.getStyleClass().add("btn-gold");
-        btnResenar.setOnAction(e ->
-                VentanaUtil.abrirVentana("mis_resenas_usuario", "Mis Reseñas", 900, 650));
-
-        panelAccion.getChildren().addAll(btnVerResenas, btnResenar);
-        tarjeta.getChildren().addAll(info, panelAccion);
-        return tarjeta;
+    @FXML
+    public void resenarSeleccionado() {
+        VentanaUtil.abrirVentana("mis_resenas_usuario", "Mis Reseñas", 900, 650);
     }
 
     @FXML
     public void cerrar() {
-        ((Stage) vboxJuegos.getScene().getWindow()).close();
+        ((Stage) tablaJuegos.getScene().getWindow()).close();
     }
 }

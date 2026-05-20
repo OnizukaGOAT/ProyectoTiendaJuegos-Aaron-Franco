@@ -8,41 +8,260 @@
             fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.EstadisticasAdminController"
             styleClass="main-pane">
 
+    <!-- ══ CABECERA ══════════════════════════════════════════ -->
     <top>
         <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
             <Label text="📊 Estadísticas y Consultas" styleClass="header-title"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="lblSeccion" styleClass="header-subtitle" text=""/>
             <Button text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
         </HBox>
     </top>
 
-    <left>
-        <ScrollPane fitToWidth="true" styleClass="scroll-pane" prefWidth="210">
-            <VBox styleClass="side-panel" spacing="5">
-                <Label text="VENTAS" styleClass="label-muted"/>
-                <Button text="📊 Ventas por Juego"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarVentas"/>
-                <Button text="🔥 Más Vendidos"      styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarMasVendidos"/>
-
-                <Label text="VALORACIONES" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
-                <Button text="⭐ Mejor Valorados"   styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarMejorValorados"/>
-
-                <Label text="RESEÑAS" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
-                <Button text="💬 Reseñas / Idioma"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarResenasPorIdioma"/>
-                <Button text="🎮 Reseñas / Juego"   styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarResenasPorJuego"/>
-                <Button text="✍ Reseñas / Usuario"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarResenasPorUsuario"/>
-
-                <Label text="USUARIOS" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
-                <Button text="🛒 Juegos / Usuario"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarJuegosPorUsuario"/>
-
-                <Label text="ESTUDIOS" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
-                <Button text="🏢 Por Estudio"       styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarEstadisticasPorEstudio"/>
-            </VBox>
-        </ScrollPane>
-    </left>
-
+    <!-- ══ CONTENIDO: TabPane completo en FXML ═══════════════ -->
     <center>
-        <StackPane fx:id="contentPane" styleClass="content-area"/>
+        <TabPane fx:id="tabPane" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+            <!-- ── Pestaña 1: Ventas por juego ────────────── -->
+            <Tab text="📊 Ventas" fx:id="tabVentas">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Ventas por Juego" styleClass="label-section"/>
+                    <TableView fx:id="tablaVentas" VBox.vgrow="ALWAYS" styleClass="table-view">
+                        <columns>
+                            <TableColumn fx:id="colVTitulo"   text="Juego"    prefWidth="230"/>
+                            <TableColumn fx:id="colVVentas"   text="Ventas"   prefWidth="80"/>
+                            <TableColumn fx:id="colVIngresos" text="Ingresos" prefWidth="110"/>
+                            <TableColumn fx:id="colVBarra"    text="Relativo" prefWidth="220"/>
+                        </columns>
+                        <placeholder><Label text="No hay datos de ventas." styleClass="label-muted"/></placeholder>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- ── Pestaña 2: Más vendidos ────────────────── -->
+            <Tab text="🔥 Más Vendidos" fx:id="tabMasVendidos">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Ranking – Juegos Más Vendidos" styleClass="label-section"/>
+                    <TableView fx:id="tablaMasVendidos" VBox.vgrow="ALWAYS" styleClass="table-view">
+                        <columns>
+                            <TableColumn fx:id="colMVPos"      text="#"        prefWidth="45"/>
+                            <TableColumn fx:id="colMVTitulo"   text="Juego"    prefWidth="230"/>
+                            <TableColumn fx:id="colMVVentas"   text="Uds"      prefWidth="70"/>
+                            <TableColumn fx:id="colMVIngresos" text="Ingresos" prefWidth="110"/>
+                        </columns>
+                        <placeholder><Label text="Sin ventas registradas." styleClass="label-muted"/></placeholder>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- ── Pestaña 3: Mejor valorados ─────────────── -->
+            <Tab text="⭐ Mejor Valorados" fx:id="tabMejorVal">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Ranking – Juegos Mejor Valorados" styleClass="label-section"/>
+                    <TableView fx:id="tablaMejorVal" VBox.vgrow="ALWAYS" styleClass="table-view">
+                        <columns>
+                            <TableColumn fx:id="colBVPos"     text="#"        prefWidth="45"/>
+                            <TableColumn fx:id="colBVTitulo"  text="Juego"    prefWidth="210"/>
+                            <TableColumn fx:id="colBVMedia"   text="⭐ Media" prefWidth="90"/>
+                            <TableColumn fx:id="colBVResenas" text="Reseñas"  prefWidth="80"/>
+                            <TableColumn fx:id="colBVDir"     text="Director" prefWidth="150"/>
+                        </columns>
+                        <placeholder><Label text="Sin valoraciones todavía." styleClass="label-muted"/></placeholder>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- ── Pestaña 4: Reseñas por juego ───────────── -->
+            <Tab text="🎮 Reseñas/Juego" fx:id="tabResJuego">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Reseñas por Juego" styleClass="label-section"/>
+                    <HBox spacing="15" VBox.vgrow="ALWAYS">
+                        <!-- Tabla de juegos con reseñas -->
+                        <TableView fx:id="tablaResJuego" prefWidth="360" VBox.vgrow="ALWAYS"
+                                   styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colRJTitulo"  text="Juego"    prefWidth="200"/>
+                                <TableColumn fx:id="colRJMedia"   text="⭐ Media" prefWidth="80"/>
+                                <TableColumn fx:id="colRJTotal"   text="Total"    prefWidth="60"/>
+                            </columns>
+                            <placeholder><Label text="Sin reseñas." styleClass="label-muted"/></placeholder>
+                        </TableView>
+                        <!-- Tabla de reseñas del juego seleccionado -->
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblResJuegoSel" text="Selecciona un juego"
+                                   styleClass="label-muted"/>
+                            <TableView fx:id="tablaResDetJuego" VBox.vgrow="ALWAYS"
+                                       styleClass="table-view">
+                                <columns>
+                                    <TableColumn fx:id="colRJDAutor"  text="Usuario"    prefWidth="150"/>
+                                    <TableColumn fx:id="colRJDPunt"   text="⭐"          prefWidth="55"/>
+                                    <TableColumn fx:id="colRJDIdioma" text="Idioma"     prefWidth="90"/>
+                                    <TableColumn fx:id="colRJDCom"    text="Comentario" prefWidth="230"/>
+                                </columns>
+                                <placeholder><Label text="Selecciona un juego a la izquierda."
+                                                    styleClass="label-muted" wrapText="true"/></placeholder>
+                            </TableView>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ── Pestaña 5: Reseñas por usuario ─────────── -->
+            <Tab text="✍ Reseñas/Usuario" fx:id="tabResUsuario">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Reseñas por Usuario" styleClass="label-section"/>
+                    <HBox spacing="15" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tablaResUsuario" prefWidth="280" VBox.vgrow="ALWAYS"
+                                   styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colRUNombre" text="Usuario" prefWidth="180"/>
+                                <TableColumn fx:id="colRUTotal"  text="Total"   prefWidth="65"/>
+                            </columns>
+                            <placeholder><Label text="Sin reseñas." styleClass="label-muted"/></placeholder>
+                        </TableView>
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblResUsuarioSel" text="Selecciona un usuario"
+                                   styleClass="label-muted"/>
+                            <TableView fx:id="tablaResDetUsuario" VBox.vgrow="ALWAYS"
+                                       styleClass="table-view">
+                                <columns>
+                                    <TableColumn fx:id="colRUDJuego" text="Juego"      prefWidth="170"/>
+                                    <TableColumn fx:id="colRUDPunt"  text="⭐"          prefWidth="55"/>
+                                    <TableColumn fx:id="colRUDIdioma" text="Idioma"    prefWidth="90"/>
+                                    <TableColumn fx:id="colRUDCom"   text="Comentario" prefWidth="210"/>
+                                </columns>
+                                <placeholder><Label text="Selecciona un usuario a la izquierda."
+                                                    styleClass="label-muted" wrapText="true"/></placeholder>
+                            </TableView>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ── Pestaña 6: Reseñas por idioma ──────────── -->
+            <Tab text="🌐 Reseñas/Idioma" fx:id="tabResIdioma">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Reseñas por Idioma" styleClass="label-section"/>
+                    <HBox spacing="15" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tablaResIdioma" prefWidth="220" VBox.vgrow="ALWAYS"
+                                   styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colRIIdioma" text="Idioma" prefWidth="130"/>
+                                <TableColumn fx:id="colRITotal"  text="Total"  prefWidth="65"/>
+                            </columns>
+                            <placeholder><Label text="Sin reseñas." styleClass="label-muted"/></placeholder>
+                        </TableView>
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblResIdiomaSel" text="Selecciona un idioma"
+                                   styleClass="label-muted"/>
+                            <TableView fx:id="tablaResDetIdioma" VBox.vgrow="ALWAYS"
+                                       styleClass="table-view">
+                                <columns>
+                                    <TableColumn fx:id="colRIDJuego"  text="Juego"    prefWidth="160"/>
+                                    <TableColumn fx:id="colRIDAutor"  text="Usuario"  prefWidth="140"/>
+                                    <TableColumn fx:id="colRIDPunt"   text="⭐"        prefWidth="55"/>
+                                    <TableColumn fx:id="colRIDCom"    text="Comentario" prefWidth="190"/>
+                                </columns>
+                                <placeholder><Label text="Selecciona un idioma a la izquierda."
+                                                    styleClass="label-muted" wrapText="true"/></placeholder>
+                            </TableView>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ── Pestaña 7: Juegos por usuario ──────────── -->
+            <Tab text="🛒 Juegos/Usuario" fx:id="tabJuegosUsuario">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Juegos Comprados por Usuario" styleClass="label-section"/>
+                    <HBox spacing="15" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tablaJuegosUsuario" prefWidth="280" VBox.vgrow="ALWAYS"
+                                   styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colJUNombre" text="Usuario" prefWidth="180"/>
+                                <TableColumn fx:id="colJUTotal"  text="Juegos"  prefWidth="70"/>
+                            </columns>
+                            <placeholder><Label text="Sin usuarios." styleClass="label-muted"/></placeholder>
+                        </TableView>
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblJuegosUsuarioSel" text="Selecciona un usuario"
+                                   styleClass="label-muted"/>
+                            <TableView fx:id="tablaJuegosDetUsuario" VBox.vgrow="ALWAYS"
+                                       styleClass="table-view">
+                                <columns>
+                                    <TableColumn fx:id="colJUDTitulo"  text="Juego"      prefWidth="200"/>
+                                    <TableColumn fx:id="colJUDGenero"  text="Género"     prefWidth="110"/>
+                                    <TableColumn fx:id="colJUDPlat"    text="Plataforma" prefWidth="130"/>
+                                </columns>
+                                <placeholder><Label text="Selecciona un usuario a la izquierda."
+                                                    styleClass="label-muted" wrapText="true"/></placeholder>
+                            </TableView>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ── Pestaña 8: Estadísticas por estudio ─────── -->
+            <Tab text="🏢 Por Estudio" fx:id="tabEstudio">
+                <VBox spacing="12" styleClass="content-area">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Estadísticas por Estudio" styleClass="label-section"/>
+                    <HBox spacing="15" VBox.vgrow="ALWAYS">
+                        <!-- Lista de estudios -->
+                        <TableView fx:id="tablaEstudios" prefWidth="220" VBox.vgrow="ALWAYS"
+                                   styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colEstNombre" text="Estudio" prefWidth="200"/>
+                            </columns>
+                            <placeholder><Label text="Sin estudios." styleClass="label-muted"/></placeholder>
+                        </TableView>
+                        <!-- Detalle del estudio seleccionado -->
+                        <VBox fx:id="panelEstudioDetalle" spacing="12" HBox.hgrow="ALWAYS"
+                              visible="false" managed="false">
+                            <Label fx:id="lblEstudioNombre" styleClass="label-section"/>
+                            <!-- Mejor valorado y más vendido -->
+                            <VBox styleClass="card" spacing="6">
+                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                                <HBox spacing="10">
+                                    <Label text="⭐ Mejor valorado:" styleClass="label-muted" minWidth="140"/>
+                                    <Label fx:id="lblEstMejorVal" styleClass="label-gold" wrapText="true"/>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="🔥 Más vendido:"    styleClass="label-muted" minWidth="140"/>
+                                    <Label fx:id="lblEstMasVend"    styleClass="label-normal" wrapText="true"/>
+                                </HBox>
+                            </VBox>
+                            <!-- Tabla de desarrolladores del estudio -->
+                            <Label text="👨‍💻 Desarrolladores" styleClass="label-section"/>
+                            <TableView fx:id="tablaDevEstudio" VBox.vgrow="ALWAYS"
+                                       styleClass="table-view">
+                                <columns>
+                                    <TableColumn fx:id="colDevNombre"   text="Nombre"       prefWidth="160"/>
+                                    <TableColumn fx:id="colDevPuesto"   text="Puesto"       prefWidth="130"/>
+                                    <TableColumn fx:id="colDevMejorVal" text="⭐ Mejor val." prefWidth="150"/>
+                                    <TableColumn fx:id="colDevMasVend"  text="🔥 Más vendido" prefWidth="150"/>
+                                </columns>
+                                <placeholder><Label text="Sin desarrolladores." styleClass="label-muted"/></placeholder>
+                            </TableView>
+                        </VBox>
+                        <VBox fx:id="panelEstudioVacio" styleClass="card" spacing="8"
+                              alignment="CENTER" prefWidth="400">
+                            <padding><Insets top="30" right="14" bottom="30" left="14"/></padding>
+                            <Label text="👈 Selecciona un estudio para ver sus estadísticas."
+                                   styleClass="label-muted" wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+        </TabPane>
     </center>
 
 </BorderPane>

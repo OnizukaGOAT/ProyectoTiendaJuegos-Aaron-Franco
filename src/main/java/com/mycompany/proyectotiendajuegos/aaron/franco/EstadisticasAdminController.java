@@ -1,282 +1,385 @@
 package com.mycompany.proyectotiendajuegos.aaron.franco;
 
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.*;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Supplier;
 
 /**
- * FXML Controller class
- *
- * @author USUARIO
+ * Controlador de estadísticas (admin y usuario compartido).
+ * Toda la estructura visual está declarada en estadisticas_admin.fxml (TabPane
+ * con 8 pestañas). Este controller solo enlaza datos a los TableView inyectados.
  */
 public class EstadisticasAdminController implements Initializable {
 
-    @FXML private StackPane contentPane;
-    @FXML private Label     lblSeccion;
+    // ── Pestaña 1: Ventas ─────────────────────────────────
+    @FXML private TableView<Juego>          tablaVentas;
+    @FXML private TableColumn<Juego,String> colVTitulo;
+    @FXML private TableColumn<Juego,String> colVVentas;
+    @FXML private TableColumn<Juego,String> colVIngresos;
+    @FXML private TableColumn<Juego,String> colVBarra;
+
+    // ── Pestaña 2: Más vendidos ───────────────────────────
+    @FXML private TableView<Juego>          tablaMasVendidos;
+    @FXML private TableColumn<Juego,String> colMVPos;
+    @FXML private TableColumn<Juego,String> colMVTitulo;
+    @FXML private TableColumn<Juego,String> colMVVentas;
+    @FXML private TableColumn<Juego,String> colMVIngresos;
+
+    // ── Pestaña 3: Mejor valorados ────────────────────────
+    @FXML private TableView<Juego>          tablaMejorVal;
+    @FXML private TableColumn<Juego,String> colBVPos;
+    @FXML private TableColumn<Juego,String> colBVTitulo;
+    @FXML private TableColumn<Juego,String> colBVMedia;
+    @FXML private TableColumn<Juego,String> colBVResenas;
+    @FXML private TableColumn<Juego,String> colBVDir;
+
+    // ── Pestaña 4: Reseñas / Juego ────────────────────────
+    @FXML private TableView<Juego>          tablaResJuego;
+    @FXML private TableColumn<Juego,String> colRJTitulo;
+    @FXML private TableColumn<Juego,String> colRJMedia;
+    @FXML private TableColumn<Juego,String> colRJTotal;
+    @FXML private Label                     lblResJuegoSel;
+    @FXML private TableView<Resena>          tablaResDetJuego;
+    @FXML private TableColumn<Resena,String> colRJDAutor;
+    @FXML private TableColumn<Resena,String> colRJDPunt;
+    @FXML private TableColumn<Resena,String> colRJDIdioma;
+    @FXML private TableColumn<Resena,String> colRJDCom;
+
+    // ── Pestaña 5: Reseñas / Usuario ─────────────────────
+    @FXML private TableView<Usuario>          tablaResUsuario;
+    @FXML private TableColumn<Usuario,String> colRUNombre;
+    @FXML private TableColumn<Usuario,String> colRUTotal;
+    @FXML private Label                       lblResUsuarioSel;
+    @FXML private TableView<Resena>           tablaResDetUsuario;
+    @FXML private TableColumn<Resena,String>  colRUDJuego;
+    @FXML private TableColumn<Resena,String>  colRUDPunt;
+    @FXML private TableColumn<Resena,String>  colRUDIdioma;
+    @FXML private TableColumn<Resena,String>  colRUDCom;
+
+    // ── Pestaña 6: Reseñas / Idioma ──────────────────────
+    private static final String[] IDIOMAS =
+            {"Español","English","Français","Deutsch","Português","Italiano"};
+    @FXML private TableView<String>          tablaResIdioma;
+    @FXML private TableColumn<String,String> colRIIdioma;
+    @FXML private TableColumn<String,String> colRITotal;
+    @FXML private Label                      lblResIdiomaSel;
+    @FXML private TableView<Resena>          tablaResDetIdioma;
+    @FXML private TableColumn<Resena,String> colRIDJuego;
+    @FXML private TableColumn<Resena,String> colRIDAutor;
+    @FXML private TableColumn<Resena,String> colRIDPunt;
+    @FXML private TableColumn<Resena,String> colRIDCom;
+
+    // ── Pestaña 7: Juegos / Usuario ───────────────────────
+    @FXML private TableView<Usuario>          tablaJuegosUsuario;
+    @FXML private TableColumn<Usuario,String> colJUNombre;
+    @FXML private TableColumn<Usuario,String> colJUTotal;
+    @FXML private Label                       lblJuegosUsuarioSel;
+    @FXML private TableView<Juego>            tablaJuegosDetUsuario;
+    @FXML private TableColumn<Juego,String>   colJUDTitulo;
+    @FXML private TableColumn<Juego,String>   colJUDGenero;
+    @FXML private TableColumn<Juego,String>   colJUDPlat;
+
+    // ── Pestaña 8: Por Estudio ────────────────────────────
+    @FXML private TableView<Estudio>             tablaEstudios;
+    @FXML private TableColumn<Estudio,String>    colEstNombre;
+    @FXML private VBox                           panelEstudioDetalle;
+    @FXML private VBox                           panelEstudioVacio;
+    @FXML private Label                          lblEstudioNombre;
+    @FXML private Label                          lblEstMejorVal;
+    @FXML private Label                          lblEstMasVend;
+    @FXML private TableView<Desarrollador>          tablaDevEstudio;
+    @FXML private TableColumn<Desarrollador,String> colDevNombre;
+    @FXML private TableColumn<Desarrollador,String> colDevPuesto;
+    @FXML private TableColumn<Desarrollador,String> colDevMejorVal;
+    @FXML private TableColumn<Desarrollador,String> colDevMasVend;
 
     private final GestorDatos gd = GestorDatos.getInstance();
 
+    // ── Inicialización ────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        mostrarVentas();
+        inicializarVentas();
+        inicializarMasVendidos();
+        inicializarMejorValorados();
+        inicializarResJuego();
+        inicializarResUsuario();
+        inicializarResIdioma();
+        inicializarJuegosUsuario();
+        inicializarEstudios();
     }
 
-    private void setContent(Node nodo) { contentPane.getChildren().setAll(nodo); }
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 1 – VENTAS
+    // ══════════════════════════════════════════════════════
+    private void inicializarVentas() {
+        List<Juego> juegos = gd.getJuegos();
+        int maxV = juegos.stream().mapToInt(gd::getVentasJuego).max().orElse(1);
 
-    @FXML public void mostrarVentas() {
-        lblSeccion.setText("📊 Ventas por Juego");
-        VBox raiz = new VBox(12); raiz.setPadding(new Insets(10));
+        colVTitulo.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getTitulo()));
+        colVVentas.setCellValueFactory(c ->
+                new SimpleStringProperty(String.valueOf(gd.getVentasJuego(c.getValue()))));
+        colVIngresos.setCellValueFactory(c -> {
+            int v = gd.getVentasJuego(c.getValue());
+            return new SimpleStringProperty(String.format("%.2f€", v * c.getValue().getPrecio()));
+        });
+        // Barra textual proporcional (caracteres █)
+        colVBarra.setCellValueFactory(c -> {
+            int v = gd.getVentasJuego(c.getValue());
+            int barras = maxV > 0 ? (int) Math.round(20.0 * v / maxV) : 0;
+            return new SimpleStringProperty("█".repeat(barras));
+        });
+        colVBarra.setStyle("-fx-text-fill:#e94560;");
 
-        int maxVentas = gd.getJuegos().stream().mapToInt(gd::getVentasJuego).max().orElse(1);
-        for (Juego j : gd.getJuegos()) {
-            int ventas = gd.getVentasJuego(j);
-            HBox fila = new HBox(15); fila.getStyleClass().add("card");
-            fila.setAlignment(Pos.CENTER_LEFT); fila.setPadding(new Insets(8));
-            VBox info = new VBox(3); HBox.setHgrow(info, Priority.ALWAYS);
-            Label lblT = new Label(j.getTitulo()); lblT.getStyleClass().add("label-section");
-            Label lblV = new Label("Ventas: " + ventas + "  |  Ingresos: " + String.format("%.2f€", ventas * j.getPrecio()));
-            lblV.getStyleClass().add("label-normal");
-            info.getChildren().addAll(lblT, lblV);
-            double pct = maxVentas > 0 ? (double) ventas / maxVentas : 0;
-            Region fill = new Region();
-            fill.setStyle("-fx-background-color:#e94560; -fx-background-radius:4;");
-            fill.setPrefWidth(200 * pct); fill.setPrefHeight(10);
-            HBox barra = new HBox(fill);
-            barra.setMinWidth(200);
-            barra.setStyle("-fx-background-color:#16213e; -fx-background-radius:4;");
-            barra.setAlignment(Pos.CENTER_LEFT);
-            fila.getChildren().addAll(info, barra);
-            raiz.getChildren().add(fila);
-        }
-        setContent(scroll(raiz));
+        tablaVentas.setItems(FXCollections.observableArrayList(juegos));
     }
 
-    @FXML public void mostrarMejorValorados() {
-        lblSeccion.setText("⭐ Juegos Mejor Valorados");
-        VBox raiz = new VBox(10); raiz.setPadding(new Insets(10));
-        int pos = 1;
-        for (Juego j : gd.getJuegosMejorValorados()) {
-            double media = gd.getPuntuacionMediaJuego(j.getIdJuego());
-            HBox fila = buildFilaRanking(pos++, j.getTitulo(),
-                String.format("⭐ %.1f/10  (%d reseñas)  |  Director: %s", media, gd.getResenasPorJuego(j).size(), j.getDirector()));
-            raiz.getChildren().add(fila);
-        }
-        if (raiz.getChildren().isEmpty())
-            raiz.getChildren().add(lbl("Sin valoraciones todavía."));
-        setContent(scroll(raiz));
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 2 – MÁS VENDIDOS
+    // ══════════════════════════════════════════════════════
+    private void inicializarMasVendidos() {
+        List<Juego> lista = gd.getJuegosMasVendidos();
+        final int[] pos = {1};
+        colMVPos.setCellValueFactory(c -> {
+            int idx = tablaMasVendidos.getItems().indexOf(c.getValue()) + 1;
+            return new SimpleStringProperty("#" + idx);
+        });
+        colMVTitulo.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getTitulo()));
+        colMVVentas.setCellValueFactory(c ->
+                new SimpleStringProperty(gd.getVentasJuego(c.getValue()) + " uds"));
+        colMVIngresos.setCellValueFactory(c -> {
+            int v = gd.getVentasJuego(c.getValue());
+            return new SimpleStringProperty(String.format("%.2f€", v * c.getValue().getPrecio()));
+        });
+        tablaMasVendidos.setItems(FXCollections.observableArrayList(lista));
     }
 
-    @FXML public void mostrarMasVendidos() {
-        lblSeccion.setText("🔥 Juegos Más Vendidos");
-        VBox raiz = new VBox(10); raiz.setPadding(new Insets(10));
-        int pos = 1;
-        for (Juego j : gd.getJuegosMasVendidos()) {
-            int ventas = gd.getVentasJuego(j);
-            HBox fila = buildFilaRanking(pos++, j.getTitulo(),
-                "🔥 " + ventas + " uds  |  "
-                + String.format("%.2f€ ingresos", ventas * j.getPrecio()));
-            raiz.getChildren().add(fila);
-        }
-        setContent(scroll(raiz));
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 3 – MEJOR VALORADOS
+    // ══════════════════════════════════════════════════════
+    private void inicializarMejorValorados() {
+        List<Juego> lista = gd.getJuegosMejorValorados();
+        colBVPos.setCellValueFactory(c -> {
+            int idx = tablaMejorVal.getItems().indexOf(c.getValue()) + 1;
+            return new SimpleStringProperty("#" + idx);
+        });
+        colBVTitulo.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getTitulo()));
+        colBVMedia.setCellValueFactory(c -> {
+            double m = gd.getPuntuacionMediaJuego(c.getValue().getIdJuego());
+            return new SimpleStringProperty(String.format("%.1f/10", m));
+        });
+        colBVResenas.setCellValueFactory(c ->
+                new SimpleStringProperty(
+                        String.valueOf(gd.getResenasPorJuego(c.getValue()).size())));
+        colBVDir.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getDirector()));
+        tablaMejorVal.setItems(FXCollections.observableArrayList(lista));
     }
 
-    @FXML public void mostrarResenasPorIdioma() {
-        lblSeccion.setText("💬 Reseñas por Idioma");
-        VBox raiz = new VBox(10); raiz.setPadding(new Insets(10));
-        String[] idiomas = {"Español","English","Français","Deutsch","Português","Italiano"};
-        boolean hay = false;
-        for (String idioma : idiomas) {
-            List<Resena> lista = gd.getResenasPorIdioma(idioma);
-            if (lista.isEmpty()) continue;
-            hay = true;
-            raiz.getChildren().add(acordeon("🌐 " + idioma + "  (" + lista.size() + " reseñas)", () -> {
-                VBox c = new VBox(4);
-                for (Resena r : lista) {
-                    Label l = new Label("• " + r.getJuego().getTitulo() + " – "
-                        + r.getAutor().getNombreCompleto() + "  ⭐" + r.getPuntuacion());
-                    l.getStyleClass().add("label-normal"); c.getChildren().add(l);
-                }
-                return c;
-            }));
-        }
-        if (!hay) raiz.getChildren().add(lbl("No hay reseñas registradas."));
-        setContent(scroll(raiz));
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 4 – RESEÑAS / JUEGO
+    // ══════════════════════════════════════════════════════
+    private void inicializarResJuego() {
+        // Tabla izquierda: juegos con al menos una reseña
+        List<Juego> juegosConResenas = gd.getJuegos().stream()
+                .filter(j -> !gd.getResenasPorJuego(j).isEmpty())
+                .collect(java.util.stream.Collectors.toList());
+
+        colRJTitulo.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getTitulo()));
+        colRJMedia.setCellValueFactory(c -> {
+            double m = gd.getPuntuacionMediaJuego(c.getValue().getIdJuego());
+            return new SimpleStringProperty(String.format("%.1f", m));
+        });
+        colRJTotal.setCellValueFactory(c ->
+                new SimpleStringProperty(
+                        String.valueOf(gd.getResenasPorJuego(c.getValue()).size())));
+        tablaResJuego.setItems(FXCollections.observableArrayList(juegosConResenas));
+
+        // Tabla derecha: reseñas del juego seleccionado
+        colRJDAutor.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getAutor().getNombreCompleto()));
+        colRJDPunt.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getPuntuacion() + "/10"));
+        colRJDIdioma.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getIdioma()));
+        colRJDCom.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getComentario()));
+
+        tablaResJuego.getSelectionModel().selectedItemProperty()
+                .addListener((obs, ant, j) -> {
+                    if (j == null) { tablaResDetJuego.getItems().clear(); return; }
+                    lblResJuegoSel.setText("Reseñas de: " + j.getTitulo());
+                    tablaResDetJuego.setItems(FXCollections.observableArrayList(
+                            gd.getResenasPorJuego(j)));
+                });
     }
 
-    @FXML public void mostrarResenasPorJuego() {
-        lblSeccion.setText("🎮 Reseñas por Juego");
-        VBox raiz = new VBox(10); raiz.setPadding(new Insets(10));
-        boolean hay = false;
-        for (Juego j : gd.getJuegos()) {
-            List<Resena> lista = gd.getResenasPorJuego(j);
-            if (lista.isEmpty()) continue;
-            hay = true;
-            double media = gd.getPuntuacionMediaJuego(j.getIdJuego());
-            raiz.getChildren().add(acordeon(
-                "🎮 " + j.getTitulo() + String.format("  ⭐ %.1f/10  (%d reseñas)", media, lista.size()),
-                () -> {
-                    VBox c = new VBox(4);
-                    for (Resena r : lista) {
-                        Label l = new Label("  • " + r.getAutor().getNombreCompleto()
-                            + "  ⭐" + r.getPuntuacion() + "/10  [" + r.getIdioma() + "]  – "
-                            + r.getComentario());
-                        l.getStyleClass().add("label-normal"); l.setWrapText(true);
-                        c.getChildren().add(l);
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 5 – RESEÑAS / USUARIO
+    // ══════════════════════════════════════════════════════
+    private void inicializarResUsuario() {
+        List<Usuario> usuarios = gd.getUsuarios();
+
+        colRUNombre.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getNombreCompleto()));
+        colRUTotal.setCellValueFactory(c ->
+                new SimpleStringProperty(
+                        String.valueOf(gd.getResenasPorUsuario(c.getValue()).size())));
+        tablaResUsuario.setItems(FXCollections.observableArrayList(usuarios));
+
+        colRUDJuego.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
+        colRUDPunt.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getPuntuacion() + "/10"));
+        colRUDIdioma.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getIdioma()));
+        colRUDCom.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getComentario()));
+
+        tablaResUsuario.getSelectionModel().selectedItemProperty()
+                .addListener((obs, ant, u) -> {
+                    if (u == null) { tablaResDetUsuario.getItems().clear(); return; }
+                    lblResUsuarioSel.setText("Reseñas de: " + u.getNombreCompleto());
+                    tablaResDetUsuario.setItems(FXCollections.observableArrayList(
+                            gd.getResenasPorUsuario(u)));
+                });
+    }
+
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 6 – RESEÑAS / IDIOMA
+    // ══════════════════════════════════════════════════════
+    private void inicializarResIdioma() {
+        // Solo idiomas que tengan al menos una reseña
+        List<String> idiomasConResenas = java.util.Arrays.stream(IDIOMAS)
+                .filter(i -> !gd.getResenasPorIdioma(i).isEmpty())
+                .collect(java.util.stream.Collectors.toList());
+
+        colRIIdioma.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()));
+        colRITotal.setCellValueFactory(c ->
+                new SimpleStringProperty(
+                        String.valueOf(gd.getResenasPorIdioma(c.getValue()).size())));
+        tablaResIdioma.setItems(FXCollections.observableArrayList(idiomasConResenas));
+
+        colRIDJuego.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
+        colRIDAutor.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getAutor().getNombreCompleto()));
+        colRIDPunt.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getPuntuacion() + "/10"));
+        colRIDCom.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getComentario()));
+
+        tablaResIdioma.getSelectionModel().selectedItemProperty()
+                .addListener((obs, ant, idioma) -> {
+                    if (idioma == null) { tablaResDetIdioma.getItems().clear(); return; }
+                    lblResIdiomaSel.setText("Reseñas en: " + idioma);
+                    tablaResDetIdioma.setItems(FXCollections.observableArrayList(
+                            gd.getResenasPorIdioma(idioma)));
+                });
+    }
+
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 7 – JUEGOS / USUARIO
+    // ══════════════════════════════════════════════════════
+    private void inicializarJuegosUsuario() {
+        List<Usuario> usuarios = gd.getUsuarios();
+
+        colJUNombre.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getNombreCompleto()));
+        colJUTotal.setCellValueFactory(c ->
+                new SimpleStringProperty(String.valueOf(
+                        gd.getBibliotecaUsuario(c.getValue().getIdUsuario()).size())));
+        tablaJuegosUsuario.setItems(FXCollections.observableArrayList(usuarios));
+
+        colJUDTitulo.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getTitulo()));
+        colJUDGenero.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getGenero()));
+        colJUDPlat.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getPlataforma()));
+
+        tablaJuegosUsuario.getSelectionModel().selectedItemProperty()
+                .addListener((obs, ant, u) -> {
+                    if (u == null) { tablaJuegosDetUsuario.getItems().clear(); return; }
+                    lblJuegosUsuarioSel.setText("Biblioteca de: " + u.getNombreCompleto());
+                    tablaJuegosDetUsuario.setItems(FXCollections.observableArrayList(
+                            gd.getBibliotecaUsuario(u.getIdUsuario())));
+                });
+    }
+
+    // ══════════════════════════════════════════════════════
+    // PESTAÑA 8 – POR ESTUDIO
+    // ══════════════════════════════════════════════════════
+    private void inicializarEstudios() {
+        colEstNombre.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getNombre()));
+        tablaEstudios.setItems(FXCollections.observableArrayList(gd.getEstudios()));
+
+        colDevNombre.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getNombreCompleto()));
+        colDevPuesto.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getPuestoActual()));
+        colDevMejorVal.setCellValueFactory(c -> {
+            Juego j = gd.getJuegoMejorValoradoDesarrollador(c.getValue());
+            return new SimpleStringProperty(j != null ? j.getTitulo() : "–");
+        });
+        colDevMasVend.setCellValueFactory(c -> {
+            Juego j = gd.getJuegoMasVendidoDesarrollador(c.getValue());
+            return new SimpleStringProperty(j != null ? j.getTitulo() : "–");
+        });
+
+        tablaEstudios.getSelectionModel().selectedItemProperty()
+                .addListener((obs, ant, est) -> {
+                    if (est == null) {
+                        panelEstudioDetalle.setVisible(false);
+                        panelEstudioDetalle.setManaged(false);
+                        panelEstudioVacio.setVisible(true);
+                        panelEstudioVacio.setManaged(true);
+                        return;
                     }
-                    return c;
-                }));
-        }
-        if (!hay) raiz.getChildren().add(lbl("No hay reseñas registradas."));
-        setContent(scroll(raiz));
+                    lblEstudioNombre.setText("🏢 " + est.getNombre());
+
+                    Juego mejorVal   = gd.getJuegoMejorValoradoEstudio(est);
+                    Juego masVendido = gd.getJuegoMasVendidoEstudio(est);
+                    lblEstMejorVal.setText(mejorVal != null
+                            ? mejorVal.getTitulo() + String.format(" (%.1f/10)",
+                                gd.getPuntuacionMediaJuego(mejorVal.getIdJuego()))
+                            : "–");
+                    lblEstMasVend.setText(masVendido != null
+                            ? masVendido.getTitulo() + " (" + gd.getVentasJuego(masVendido) + " uds)"
+                            : "–");
+
+                    tablaDevEstudio.setItems(FXCollections.observableArrayList(
+                            gd.getDesarrolladoresDeEstudio(est)));
+
+                    panelEstudioDetalle.setVisible(true);
+                    panelEstudioDetalle.setManaged(true);
+                    panelEstudioVacio.setVisible(false);
+                    panelEstudioVacio.setManaged(false);
+                });
+
+        // Estado inicial: panel vacío visible
+        panelEstudioDetalle.setVisible(false);
+        panelEstudioDetalle.setManaged(false);
+        panelEstudioVacio.setVisible(true);
+        panelEstudioVacio.setManaged(true);
     }
 
-    @FXML public void mostrarResenasPorUsuario() {
-        lblSeccion.setText("✍ Reseñas por Usuario");
-        VBox raiz = new VBox(10); raiz.setPadding(new Insets(10));
-        boolean hay = false;
-        for (Usuario u : gd.getUsuarios()) {
-            List<Resena> lista = gd.getResenasPorUsuario(u);
-            if (lista.isEmpty()) continue;
-            hay = true;
-            raiz.getChildren().add(acordeon(
-                "👤 " + u.getNombreCompleto() + "  (" + lista.size() + " reseñas)", () -> {
-                    VBox c = new VBox(4);
-                    for (Resena r : lista) {
-                        Label l = new Label("  • " + r.getJuego().getTitulo()
-                            + "  ⭐" + r.getPuntuacion() + "/10  –  " + r.getComentario());
-                        l.getStyleClass().add("label-normal"); l.setWrapText(true);
-                        c.getChildren().add(l);
-                    }
-                    return c;
-                }));
-        }
-        if (!hay) raiz.getChildren().add(lbl("No hay reseñas."));
-        setContent(scroll(raiz));
-    }
-
-    @FXML public void mostrarJuegosPorUsuario() {
-        lblSeccion.setText("🛒 Juegos Comprados por Usuario");
-        VBox raiz = new VBox(10); raiz.setPadding(new Insets(10));
-        for (Usuario u : gd.getUsuarios()) {
-            List<Juego> bib = gd.getBibliotecaUsuario(u.getIdUsuario());
-            raiz.getChildren().add(acordeon(
-                "👤 " + u.getNombreCompleto() + "  (" + bib.size() + " juegos)", () -> {
-                    VBox c = new VBox(4);
-                    if (bib.isEmpty()) c.getChildren().add(lbl("Sin compras."));
-                    else for (Juego j : bib) {
-                        Label l = new Label("  • " + j.getTitulo() + " (" + j.getGenero() + ")");
-                        l.getStyleClass().add("label-normal"); c.getChildren().add(l);
-                    }
-                    return c;
-                }));
-        }
-        setContent(scroll(raiz));
-    }
-
-    @FXML public void mostrarEstadisticasPorEstudio() {
-        lblSeccion.setText("🏢 Estadísticas por Estudio");
-        VBox raiz = new VBox(10); raiz.setPadding(new Insets(10));
-        for (Estudio est : gd.getEstudios()) {
-            raiz.getChildren().add(acordeon("🏢 " + est.getNombre(), () -> {
-                VBox c = new VBox(6);
-                Juego mejorVal   = gd.getJuegoMejorValoradoEstudio(est);
-                Juego masVendido = gd.getJuegoMasVendidoEstudio(est);
-                if (mejorVal != null) {
-                    Label l = new Label("⭐ Mejor valorado: " + mejorVal.getTitulo()
-                        + String.format("  (%.1f/10)",
-                            gd.getPuntuacionMediaJuego(mejorVal.getIdJuego())));
-                    l.getStyleClass().add("label-normal"); c.getChildren().add(l);
-                }
-                if (masVendido != null) {
-                    Label l = new Label("🔥 Más vendido: " + masVendido.getTitulo()
-                        + "  (" + gd.getVentasJuego(masVendido) + " uds)");
-                    l.getStyleClass().add("label-normal"); c.getChildren().add(l);
-                }
-                // Desarrolladores del estudio
-                List<Desarrollador> devs = gd.getDesarrolladoresDeEstudio(est);
-                if (!devs.isEmpty()) {
-                    Label lblDevs = new Label("👨‍💻 Desarrolladores notables:");
-                    lblDevs.getStyleClass().add("label-muted");
-                    c.getChildren().add(lblDevs);
-                    for (Desarrollador d : devs) {
-                        Juego mejorD = gd.getJuegoMejorValoradoDesarrollador(d);
-                        Juego masVD  = gd.getJuegoMasVendidoDesarrollador(d);
-                        StringBuilder sb = new StringBuilder("  • " + d.getNombreCompleto()
-                            + " (" + d.getPuestoActual() + ")");
-                        if (mejorD != null) sb.append("  |  ⭐ ").append(mejorD.getTitulo());
-                        if (masVD  != null) sb.append("  |  🔥 ").append(masVD.getTitulo());
-                        Label l = new Label(sb.toString());
-                        l.getStyleClass().add("label-muted"); c.getChildren().add(l);
-                    }
-                }
-                return c;
-            }));
-        }
-        setContent(scroll(raiz));
-    }
-
-
+    // ── Cerrar ────────────────────────────────────────────
     @FXML
     public void cerrar() {
-        ((Stage) contentPane.getScene().getWindow()).close();
-    }
-
-//Código netamente estético para lograr que algunas estadísticas sean desplegables, que si no se encontraban bastante amontonadas. 
-
-
-    private HBox buildFilaRanking(int pos, String titulo, String detalle) {
-        HBox fila = new HBox(15); fila.getStyleClass().add("card");
-        fila.setAlignment(Pos.CENTER_LEFT); fila.setPadding(new Insets(10));
-        Label lblPos = new Label("#" + pos); lblPos.getStyleClass().add("label-gold");
-        lblPos.setMinWidth(32);
-        VBox info = new VBox(3);
-        Label lblT = new Label(titulo); lblT.getStyleClass().add("label-section");
-        Label lblD = new Label(detalle); lblD.getStyleClass().add("label-normal");
-        info.getChildren().addAll(lblT, lblD);
-        fila.getChildren().addAll(lblPos, info);
-        return fila;
-    }
-    private VBox acordeon(String etiqueta, Supplier<Node> constructorContenido) {
-        VBox panel = new VBox(0); panel.getStyleClass().add("card");
-        HBox cabecera = new HBox(10);
-        cabecera.setAlignment(Pos.CENTER_LEFT);
-        cabecera.setPadding(new Insets(10, 14, 10, 14));
-        cabecera.setStyle("-fx-cursor:hand;");
-        Label flecha = new Label("▶"); flecha.getStyleClass().add("label-gold");
-        Label etiq   = new Label(etiqueta); etiq.getStyleClass().add("label-section");
-        cabecera.getChildren().addAll(flecha, etiq);
-        VBox cuerpo = new VBox(); cuerpo.setPadding(new Insets(0, 14, 10, 28));
-        cuerpo.setVisible(false); cuerpo.setManaged(false);
-        cabecera.setOnMouseClicked(e -> {
-            boolean abierto = cuerpo.isVisible();
-            if (!abierto && cuerpo.getChildren().isEmpty())
-                cuerpo.getChildren().add(constructorContenido.get());
-            flecha.setText(abierto ? "▶" : "▼");
-            cuerpo.setVisible(!abierto); cuerpo.setManaged(!abierto);
-        });
-        panel.getChildren().addAll(cabecera, cuerpo);
-        return panel;
-    }
-
-    private ScrollPane scroll(Node nodo) {
-        ScrollPane sp = new ScrollPane(nodo);
-        sp.setFitToWidth(true); sp.getStyleClass().add("scroll-pane");
-        return sp;
-    }
-
-    private Label lbl(String txt) {
-        Label l = new Label(txt); l.getStyleClass().add("label-normal"); return l;
+        ((Stage) tablaVentas.getScene().getWindow()).close();
     }
 }

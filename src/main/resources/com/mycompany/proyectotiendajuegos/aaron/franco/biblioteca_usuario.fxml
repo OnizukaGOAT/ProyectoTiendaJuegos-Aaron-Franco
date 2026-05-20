@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.BibliotecaController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <Label text="📚 Mi Biblioteca" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblContador" styleClass="label-muted"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox fx:id="vboxJuegos" spacing="10">
+                <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

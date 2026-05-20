@@ -5,85 +5,44 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.EstadisticasAdminController"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.EstadisticasAdminController"
             styleClass="main-pane">
 
     <top>
         <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
             <Label text="📊 Estadísticas y Consultas" styleClass="header-title"/>
             <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblSeccion" styleClass="header-subtitle" text=""/>
             <Button text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
         </HBox>
     </top>
 
-    <!-- Pestañas para cada tipo de estadística -->
+    <left>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane" prefWidth="210">
+            <VBox styleClass="side-panel" spacing="5">
+                <Label text="VENTAS" styleClass="label-muted"/>
+                <Button text="📊 Ventas por Juego"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarVentas"/>
+                <Button text="🔥 Más Vendidos"      styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarMasVendidos"/>
+
+                <Label text="VALORACIONES" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+                <Button text="⭐ Mejor Valorados"   styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarMejorValorados"/>
+
+                <Label text="RESEÑAS" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+                <Button text="💬 Reseñas / Idioma"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarResenasPorIdioma"/>
+                <Button text="🎮 Reseñas / Juego"   styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarResenasPorJuego"/>
+                <Button text="✍ Reseñas / Usuario"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarResenasPorUsuario"/>
+
+                <Label text="USUARIOS" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+                <Button text="🛒 Juegos / Usuario"  styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarJuegosPorUsuario"/>
+
+                <Label text="ESTUDIOS" styleClass="label-muted" style="-fx-padding:10 0 0 0;"/>
+                <Button text="🏢 Por Estudio"       styleClass="nav-btn" maxWidth="Infinity" onAction="#mostrarEstadisticasPorEstudio"/>
+            </VBox>
+        </ScrollPane>
+    </left>
+
     <center>
-        <TabPane fx:id="tabPane" styleClass="content-area" tabClosingPolicy="UNAVAILABLE">
-
-            <Tab text="📊 Ventas por Juego">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelVentas" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-            <Tab text="⭐ Mejor Valorados">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelMejorVal" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-            <Tab text="🔥 Más Vendidos">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelMasVend" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-            <Tab text="💬 Reseñas / Idioma">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelResIdioma" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-            <Tab text="🎮 Reseñas / Juego">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelResJuego" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-            <Tab text="🏢 Por Estudio">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelEstudio" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-            <Tab text="🛒 Juegos / Usuario">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelJuegosUsuario" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-            <Tab text="✍ Reseñas / Usuario">
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-                    <VBox fx:id="panelResenasUsuario" spacing="10">
-                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-
-        </TabPane>
+        <StackPane fx:id="contentPane" styleClass="content-area"/>
     </center>
+
 </BorderPane>

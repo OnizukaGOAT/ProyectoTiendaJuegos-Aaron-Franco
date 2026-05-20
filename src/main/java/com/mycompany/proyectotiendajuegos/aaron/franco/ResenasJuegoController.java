@@ -1,4 +1,4 @@
-package com.mycompany.proyectotiendajuegos.aaron.franco.controladores;
+package com.mycompany.proyectotiendajuegos.aaron.franco;
 
 import com.mycompany.proyectotiendajuegos.aaron.franco.clases.*;
 import javafx.fxml.FXML;

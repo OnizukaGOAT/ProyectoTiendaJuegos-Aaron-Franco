@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.CatalogoController"
+            styleClass="main-pane">
+
+    <top>
+        <VBox styleClass="header-bar" spacing="10">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <Label text="🎮 Catálogo de Juegos" styleClass="header-title"/>
+            <!-- Barra de búsqueda -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="txBusqueda" promptText="Buscar juego..."
+                           styleClass="text-field" prefWidth="300"
+                           onAction="#buscar"/>
+                <ComboBox fx:id="cbTipo" styleClass="combo-box" prefWidth="120"/>
+                <Button text="🔍 Buscar"       styleClass="btn-primary"   onAction="#buscar"/>
+                <Button text="✕ Limpiar"       styleClass="btn-secondary" onAction="#limpiar"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblResultados" styleClass="label-muted"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox fx:id="vboxJuegos" spacing="10">
+                <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.PerfilUsuarioController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <Label text="👤 Mi Perfil" styleClass="header-title"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="20">
+                <padding><Insets top="20" right="25" bottom="20" left="25"/></padding>
+
+                <!-- ── Datos actuales ─────────────────────── -->
+                <Label text="📋 Mis Datos" styleClass="label-section"/>
+                <VBox styleClass="card" spacing="8">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <HBox spacing="10"><Label text="Nombre:"    styleClass="label-muted" minWidth="160"/><Label fx:id="lblNombre"    styleClass="label-normal"/></HBox>
+                    <HBox spacing="10"><Label text="Correo:"    styleClass="label-muted" minWidth="160"/><Label fx:id="lblCorreo"    styleClass="label-normal"/></HBox>
+                    <HBox spacing="10"><Label text="Idioma:"    styleClass="label-muted" minWidth="160"/><Label fx:id="lblIdioma"    styleClass="label-normal"/></HBox>
+                    <HBox spacing="10"><Label text="Saldo:"     styleClass="label-muted" minWidth="160"/><Label fx:id="lblSaldo"     styleClass="label-gold"/></HBox>
+                    <HBox spacing="10"><Label text="Juegos:"    styleClass="label-muted" minWidth="160"/><Label fx:id="lblNumJuegos" styleClass="label-normal"/></HBox>
+                    <HBox spacing="10"><Label text="Compras:"   styleClass="label-muted" minWidth="160"/><Label fx:id="lblNumCompras" styleClass="label-normal"/></HBox>
+                    <HBox spacing="10"><Label text="Reseñas:"   styleClass="label-muted" minWidth="160"/><Label fx:id="lblNumResenas" styleClass="label-normal"/></HBox>
+                </VBox>
+
+                <!-- ── Añadir saldo ──────────────────────── -->
+                <Label text="💰 Añadir Saldo" styleClass="label-section"/>
+                <VBox styleClass="card" spacing="10">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="Cantidad rápida:" styleClass="label-normal"/>
+                    <HBox spacing="8">
+                        <Button text="+5€"  styleClass="btn-secondary" onAction="#recargar5"/>
+                        <Button text="+10€" styleClass="btn-secondary" onAction="#recargar10"/>
+                        <Button text="+20€" styleClass="btn-secondary" onAction="#recargar20"/>
+                        <Button text="+50€" styleClass="btn-secondary" onAction="#recargar50"/>
+                    </HBox>
+                    <Label text="O introduce una cantidad:" styleClass="label-normal"/>
+                    <HBox spacing="8">
+                        <TextField fx:id="txCantidad" promptText="Cantidad (€)"
+                                   styleClass="text-field" prefWidth="180"/>
+                        <Button text="Añadir" styleClass="btn-primary"
+                                onAction="#recargarPersonalizado"/>
+                    </HBox>
+                    <Label fx:id="lblErrorSaldo" styleClass="label-accent" wrapText="true"/>
+                </VBox>
+
+                <!-- ── Editar datos ──────────────────────── -->
+                <Label text="✏ Editar Datos" styleClass="label-section"/>
+                <VBox styleClass="card" spacing="10">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+                    <GridPane hgap="10" vgap="8">
+                        <Label text="Nombre *:"     GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="label-normal"/>
+                        <TextField fx:id="txNombre" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="text-field" maxWidth="Infinity"/>
+
+                        <Label text="Apellidos:"       GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="label-normal"/>
+                        <TextField fx:id="txApellidos" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="text-field" maxWidth="Infinity"/>
+
+                        <Label text="Correo *:"     GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="label-normal"/>
+                        <TextField fx:id="txCorreo" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="text-field" maxWidth="Infinity"/>
+
+                        <Label text="Contraseña:"       GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="label-normal"/>
+                        <PasswordField fx:id="txContrasena" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                                       promptText="(vacío = sin cambios)" styleClass="password-field" maxWidth="Infinity"/>
+
+                        <Label text="Idioma:"       GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="label-normal"/>
+                        <ComboBox fx:id="cbIdioma"  GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="combo-box" maxWidth="Infinity"/>
+                    </GridPane>
+
+                    <Label fx:id="lblErrorEdicion" styleClass="label-accent" wrapText="true"/>
+                    <Button text="Guardar cambios" styleClass="btn-primary" onAction="#guardarPerfil"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

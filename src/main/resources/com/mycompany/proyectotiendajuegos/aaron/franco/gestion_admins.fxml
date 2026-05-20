@@ -5,7 +5,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.GestionAdminsController"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.GestionAdminsController"
             styleClass="main-pane">
 
     <top>
@@ -20,7 +20,6 @@
         <HBox spacing="15" styleClass="content-area">
             <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
 
-            <!-- Tabla -->
             <VBox spacing="10" HBox.hgrow="ALWAYS">
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <Label text="Administradores registrados" styleClass="label-section"/>
@@ -38,28 +37,21 @@
                 </TableView>
             </VBox>
 
-            <!-- Formulario -->
             <VBox spacing="10" prefWidth="300" minWidth="260" styleClass="card">
                 <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
                 <Label fx:id="lblTitulo" text="Nuevo Administrador" styleClass="label-section"/>
-
-                <Label text="Nombre *" styleClass="label-normal"/>
-                <TextField fx:id="txNombre" promptText="Nombre" styleClass="text-field"/>
-
-                <Label text="Apellidos" styleClass="label-normal"/>
-                <TextField fx:id="txApellidos" promptText="Apellidos" styleClass="text-field"/>
-
-                <Label text="Correo *" styleClass="label-normal"/>
-                <TextField fx:id="txCorreo" promptText="correo@ejemplo.com" styleClass="text-field"/>
-
-                <Label text="Contraseña" styleClass="label-normal"/>
+                <Label text="Nombre *"    styleClass="label-normal"/>
+                <TextField fx:id="txNombre"    promptText="Nombre"             styleClass="text-field"/>
+                <Label text="Apellidos"   styleClass="label-normal"/>
+                <TextField fx:id="txApellidos" promptText="Apellidos"          styleClass="text-field"/>
+                <Label text="Correo *"    styleClass="label-normal"/>
+                <TextField fx:id="txCorreo"    promptText="correo@ejemplo.com" styleClass="text-field"/>
+                <Label text="Contraseña"  styleClass="label-normal"/>
                 <PasswordField fx:id="txContrasena" styleClass="password-field"/>
-
                 <Label fx:id="lblError" styleClass="label-accent" wrapText="true"/>
-
                 <HBox spacing="8">
-                    <Button text="Guardar"  styleClass="btn-primary"   onAction="#guardar"   HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                    <Button text="Cancelar" styleClass="btn-secondary"  onAction="#cancelar"  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Button text="Guardar"  styleClass="btn-primary"  onAction="#guardar"  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelar" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                 </HBox>
             </VBox>
         </HBox>

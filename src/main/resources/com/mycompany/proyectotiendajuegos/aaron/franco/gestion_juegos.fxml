@@ -5,7 +5,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.controladores.GestionJuegosController"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.GestionJuegosController"
             styleClass="main-pane">
 
     <top>
@@ -20,7 +20,6 @@
         <HBox spacing="15" styleClass="content-area">
             <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
 
-            <!-- Tabla -->
             <VBox spacing="10" HBox.hgrow="ALWAYS">
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <Label text="Catálogo de juegos" styleClass="label-section"/>
@@ -29,40 +28,52 @@
                 </HBox>
                 <TableView fx:id="tablaJuegos" VBox.vgrow="ALWAYS" styleClass="table-view">
                     <columns>
-                        <TableColumn fx:id="colId"        text="ID"         prefWidth="45"/>
-                        <TableColumn fx:id="colTitulo"    text="Título"     prefWidth="160"/>
-                        <TableColumn fx:id="colGenero"    text="Género"     prefWidth="100"/>
-                        <TableColumn fx:id="colPlat"      text="Plataforma" prefWidth="130"/>
-                        <TableColumn fx:id="colPrecio"    text="Precio"     prefWidth="75"/>
-                        <TableColumn fx:id="colStock"     text="Stock"      prefWidth="55"/>
-                        <TableColumn fx:id="colDirector"  text="Director"   prefWidth="130"/>
-                        <TableColumn fx:id="colAcciones"  text="Acciones"   prefWidth="150"/>
+                        <TableColumn fx:id="colId"       text="ID"         prefWidth="45"/>
+                        <TableColumn fx:id="colTitulo"   text="Título"     prefWidth="160"/>
+                        <TableColumn fx:id="colGenero"   text="Género"     prefWidth="100"/>
+                        <TableColumn fx:id="colPlat"     text="Plataforma" prefWidth="130"/>
+                        <TableColumn fx:id="colPrecio"   text="Precio"     prefWidth="75"/>
+                        <TableColumn fx:id="colStock"    text="Stock"      prefWidth="55"/>
+                        <TableColumn fx:id="colDirector" text="Director"   prefWidth="130"/>
+                        <TableColumn fx:id="colAcciones" text="Acciones"   prefWidth="150"/>
                     </columns>
                     <placeholder><Label text="No hay juegos registrados." styleClass="label-muted"/></placeholder>
                 </TableView>
             </VBox>
 
-            <!-- Formulario -->
             <ScrollPane fitToWidth="true" prefWidth="310" minWidth="280" styleClass="scroll-pane">
                 <VBox spacing="10" styleClass="card">
                     <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
-                    <Label fx:id="lblTitulo" text="Nuevo Juego" styleClass="label-section"/>
 
+                    <!-- Panel detalle -->
+                    <Label text="📋 Detalle" styleClass="label-section"/>
+                    <HBox spacing="8"><Label text="Título:"    styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetTitulo"  styleClass="label-normal"/></HBox>
+                    <HBox spacing="8"><Label text="Género:"    styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetGenero"  styleClass="label-normal"/></HBox>
+                    <HBox spacing="8"><Label text="Plataforma:" styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetPlat"   styleClass="label-normal"/></HBox>
+                    <HBox spacing="8"><Label text="Precio:"    styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetPrecio" styleClass="label-normal"/></HBox>
+                    <HBox spacing="8"><Label text="Stock:"     styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetStock"  styleClass="label-normal"/></HBox>
+                    <HBox spacing="8"><Label text="Director:"  styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetDirector" styleClass="label-normal"/></HBox>
+                    <HBox spacing="8"><Label text="Valoración:" styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetMedia"  styleClass="label-normal"/></HBox>
+                    <HBox spacing="8"><Label text="Ventas:"    styleClass="label-muted" minWidth="70"/><Label fx:id="lblDetVentas" styleClass="label-normal"/></HBox>
+
+                    <Separator/>
+
+                    <!-- Formulario alta/edición -->
+                    <Label fx:id="lblTitulo" text="Nuevo Juego" styleClass="label-section"/>
                     <Label text="Título *"     styleClass="label-normal"/>
-                    <TextField fx:id="txTitulo"   promptText="Título del juego"  styleClass="text-field"/>
+                    <TextField fx:id="txTitulo"   promptText="Título del juego"   styleClass="text-field"/>
                     <Label text="Género"       styleClass="label-normal"/>
-                    <TextField fx:id="txGenero"   promptText="Acción, RPG..."     styleClass="text-field"/>
+                    <TextField fx:id="txGenero"   promptText="Acción, RPG..."      styleClass="text-field"/>
                     <Label text="Plataforma"   styleClass="label-normal"/>
-                    <TextField fx:id="txPlat"     promptText="PC, PS5..."         styleClass="text-field"/>
+                    <TextField fx:id="txPlat"     promptText="PC, PS5..."          styleClass="text-field"/>
                     <Label text="Precio (€) *" styleClass="label-normal"/>
-                    <TextField fx:id="txPrecio"   promptText="0.00"               styleClass="text-field"/>
+                    <TextField fx:id="txPrecio"   promptText="0.00"                styleClass="text-field"/>
                     <Label text="Stock *"      styleClass="label-normal"/>
-                    <TextField fx:id="txStock"    promptText="0"                  styleClass="text-field"/>
+                    <TextField fx:id="txStock"    promptText="0"                   styleClass="text-field"/>
                     <Label text="Director"     styleClass="label-normal"/>
                     <TextField fx:id="txDirector" promptText="Nombre del director" styleClass="text-field"/>
                     <Label text="Estudio"      styleClass="label-normal"/>
                     <ComboBox fx:id="cbEstudio" promptText="Seleccionar estudio" styleClass="combo-box" maxWidth="Infinity"/>
-
                     <Label fx:id="lblError" styleClass="label-accent" wrapText="true"/>
                     <HBox spacing="8">
                         <Button text="Guardar"  styleClass="btn-primary"  onAction="#guardar"  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>

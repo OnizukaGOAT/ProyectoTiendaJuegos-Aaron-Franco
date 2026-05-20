@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 public class VentanaUtil {
 
     private static final String RUTA_BASE =
-            "/com/mycompany/proyectotiendajuegos.aaron.franco/";
+            "/com/mycompany/proyectotiendajuegos/aaron/franco/";
 
     /** Abre una ventana modal con tamaño por defecto. */
     public static void abrirVentana(String nombreFxml, String titulo) {

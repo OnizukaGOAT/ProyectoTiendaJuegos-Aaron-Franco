@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.ResenasJuegoController"
+            styleClass="main-pane">
+
+    <top>
+        <VBox styleClass="header-bar" spacing="4">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <Label fx:id="lblTituloJuego" text="Reseñas del juego" styleClass="header-title"/>
+            <Label fx:id="lblMedia" styleClass="label-gold"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox fx:id="vboxResenas" spacing="10">
+                <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" styleClass="header-bar">
+            <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
+            <Button fx:id="btnCerrar" text="✕ Cerrar" styleClass="btn-danger" onAction="#cerrar"/>
+        </HBox>
+    </bottom>
+</BorderPane>

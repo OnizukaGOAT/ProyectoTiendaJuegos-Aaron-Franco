@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectotiendajuegos.aaron.franco.MisResenasController"
+            styleClass="main-pane">
+
+    <top>
+        <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="15">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <Label text="✍ Mis Reseñas" styleClass="header-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblContador" styleClass="label-muted"/>
+        </HBox>
+    </top>
+
+    <!-- Layout: lista de reseñas a la izquierda, formulario a la derecha -->
+    <center>
+        <HBox spacing="15" styleClass="content-area">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <!-- Lista de reseñas existentes -->
+            <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="scroll-pane">
+                <VBox fx:id="vboxResenas" spacing="10">
+                    <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
+                </VBox>
+            </ScrollPane>
+
+            <!-- Formulario nueva / editar reseña -->
+            <ScrollPane fitToWidth="true" prefWidth="320" minWidth="290" styleClass="scroll-pane">
+                <VBox spacing="10" styleClass="card">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+                    <Label fx:id="lblFormTitulo" text="Nueva Reseña" styleClass="label-section"/>
+
+                    <Label text="Juego *" styleClass="label-normal"/>
+                    <ComboBox fx:id="cbJuego" styleClass="combo-box" maxWidth="Infinity"/>
+
+                    <Label text="Puntuación (1-10) *" styleClass="label-normal"/>
+                    <Spinner fx:id="spinPuntuacion" styleClass="spinner" maxWidth="Infinity"/>
+
+                    <Label text="Idioma" styleClass="label-normal"/>
+                    <ComboBox fx:id="cbIdioma" styleClass="combo-box" maxWidth="Infinity"/>
+
+                    <Label text="Comentario *" styleClass="label-normal"/>
+                    <TextArea fx:id="txComentario" prefRowCount="5"
+                              promptText="Escribe tu reseña aquí..."
+                              styleClass="text-area" wrapText="true"/>
+
+                    <Label fx:id="lblError" styleClass="label-accent" wrapText="true"/>
+
+                    <HBox spacing="8">
+                        <Button fx:id="btnGuardar" text="Publicar"
+                                styleClass="btn-primary" onAction="#guardar"
+                                HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Cancelar"
+                                styleClass="btn-secondary" onAction="#cancelar"
+                                HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </HBox>
+    </center>
+</BorderPane>

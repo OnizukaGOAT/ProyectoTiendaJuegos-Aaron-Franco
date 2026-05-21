@@ -1,5 +1,14 @@
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.proyectotiendajuegos.aaron.franco.clases;
 
+/**
+ *
+ * @author USUARIO
+ */
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -7,13 +16,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Singleton que gestiona todas las operaciones de datos mediante JDBC (MySQL).
- * Sustituye por completo la versión anterior basada en listas en memoria.
- */
+
 public class GestorDatos {
 
-    // ── Singleton ──────────────────────────────────────────
     private static GestorDatos instancia;
 
     public static GestorDatos getInstance() {
@@ -21,19 +26,15 @@ public class GestorDatos {
         return instancia;
     }
 
-    // ── Sesión activa (solo en memoria) ───────────────────
     private Usuario       usuarioActual;
     private Administrador adminActual;
 
-    private GestorDatos() { /* conexión lazy a través de DBConexion */ }
+    private GestorDatos() {}
 
     private Connection con() {
         return DBConexion.getInstance().getConexion();
     }
 
-    // ══════════════════════════════════════════════════════
-    // SESIÓN
-    // ══════════════════════════════════════════════════════
     public Usuario loginUsuario(String correo, String pass) {
         String sql = "SELECT * FROM usuario WHERE correo = ?";
         try (PreparedStatement ps = con().prepareStatement(sql)) {
@@ -71,9 +72,6 @@ public class GestorDatos {
     public Usuario       getUsuarioActual() { return usuarioActual; }
     public Administrador getAdminActual()   { return adminActual; }
 
-    // ══════════════════════════════════════════════════════
-    // USUARIOS
-    // ══════════════════════════════════════════════════════
     public ArrayList<Usuario> getUsuarios() {
         ArrayList<Usuario> lista = new ArrayList<>();
         String sql = "SELECT * FROM usuario ORDER BY id_usuario";
@@ -134,7 +132,6 @@ public class GestorDatos {
         return null;
     }
 
-    /** Biblioteca: juegos que el usuario ha comprado. */
     public ArrayList<Juego> getBibliotecaUsuario(int idUsuario) {
         ArrayList<Juego> lista = new ArrayList<>();
         String sql = "SELECT DISTINCT j.* FROM juego j "
@@ -148,7 +145,6 @@ public class GestorDatos {
         return lista;
     }
 
-    /** Compras de un usuario. */
     public ArrayList<Compra> getComprasUsuario(int idUsuario) {
         ArrayList<Compra> lista = new ArrayList<>();
         String sql = "SELECT c.*, u.nombre u_nombre, u.apellidos u_ap, u.correo u_correo, "
@@ -167,9 +163,6 @@ public class GestorDatos {
         return lista;
     }
 
-    // ══════════════════════════════════════════════════════
-    // ADMINISTRADORES
-    // ══════════════════════════════════════════════════════
     public ArrayList<Administrador> getAdministradores() {
         ArrayList<Administrador> lista = new ArrayList<>();
         String sql = "SELECT * FROM administrador ORDER BY id_admin";
@@ -211,9 +204,6 @@ public class GestorDatos {
         } catch (SQLException e) { manejarError(e); return false; }
     }
 
-    // ══════════════════════════════════════════════════════
-    // JUEGOS
-    // ══════════════════════════════════════════════════════
     public ArrayList<Juego> getJuegos() {
         ArrayList<Juego> lista = new ArrayList<>();
         String sql = "SELECT * FROM juego ORDER BY titulo";
@@ -307,7 +297,6 @@ public class GestorDatos {
         return lista;
     }
 
-    /** Comprueba si un usuario ya tiene un juego (por compra). */
     public boolean usuarioPoseeJuego(int idUsuario, int idJuego) {
         String sql = "SELECT 1 FROM compra WHERE id_usuario=? AND id_juego=? LIMIT 1";
         try (PreparedStatement ps = con().prepareStatement(sql)) {
@@ -316,9 +305,7 @@ public class GestorDatos {
         } catch (SQLException e) { manejarError(e); return false; }
     }
 
-    // ══════════════════════════════════════════════════════
-    // COMPRAS
-    // ══════════════════════════════════════════════════════
+
     public String comprarJuego(Usuario u, Juego j, int cantidad) {
         if (j.getStock() < cantidad)                  return "Stock insuficiente.";
         if (u.getSaldo() < j.getPrecio() * cantidad)  return "Saldo insuficiente.";
@@ -377,9 +364,7 @@ public class GestorDatos {
         return lista;
     }
 
-    // ══════════════════════════════════════════════════════
-    // RESEÑAS
-    // ══════════════════════════════════════════════════════
+
     public ArrayList<Resena> getResenas() {
         return getResenasPorFiltro(null, null, null);
     }
@@ -458,9 +443,6 @@ public class GestorDatos {
         } catch (SQLException e) { manejarError(e); return false; }
     }
 
-    // ══════════════════════════════════════════════════════
-    // ESTADÍSTICAS
-    // ══════════════════════════════════════════════════════
     public List<Juego> getJuegosMejorValorados() {
         List<Juego> lista = new ArrayList<>();
         String sql = "SELECT j.*, AVG(r.puntuacion) AS media "
@@ -505,7 +487,6 @@ public class GestorDatos {
         return 0.0;
     }
 
-    // ── Por estudio ────────────────────────────────────────
     public Juego getJuegoMejorValoradoEstudio(Estudio est) {
         String sql = "SELECT j.*, AVG(r.puntuacion) AS media "
                    + "FROM juego j JOIN resena r ON r.id_juego = j.id_juego "
@@ -532,7 +513,6 @@ public class GestorDatos {
         return null;
     }
 
-    // ── Por desarrollador ──────────────────────────────────
     public Juego getJuegoMejorValoradoDesarrollador(Desarrollador d) {
         String sql = "SELECT j.*, AVG(r.puntuacion) AS media "
                    + "FROM juego j "
@@ -563,9 +543,6 @@ public class GestorDatos {
         return null;
     }
 
-    // ══════════════════════════════════════════════════════
-    // ESTUDIOS
-    // ══════════════════════════════════════════════════════
     public ArrayList<Estudio> getEstudios() {
         ArrayList<Estudio> lista = new ArrayList<>();
         String sql = "SELECT * FROM estudio ORDER BY nombre";
@@ -627,9 +604,6 @@ public class GestorDatos {
         return lista;
     }
 
-    // ══════════════════════════════════════════════════════
-    // DESARROLLADORES
-    // ══════════════════════════════════════════════════════
     public ArrayList<Desarrollador> getDesarrolladores() {
         ArrayList<Desarrollador> lista = new ArrayList<>();
         String sql = "SELECT * FROM desarrollador ORDER BY nombre";
@@ -740,9 +714,6 @@ public class GestorDatos {
         } catch (SQLException e) { manejarError(e); }
     }
 
-    // ══════════════════════════════════════════════════════
-    // MAPPERS – ResultSet → Objetos
-    // ══════════════════════════════════════════════════════
     private Usuario mapUsuario(ResultSet rs) throws SQLException {
         Usuario u = new Usuario();
         u.setIdUsuario(rs.getInt("id_usuario"));
@@ -838,9 +809,7 @@ public class GestorDatos {
         return r;
     }
 
-    // ══════════════════════════════════════════════════════
-    // ERROR HANDLING
-    // ══════════════════════════════════════════════════════
+
     private void manejarError(SQLException e) {
         System.err.println("[GestorDatos SQL] " + e.getMessage());
         e.printStackTrace();

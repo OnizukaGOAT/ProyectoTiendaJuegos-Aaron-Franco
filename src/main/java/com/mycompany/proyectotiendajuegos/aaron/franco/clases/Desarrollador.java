@@ -1,5 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.proyectotiendajuegos.aaron.franco.clases;
 
+/**
+ *
+ * @author USUARIO
+ */
 import java.util.ArrayList;
 
 public class Desarrollador extends Persona {
@@ -22,28 +30,74 @@ public class Desarrollador extends Persona {
         this.juegosEnLosQueHaTrabajado = new ArrayList<>();
     }
 
-    // ── Getters ───────────────────────────────────────────
-    public int              getIdDesarrollador()            { return idDesarrollador; }
-    public int              getAnosExperiencia()            { return anosExperiencia; }
-    public String           getPuestoActual()               { return puestoActual; }
-    public ArrayList<Juego> getJuegosEnLosQueHaTrabajado()  { return juegosEnLosQueHaTrabajado; }
-
-    // ── Setters ───────────────────────────────────────────
-    public void setIdDesarrollador(int id)              { this.idDesarrollador = id; }
-    public void setAnosExperiencia(int anosExperiencia) { this.anosExperiencia = anosExperiencia; }
-    public void setPuestoActual(String puestoActual)    { this.puestoActual    = puestoActual; }
 
     public void addJuego(Juego j) {
         if (!juegosEnLosQueHaTrabajado.contains(j))
-            juegosEnLosQueHaTrabajado.add(j);
+            getJuegosEnLosQueHaTrabajado().add(j);
     }
 
     public void removeJuego(Juego j) {
-        juegosEnLosQueHaTrabajado.remove(j);
+        getJuegosEnLosQueHaTrabajado().remove(j);
     }
 
     @Override
     public String toString() {
-        return getNombreCompleto() + " – " + puestoActual;
+        return getNombreCompleto() + " – " + getPuestoActual();
+    }
+
+    /**
+     * @return the idDesarrollador
+     */
+    public int getIdDesarrollador() {
+        return idDesarrollador;
+    }
+
+    /**
+     * @param idDesarrollador the idDesarrollador to set
+     */
+    public void setIdDesarrollador(int idDesarrollador) {
+        this.idDesarrollador = idDesarrollador;
+    }
+
+    /**
+     * @return the anosExperiencia
+     */
+    public int getAnosExperiencia() {
+        return anosExperiencia;
+    }
+
+    /**
+     * @param anosExperiencia the anosExperiencia to set
+     */
+    public void setAnosExperiencia(int anosExperiencia) {
+        this.anosExperiencia = anosExperiencia;
+    }
+
+    /**
+     * @return the puestoActual
+     */
+    public String getPuestoActual() {
+        return puestoActual;
+    }
+
+    /**
+     * @param puestoActual the puestoActual to set
+     */
+    public void setPuestoActual(String puestoActual) {
+        this.puestoActual = puestoActual;
+    }
+
+    /**
+     * @return the juegosEnLosQueHaTrabajado
+     */
+    public ArrayList<Juego> getJuegosEnLosQueHaTrabajado() {
+        return juegosEnLosQueHaTrabajado;
+    }
+
+    /**
+     * @param juegosEnLosQueHaTrabajado the juegosEnLosQueHaTrabajado to set
+     */
+    public void setJuegosEnLosQueHaTrabajado(ArrayList<Juego> juegosEnLosQueHaTrabajado) {
+        this.juegosEnLosQueHaTrabajado = juegosEnLosQueHaTrabajado;
     }
 }

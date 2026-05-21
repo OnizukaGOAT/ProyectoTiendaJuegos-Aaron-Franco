@@ -42,21 +42,14 @@ public class HistorialComprasAdminController implements Initializable {
         cbFiltroUsuario.setItems(FXCollections.observableArrayList(gd.getUsuarios()));
         cbFiltroUsuario.setPromptText("Todos los usuarios");
 
-        colId.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getCodCompra())));
-        colUsuario.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getUsuario().getNombreCompleto()));
-        colJuego.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
-        colFecha.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getFechaFormateada()));
-        colCantidad.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getCantidad())));
-        colCoste.setCellValueFactory(c ->
-                new SimpleStringProperty(String.format("%.2f€", c.getValue().getCoste())));
+        colId.setCellValueFactory(c ->new SimpleStringProperty(String.valueOf(c.getValue().getCodCompra())));
+        colUsuario.setCellValueFactory(c ->new SimpleStringProperty(c.getValue().getUsuario().getNombreCompleto()));
+        colJuego.setCellValueFactory(c ->new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
+        colFecha.setCellValueFactory(c ->new SimpleStringProperty(c.getValue().getFechaFormateada()));
+        colCantidad.setCellValueFactory(c ->new SimpleStringProperty(String.valueOf(c.getValue().getCantidad())));
+        colCoste.setCellValueFactory(c ->new SimpleStringProperty(String.format("%.2f€", c.getValue().getCoste())));
 
-        listaFiltrada = new FilteredList<>(
-                FXCollections.observableArrayList(gd.getHistorialComprasGlobal()));
+        listaFiltrada = new FilteredList<>(FXCollections.observableArrayList(gd.getHistorialComprasGlobal()));
         tablaCompras.setItems(listaFiltrada);
         actualizarResumen();
 
@@ -67,12 +60,8 @@ public class HistorialComprasAdminController implements Initializable {
     private void aplicarFiltro() {
         String texto    = txFiltro.getText().toLowerCase();
         Usuario usuario = cbFiltroUsuario.getValue();
-        listaFiltrada.setPredicate(c -> {
-            boolean txt = texto.isEmpty()
-                    || c.getJuego().getTitulo().toLowerCase().contains(texto)
-                    || c.getUsuario().getNombreCompleto().toLowerCase().contains(texto);
-            boolean usr = usuario == null
-                    || c.getUsuario().getNombreCompleto().equalsIgnoreCase(usuario.getNombreCompleto());
+        listaFiltrada.setPredicate(c -> {boolean txt = texto.isEmpty()|| c.getJuego().getTitulo().toLowerCase().contains(texto)|| c.getUsuario().getNombreCompleto().toLowerCase().contains(texto);
+            boolean usr = usuario == null || c.getUsuario().getNombreCompleto().equalsIgnoreCase(usuario.getNombreCompleto());
             return txt && usr;
         });
         actualizarResumen();

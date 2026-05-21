@@ -29,8 +29,7 @@ public class LoginController {
         String pass   = txPassword.getText();
         lblError.setVisible(false);
 
-        if (correo.isEmpty() || pass.isEmpty()) {
-            mostrarError("Introduce correo y contraseña.");
+        if (correo.isEmpty() || pass.isEmpty()) {mostrarError("Introduce correo y contraseña.");
             return;
         }
         Usuario u = gd.loginUsuario(correo, pass);
@@ -39,13 +38,12 @@ public class LoginController {
     }
 
     @FXML
-    private void loginAdmin() {
+    private void loginAdmin() {                 //Se que no tiene mucho sentido que el login del admin aparezca justo debajo, pero lo dejo para probar la aplicación, porque solo un admin puede registrar admins
         String correo = txCorreo.getText().trim();
         String pass   = txPassword.getText();
         lblError.setVisible(false);
 
-        if (correo.isEmpty() || pass.isEmpty()) {
-            mostrarError("Introduce correo y contraseña.");
+        if (correo.isEmpty() || pass.isEmpty()) {mostrarError("Introduce correo y contraseña.");
             return;
         }
         Administrador a = gd.loginAdmin(correo, pass);

@@ -25,7 +25,6 @@ public class MainAdminController implements Initializable {
         lblAdminNombre.setText("Admin: " + gd.getAdminActual().getNombreCompleto());
     }
 
-    // ── MANTENIMIENTO ──────────────────────────────────────
     @FXML public void abrirGestionUsuarios() {
         VentanaUtil.abrirVentana("gestion_usuarios", "Gestión de Usuarios", 950, 650);
     }
@@ -42,7 +41,6 @@ public class MainAdminController implements Initializable {
         VentanaUtil.abrirVentana("gestion_estudios", "Gestión de Estudios", 900, 650);
     }
 
-    // ── GESTIÓN ────────────────────────────────────────────
     @FXML public void abrirGestionResenas() {
         VentanaUtil.abrirVentana("gestion_resenas", "Gestión de Reseñas", 900, 650);
     }
@@ -51,12 +49,10 @@ public class MainAdminController implements Initializable {
         VentanaUtil.abrirVentana("historial_compras_admin", "Historial de Compras Global", 950, 650);
     }
 
-    // ── ESTADÍSTICAS ───────────────────────────────────────
     @FXML public void abrirEstadisticas() {
         VentanaUtil.abrirVentana("estadisticas_admin", "Estadísticas y Consultas", 950, 700);
     }
 
-    // ── SESIÓN ─────────────────────────────────────────────
     @FXML public void cerrarSesion() {
         if (DialogUtil.confirmar("¿Seguro que quieres cerrar sesión?")) {
             gd.cerrarSesion();

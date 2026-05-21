@@ -17,7 +17,6 @@ import java.util.ResourceBundle;
  */
 public class PerfilUsuarioController implements Initializable {
 
-    // ── Datos actuales ─────────────────────────────────────
     @FXML private Label lblNombre;
     @FXML private Label lblCorreo;
     @FXML private Label lblIdioma;
@@ -25,12 +24,8 @@ public class PerfilUsuarioController implements Initializable {
     @FXML private Label lblNumJuegos;
     @FXML private Label lblNumCompras;
     @FXML private Label lblNumResenas;
-
-    // ── Recarga de saldo ───────────────────────────────────
     @FXML private TextField txCantidad;
     @FXML private Label     lblErrorSaldo;
-
-    // ── Edición de datos ───────────────────────────────────
     @FXML private TextField     txNombre;
     @FXML private TextField     txApellidos;
     @FXML private TextField     txCorreo;
@@ -57,15 +52,13 @@ public class PerfilUsuarioController implements Initializable {
         lblNumCompras.setText(String.valueOf(gd.getComprasUsuario(u.getIdUsuario()).size()));
         lblNumResenas.setText(String.valueOf(gd.getResenasPorUsuario(u).size()));
 
-        // Prellenar formulario de edición
         txNombre.setText(u.getNombre());
         txApellidos.setText(u.getApellidos());
         txCorreo.setText(u.getCorreo());
         txContrasena.clear();
         cbIdioma.getSelectionModel().select(u.getIdioma());
     }
-
-    // ── Saldo rápido ───────────────────────────────────────
+    //Me acabo de dar cuenta que estos botones se parecen más a los del Bet que a los de Steam, madre mia como tengo el cerebro ya de chamuscado
     @FXML public void recargar5()   { recargar(5); }
     @FXML public void recargar10()  { recargar(10); }
     @FXML public void recargar20()  { recargar(20); }
@@ -93,7 +86,6 @@ public class PerfilUsuarioController implements Initializable {
         cargar();
     }
 
-    // ── Editar datos ───────────────────────────────────────
     @FXML
     public void guardarPerfil() {
         lblErrorEdicion.setText("");

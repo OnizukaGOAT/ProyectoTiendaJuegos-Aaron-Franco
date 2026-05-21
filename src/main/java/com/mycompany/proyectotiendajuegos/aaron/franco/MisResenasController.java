@@ -18,10 +18,7 @@ import java.util.ResourceBundle;
  */
 public class MisResenasController implements Initializable {
 
-    /* ── Cabecera ─────────────────────────────────────────── */
     @FXML private Label lblContador;
-
-    /* ── Tabla de reseñas ────────────────────────────────── */
     @FXML private TableView<Resena>          tablaResenas;
     @FXML private TableColumn<Resena,String> colJuego;
     @FXML private TableColumn<Resena,String> colPunt;
@@ -29,11 +26,9 @@ public class MisResenasController implements Initializable {
     @FXML private TableColumn<Resena,String> colFecha;
     @FXML private TableColumn<Resena,String> colCom;
 
-    /* ── Botones de acción sobre la tabla ────────────────── */
     @FXML private Button btnEditar;
     @FXML private Button btnEliminar;
 
-    /* ── Formulario nueva / editar reseña ────────────────── */
     @FXML private Label             lblFormTitulo;
     @FXML private ComboBox<Juego>   cbJuego;
     @FXML private Spinner<Integer>  spinPuntuacion;
@@ -45,21 +40,17 @@ public class MisResenasController implements Initializable {
     private Resena resenaEnEdicion = null;
     private final GestorDatos gd   = GestorDatos.getInstance();
 
-    // ── Inicialización ────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Spinner de puntuación
         spinPuntuacion.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 8));
 
-        // Combos del formulario
         cbIdioma.setItems(FXCollections.observableArrayList(
                 "Español", "English", "Français", "Deutsch", "Português", "Italiano"));
         cbIdioma.getSelectionModel().select(gd.getUsuarioActual().getIdioma());
 
         cargarComboJuegos();
 
-        // Columnas de la tabla
         colJuego.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
         colPunt.setCellValueFactory(c ->
@@ -71,7 +62,6 @@ public class MisResenasController implements Initializable {
         colCom.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getComentario()));
 
-        // Habilitar botones sólo con selección
         tablaResenas.getSelectionModel().selectedItemProperty()
                 .addListener((obs, ant, nuevo) -> {
                     boolean haySeleccion = nuevo != null;
@@ -83,20 +73,17 @@ public class MisResenasController implements Initializable {
     }
 
     private void cargarComboJuegos() {
-        List<Juego> biblioteca = gd.getBibliotecaUsuario(
-                gd.getUsuarioActual().getIdUsuario());
+        List<Juego> biblioteca = gd.getBibliotecaUsuario(gd.getUsuarioActual().getIdUsuario());
         cbJuego.setItems(FXCollections.observableArrayList(biblioteca));
         cbJuego.setPromptText("Selecciona un juego de tu biblioteca");
     }
 
-    // ── Tabla ─────────────────────────────────────────────
     private void cargarResenas() {
         List<Resena> lista = gd.getResenasPorUsuario(gd.getUsuarioActual());
         tablaResenas.setItems(FXCollections.observableArrayList(lista));
         lblContador.setText(lista.size() + " reseña(s) escritas");
     }
 
-    // ── Botones de tabla ──────────────────────────────────
     @FXML
     public void editarSeleccionada() {
         Resena r = tablaResenas.getSelectionModel().getSelectedItem();
@@ -114,17 +101,12 @@ public class MisResenasController implements Initializable {
         }
     }
 
-    // ── Formulario ────────────────────────────────────────
     private void cargarEnFormulario(Resena r) {
         resenaEnEdicion = r;
         lblFormTitulo.setText("Editar Reseña");
         btnGuardar.setText("Actualizar");
-
-        gd.getBibliotecaUsuario(gd.getUsuarioActual().getIdUsuario()).stream()
-                .filter(j -> j.getIdJuego() == r.getJuego().getIdJuego())
-                .findFirst().ifPresent(cbJuego.getSelectionModel()::select);
+        gd.getBibliotecaUsuario(gd.getUsuarioActual().getIdUsuario()).stream().filter(j -> j.getIdJuego() == r.getJuego().getIdJuego()).findFirst().ifPresent(cbJuego.getSelectionModel()::select);
         cbJuego.setDisable(true);
-
         spinPuntuacion.getValueFactory().setValue(r.getPuntuacion());
         cbIdioma.getSelectionModel().select(r.getIdioma());
         txComentario.setText(r.getComentario());
@@ -133,21 +115,17 @@ public class MisResenasController implements Initializable {
 
     @FXML
     public void guardar() {
-        if (cbJuego.getValue() == null)         { lblError.setText("Selecciona un juego.");     return; }
+        if (cbJuego.getValue() == null)         { lblError.setText("Selecciona un juego."); return; }
         if (txComentario.getText().trim().isEmpty()) { lblError.setText("Escribe un comentario."); return; }
-
         if (resenaEnEdicion != null) {
             resenaEnEdicion.setComentario(txComentario.getText().trim());
             resenaEnEdicion.setPuntuacion(spinPuntuacion.getValue());
             resenaEnEdicion.setIdioma(cbIdioma.getValue());
             gd.actualizarResena(resenaEnEdicion);
             DialogUtil.info("Reseña actualizada correctamente.");
-        } else {
-            String resultado = gd.anadirResena(
-                    gd.getUsuarioActual(), cbJuego.getValue(),
-                    txComentario.getText().trim(),
-                    spinPuntuacion.getValue(),
-                    cbIdioma.getValue());
+        } 
+        else {
+            String resultado = gd.anadirResena(gd.getUsuarioActual(), cbJuego.getValue(), txComentario.getText().trim(), spinPuntuacion.getValue(), cbIdioma.getValue());
             if (!"OK".equals(resultado)) { lblError.setText(resultado); return; }
             DialogUtil.info("Reseña publicada correctamente.");
         }
@@ -157,7 +135,8 @@ public class MisResenasController implements Initializable {
 
     @FXML
     public void cancelar() { limpiarFormulario(); }
-
+    
+    
     private void limpiarFormulario() {
         resenaEnEdicion = null;
         lblFormTitulo.setText("Nueva Reseña");

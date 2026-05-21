@@ -26,28 +26,25 @@ public class RegistroController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cbIdioma.setItems(FXCollections.observableArrayList(
-                "Español", "English", "Français", "Deutsch", "Português", "Italiano"));
+        cbIdioma.setItems(FXCollections.observableArrayList("Español", "English", "Français", "Deutsch", "Português", "Italiano")); //Me acabo de dar cuenta de que si pones una reseña en la BD en un idioma que no esté aquí aparece como ?????
         cbIdioma.getSelectionModel().selectFirst();
     }
 
     @FXML
     private void registrar() {
-        String nombre    = txNombre.getText().trim();
+        String nombre = txNombre.getText().trim();
         String apellidos = txApellidos.getText().trim();
-        String correo    = txCorreo.getText().trim();
-        String pass      = txPassword.getText();
-        String idioma    = cbIdioma.getValue();
-        String saldoStr  = txSaldo.getText().trim();
+        String correo = txCorreo.getText().trim();
+        String pass = txPassword.getText();
+        String idioma = cbIdioma.getValue();
+        String saldoStr = txSaldo.getText().trim();
 
         lblError.setVisible(false);
 
-        if (nombre.isEmpty() || apellidos.isEmpty() || correo.isEmpty() || pass.isEmpty()) {
-            mostrarError("Rellena todos los campos obligatorios.");
+        if (nombre.isEmpty() || apellidos.isEmpty() || correo.isEmpty() || pass.isEmpty()) {mostrarError("Rellena todos los campos obligatorios.");
             return;
         }
-        if (pass.length() < 6) {
-            mostrarError("La contraseña debe tener al menos 6 caracteres.");
+        if (pass.length() < 6) {mostrarError("La contraseña debe tener al menos 6 caracteres.");
             return;
         }
         double saldo = 50.0;

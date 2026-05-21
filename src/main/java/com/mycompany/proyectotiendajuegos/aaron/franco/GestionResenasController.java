@@ -32,27 +32,19 @@ public class GestionResenasController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        colId.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getIdResena())));
-        colJuego.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
-        colAutor.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getAutor().getNombreCompleto()));
-        colPunt.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getPuntuacion())));
-        colIdioma.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getIdioma()));
-        colFecha.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getFechaFormateada()));
-        colCom.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getComentario()));
+        colId.setCellValueFactory(c ->new SimpleStringProperty(String.valueOf(c.getValue().getIdResena())));
+        colJuego.setCellValueFactory(c ->new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
+        colAutor.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAutor().getNombreCompleto()));
+        colPunt.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getPuntuacion())));
+        colIdioma.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getIdioma()));
+        colFecha.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getFechaFormateada()));
+        colCom.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getComentario()));
 
         colAcciones.setCellFactory(tc -> new TableCell<>() {
             final Button btnDel = new Button("🗑 Eliminar");
             {
                 btnDel.getStyleClass().add("btn-danger");
-                btnDel.setOnAction(e -> {
-                    Resena r = getTableView().getItems().get(getIndex());
+                btnDel.setOnAction(e -> {Resena r = getTableView().getItems().get(getIndex());
                     if (DialogUtil.confirmar("¿Eliminar esta reseña?")) {
                         gd.eliminarResena(r.getIdResena());
                         cargar(null);

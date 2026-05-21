@@ -1,5 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.proyectotiendajuegos.aaron.franco.clases;
 
+/**
+ *
+ * @author USUARIO
+ */
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -24,23 +32,93 @@ public class Compra {
         this.fecha    = LocalDate.now();
     }
 
-    // ── Getters ───────────────────────────────────────────
-    public int       getCodCompra() { return codCompra; }
-    public LocalDate getFecha()     { return fecha; }
-    public int       getCantidad()  { return cantidad; }
-    public double    getCoste()     { return coste; }
-    public Usuario   getUsuario()   { return usuario; }
-    public Juego     getJuego()     { return juego; }
 
-    // ── Setters ───────────────────────────────────────────
-    public void setCodCompra(int codCompra)   { this.codCompra = codCompra; }
-    public void setFecha(LocalDate fecha)     { this.fecha     = fecha; }
-    public void setCantidad(int cantidad)     { this.cantidad  = cantidad; }
-    public void setCoste(double coste)        { this.coste     = coste; }
-    public void setUsuario(Usuario usuario)   { this.usuario   = usuario; }
-    public void setJuego(Juego juego)         { this.juego     = juego; }
 
     public String getFechaFormateada() {
-        return fecha != null ? fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+        return getFecha() != null ? getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+    }
+
+    /**
+     * @return the codCompra
+     */
+    public int getCodCompra() {
+        return codCompra;
+    }
+
+    /**
+     * @param codCompra the codCompra to set
+     */
+    public void setCodCompra(int codCompra) {
+        this.codCompra = codCompra;
+    }
+
+    /**
+     * @return the fecha
+     */
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    /**
+     * @param fecha the fecha to set
+     */
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    /**
+     * @return the cantidad
+     */
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    /**
+     * @param cantidad the cantidad to set
+     */
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    /**
+     * @return the coste
+     */
+    public double getCoste() {
+        return coste;
+    }
+
+    /**
+     * @param coste the coste to set
+     */
+    public void setCoste(double coste) {
+        this.coste = coste;
+    }
+
+    /**
+     * @return the usuario
+     */
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    /**
+     * @return the juego
+     */
+    public Juego getJuego() {
+        return juego;
+    }
+
+    /**
+     * @param juego the juego to set
+     */
+    public void setJuego(Juego juego) {
+        this.juego = juego;
     }
 }

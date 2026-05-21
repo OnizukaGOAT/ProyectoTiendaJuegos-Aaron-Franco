@@ -28,15 +28,10 @@ public class HistorialComprasUsuarioController implements Initializable {
     private final GestorDatos gd = GestorDatos.getInstance();
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        colJuego.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
-        colFecha.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getFechaFormateada()));
-        colCantidad.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getCantidad())));
-        colCoste.setCellValueFactory(c ->
-                new SimpleStringProperty(String.format("%.2f€", c.getValue().getCoste())));
+    public void initialize(URL url, ResourceBundle rb) { colJuego.setCellValueFactory(c ->new SimpleStringProperty(c.getValue().getJuego().getTitulo()));
+        colFecha.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getFechaFormateada()));
+        colCantidad.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getCantidad())));
+        colCoste.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f€", c.getValue().getCoste())));
 
         cargar();
     }

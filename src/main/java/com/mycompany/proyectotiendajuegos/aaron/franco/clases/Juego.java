@@ -1,5 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.proyectotiendajuegos.aaron.franco.clases;
 
+/**
+ *
+ * @author USUARIO
+ */
 import java.util.ArrayList;
 
 public class Juego {
@@ -24,39 +32,106 @@ public class Juego {
         this.director   = director;
     }
 
-    // ── Getters ────────────────────────────────────────────
-    public int    getIdJuego()    { return idJuego; }
-    public String getTitulo()     { return titulo; }
-    public String getGenero()     { return genero; }
-    public String getPlataforma() { return plataforma; }
-    public double getPrecio()     { return precio; }
-    public int    getStock()      { return stock; }
-    public String getDirector()   { return director; }
 
-    /**
-     * Devuelve la lista de reseñas consultando la BD.
-     * Usada solo cuando se necesita iterar (p.ej. detalle de juego en admin).
-     */
-    public ArrayList<Resena> getResenas() {
-        if (idJuego == 0) return new ArrayList<>();
-        return new ArrayList<>(GestorDatos.getInstance().getResenasPorJuego(this));
-    }
-
-    /** Media de puntuación calculada en BD. */
-    public double getPuntuacionMedia() {
-        if (idJuego == 0) return 0;
-        return GestorDatos.getInstance().getPuntuacionMediaJuego(idJuego);
-    }
-
-    // ── Setters ────────────────────────────────────────────
-    public void setIdJuego(int idJuego)          { this.idJuego    = idJuego; }
-    public void setTitulo(String titulo)         { this.titulo     = titulo; }
-    public void setGenero(String genero)         { this.genero     = genero; }
-    public void setPlataforma(String plataforma) { this.plataforma = plataforma; }
-    public void setPrecio(double precio)         { this.precio     = precio; }
-    public void setStock(int stock)              { this.stock      = stock; }
-    public void setDirector(String director)     { this.director   = director; }
 
     @Override
-    public String toString() { return titulo; }
+    public String toString() { return getTitulo(); }
+
+    /**
+     * @return the idJuego
+     */
+    public int getIdJuego() {
+        return idJuego;
+    }
+
+    /**
+     * @param idJuego the idJuego to set
+     */
+    public void setIdJuego(int idJuego) {
+        this.idJuego = idJuego;
+    }
+
+    /**
+     * @return the titulo
+     */
+    public String getTitulo() {
+        return titulo;
+    }
+
+    /**
+     * @param titulo the titulo to set
+     */
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    /**
+     * @return the genero
+     */
+    public String getGenero() {
+        return genero;
+    }
+
+    /**
+     * @param genero the genero to set
+     */
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    /**
+     * @return the plataforma
+     */
+    public String getPlataforma() {
+        return plataforma;
+    }
+
+    /**
+     * @param plataforma the plataforma to set
+     */
+    public void setPlataforma(String plataforma) {
+        this.plataforma = plataforma;
+    }
+
+    /**
+     * @return the precio
+     */
+    public double getPrecio() {
+        return precio;
+    }
+
+    /**
+     * @param precio the precio to set
+     */
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    /**
+     * @return the stock
+     */
+    public int getStock() {
+        return stock;
+    }
+
+    /**
+     * @param stock the stock to set
+     */
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    /**
+     * @return the director
+     */
+    public String getDirector() {
+        return director;
+    }
+
+    /**
+     * @param director the director to set
+     */
+    public void setDirector(String director) {
+        this.director = director;
+    }
 }

@@ -128,16 +128,14 @@ public class GestionJuegosController implements Initializable {
         txPrecio.setText(String.valueOf(j.getPrecio()));
         txStock.setText(String.valueOf(j.getStock()));
         txDirector.setText(j.getDirector());
-        gd.getEstudios().stream()
-                .filter(e -> e.getJuegos().stream().anyMatch(jj -> jj.getIdJuego() == j.getIdJuego()))
-                .findFirst().ifPresent(cbEstudio.getSelectionModel()::select);
+        gd.getEstudios().stream().filter(e -> e.getJuegos().stream().anyMatch(jj -> jj.getIdJuego() == j.getIdJuego())).findFirst().ifPresent(cbEstudio.getSelectionModel()::select);
         lblError.setText("");
     }
 
     @FXML public void guardar() {
-        String titulo   = txTitulo.getText().trim();
-        String genero   = txGenero.getText().trim();
-        String plat     = txPlat.getText().trim();
+        String titulo = txTitulo.getText().trim();
+        String genero = txGenero.getText().trim();
+        String plat = txPlat.getText().trim();
         String director = txDirector.getText().trim();
         if (titulo.isEmpty()) { lblError.setText("El título es obligatorio."); return; }
         double precio;

@@ -44,21 +44,22 @@ public class GestionAdminsController implements Initializable {
     }
 
     private void configurarTabla() {
-        colId.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getIdAdmin())));
-        colNombre.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getNombreCompleto()));
-        colCorreo.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getCorreo()));
-
+        colId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getIdAdmin())));
+        colNombre.setCellValueFactory(c ->new SimpleStringProperty(c.getValue().getNombreCompleto()));
+        colCorreo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCorreo()));
         colAcciones.setCellFactory(tc -> new TableCell<>() {final Button btnEditar = new Button("✏ Editar"); final Button btnBaja   = new Button("🗑 Baja");
             {
                 btnEditar.getStyleClass().add("btn-secondary");
                 btnBaja.getStyleClass().add("btn-danger");
                 btnEditar.setOnAction(e -> prepararEdicion(getTableView().getItems().get(getIndex())));
-                btnBaja.setOnAction(e   -> darDeBaja(getTableView().getItems().get(getIndex())));
+                btnBaja.setOnAction(e -> darDeBaja(getTableView().getItems().get(getIndex())));
             }
-            @Override protected void updateItem(Void item, boolean vacio) {super.updateItem(item, vacio); setGraphic(vacio ? null : new HBox(5, btnEditar, btnBaja));
+            
+            
+            @Override protected void updateItem(Void item, boolean vacio) {super.updateItem(item, vacio); setGraphic(vacio ? null : new HBox(5, btnEditar, btnBaja)); 
+            
+             // Si la celda está vacía, no muestra nada. He tenido que buscar como se hacía esto 
+            // Si tiene datos, muestra un contenedor horizontal con espacio de 5px entre los botones Editar y Baja.
             }
         });
     }
@@ -84,10 +85,10 @@ public class GestionAdminsController implements Initializable {
     }
 
     @FXML public void guardar() {
-        String nombre    = txNombre.getText().trim();
+        String nombre = txNombre.getText().trim();
         String apellidos = txApellidos.getText().trim();
-        String correo    = txCorreo.getText().trim();
-        String pass      = txContrasena.getText();
+        String correo = txCorreo.getText().trim();
+        String pass = txContrasena.getText();
 
         if (nombre.isEmpty()) { lblError.setText("El nombre es obligatorio."); return; }
 

@@ -1,5 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.proyectotiendajuegos.aaron.franco.clases;
 
+/**
+ *
+ * @author USUARIO
+ */
 import java.util.ArrayList;
 
 public class Estudio {
@@ -20,32 +28,79 @@ public class Estudio {
         this.juegos          = new ArrayList<>();
     }
 
-    // ── Getters ───────────────────────────────────────────
-    public int                      getIdEstudio()       { return idEstudio; }
-    public String                   getNombre()          { return nombre; }
-    public ArrayList<Desarrollador> getDesarrolladores() { return desarrolladores; }
-    public ArrayList<Juego>         getJuegos()          { return juegos; }
-
-    // ── Setters ───────────────────────────────────────────
-    public void setIdEstudio(int idEstudio) { this.idEstudio = idEstudio; }
-    public void setNombre(String nombre)    { this.nombre    = nombre; }
 
     public void addDesarrollador(Desarrollador d) {
-        if (!desarrolladores.contains(d)) desarrolladores.add(d);
+        if (!desarrolladores.contains(d)) getDesarrolladores().add(d);
     }
 
     public void removeDesarrollador(int id) {
-        desarrolladores.removeIf(d -> d.getIdDesarrollador() == id);
+        getDesarrolladores().removeIf(d -> d.getIdDesarrollador() == id);
     }
 
     public void addJuego(Juego j) {
-        if (!juegos.contains(j)) juegos.add(j);
+        if (!juegos.contains(j)) getJuegos().add(j);
     }
 
     public void removeJuego(int id) {
-        juegos.removeIf(j -> j.getIdJuego() == id);
+        getJuegos().removeIf(j -> j.getIdJuego() == id);
     }
 
     @Override
-    public String toString() { return nombre; }
+    public String toString() { return getNombre(); }
+
+    /**
+     * @return the idEstudio
+     */
+    public int getIdEstudio() {
+        return idEstudio;
+    }
+
+    /**
+     * @param idEstudio the idEstudio to set
+     */
+    public void setIdEstudio(int idEstudio) {
+        this.idEstudio = idEstudio;
+    }
+
+    /**
+     * @return the nombre
+     */
+    public String getNombre() {
+        return nombre;
+    }
+
+    /**
+     * @param nombre the nombre to set
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    /**
+     * @return the desarrolladores
+     */
+    public ArrayList<Desarrollador> getDesarrolladores() {
+        return desarrolladores;
+    }
+
+    /**
+     * @param desarrolladores the desarrolladores to set
+     */
+    public void setDesarrolladores(ArrayList<Desarrollador> desarrolladores) {
+        this.desarrolladores = desarrolladores;
+    }
+
+    /**
+     * @return the juegos
+     */
+    public ArrayList<Juego> getJuegos() {
+        return juegos;
+    }
+
+    /**
+     * @param juegos the juegos to set
+     */
+    public void setJuegos(ArrayList<Juego> juegos) {
+        this.juegos = juegos;
+    }
 }

@@ -28,11 +28,10 @@ public class MainUsuarioController implements Initializable {
         actualizarSaldo();
     }
 
-    public void actualizarSaldo() {
+    public void actualizarSaldo() {                 //Bastante goofy la vda que el saldo aumente sin pedirte ni una tarjeta ni nada, pero creo que es la manera más comoda
         lblSaldo.setText(String.format("💰 %.2f€", gd.getUsuarioActual().getSaldo()));
     }
 
-    // ── CATÁLOGO / BÚSQUEDA ───────────────────────────────────────────────
     @FXML
     public void mostrarCatalogo() {
         VentanaUtil.abrirVentana("catalogo_usuario", "Catálogo de Juegos", 1000, 680);
@@ -45,7 +44,6 @@ public class MainUsuarioController implements Initializable {
         actualizarSaldo();
     }
 
-    // ── MI CUENTA ────────────────────────────────────────────────────────
     @FXML
     public void mostrarHistorialCompras() {
         VentanaUtil.abrirVentana("historial_compras_usuario", "Historial de Compras", 750, 560);
@@ -67,24 +65,19 @@ public class MainUsuarioController implements Initializable {
         actualizarSaldo();
     }
 
-    // ── CONSULTAS ────────────────────────────────────────────────────────
     @FXML
     public void mostrarEstadisticas() {
-        // Vista de estadísticas dedicada al usuario (EstadisticasController)
         VentanaUtil.abrirVentana("estadisticas_usuario", "Estadísticas", 950, 700);
     }
 
-    // Compatibilidad con botones FXML heredados
     @FXML public void mostrarMejorValorados() { mostrarEstadisticas(); }
     @FXML public void mostrarMasVendidos()    { mostrarEstadisticas(); }
 
-    // ── AYUDA ────────────────────────────────────────────────────────────
     @FXML
     public void mostrarAyuda() {
         VentanaUtil.abrirVentana("ayuda_usuario", "Ayuda", 700, 560);
     }
 
-    // ── SESIÓN ───────────────────────────────────────────────────────────
     @FXML
     public void cerrarSesion() {
         if (DialogUtil.confirmar("¿Seguro que quieres cerrar sesión?")) {

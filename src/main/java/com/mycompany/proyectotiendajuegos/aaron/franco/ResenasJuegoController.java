@@ -20,21 +20,16 @@ import java.util.ResourceBundle;
  */
 public class ResenasJuegoController implements Initializable {
 
-    /* ── Cabecera ─────────────────────────────────────────── */
     @FXML private Label              lblTituloJuego;
     @FXML private Label              lblMedia;
     @FXML private ComboBox<String>   cbFiltroIdioma;
     @FXML private Button             btnCerrar;
-
-    /* ── Tabla ────────────────────────────────────────────── */
     @FXML private TableView<Resena>          tablaResenas;
     @FXML private TableColumn<Resena,String> colAutor;
     @FXML private TableColumn<Resena,String> colPunt;
     @FXML private TableColumn<Resena,String> colIdioma;
     @FXML private TableColumn<Resena,String> colFecha;
     @FXML private TableColumn<Resena,String> colCom;
-
-    /* ── Panel lateral de detalle de reseña ─────────────── */
     @FXML private javafx.scene.layout.VBox panelResena;
     @FXML private javafx.scene.layout.VBox panelVacio;
     @FXML private Label lblResAutor;
@@ -47,39 +42,30 @@ public class ResenasJuegoController implements Initializable {
     private Juego juego;
     private ObservableList<Resena> todasLasResenas;
 
-    // ── Punto de entrada: VentanaUtil llama a setJuego() ──
     public void setJuego(Juego juego) {
         this.juego = juego;
+        cargar(); // ← línea añadida para que carguen las reseñas, que antes se me había olvidado y no salían aquí
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // La carga real ocurre en cargar(), invocado desde VentanaUtil
-        // tras llamar a setJuego().
     }
 
-    /** Invocado por VentanaUtil tras inyectar el juego. */
     public void cargar() {
         if (juego == null) return;
 
         lblTituloJuego.setText("🎮 " + juego.getTitulo());
         List<Resena> resenas = gd.getResenasPorJuego(juego);
         double media = gd.getPuntuacionMediaJuego(juego.getIdJuego());
-        lblMedia.setText(media > 0
-                ? String.format("⭐ %.1f/10  (%d reseñas)", media, resenas.size())
-                : "Sin valoraciones todavía");
+        lblMedia.setText(media > 0 ? String.format("⭐ %.1f/10  (%d reseñas)", media, resenas.size()): "Sin valoraciones todavía");
 
-        todasLasResenas = FXCollections.observableArrayList(resenas);
+        todasLasResenas = FXCollections.observableArrayList(resenas); //Madlditos yankis, lo de tener que usar n en lugar de Ñ me mata, pero todo sea por ahorrarme errores
 
-        // Poblamos el ComboBox de idiomas con los idiomas presentes
-        List<String> idiomas = resenas.stream()
-                .map(Resena::getIdioma).distinct().sorted()
-                .collect(java.util.stream.Collectors.toList());
+        List<String> idiomas = resenas.stream().map(Resena::getIdioma).distinct().sorted().collect(java.util.stream.Collectors.toList());
         cbFiltroIdioma.setItems(FXCollections.observableArrayList(idiomas));
 
         configurarColumnas();
-        tablaResenas.getSelectionModel().selectedItemProperty()
-                .addListener((obs, ant, nuevo) -> mostrarDetalleResena(nuevo));
+        tablaResenas.getSelectionModel().selectedItemProperty().addListener((obs, ant, nuevo) -> mostrarDetalleResena(nuevo));
 
         tablaResenas.setItems(todasLasResenas);
         ocultarDetalleResena();
@@ -97,17 +83,14 @@ public class ResenasJuegoController implements Initializable {
         colCom.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getComentario()));
     }
-
-    // ── Filtros ───────────────────────────────────────────
     @FXML
-    public void filtrarPorIdioma() {
+    public void filtrarPorIdioma() {  //Parece que para la aplicación el japonés no es real o algo
         String idiomaSeleccionado = cbFiltroIdioma.getValue();
         if (idiomaSeleccionado == null || idiomaSeleccionado.isEmpty()) {
             tablaResenas.setItems(todasLasResenas);
             return;
         }
-        ObservableList<Resena> filtradas = todasLasResenas.filtered(
-                r -> idiomaSeleccionado.equals(r.getIdioma()));
+        ObservableList<Resena> filtradas = todasLasResenas.filtered(r -> idiomaSeleccionado.equals(r.getIdioma()));
         tablaResenas.setItems(filtradas);
         ocultarDetalleResena();
     }
@@ -119,7 +102,6 @@ public class ResenasJuegoController implements Initializable {
         ocultarDetalleResena();
     }
 
-    // ── Panel de detalle de reseña ────────────────────────
     private void mostrarDetalleResena(Resena r) {
         if (r == null) { ocultarDetalleResena(); return; }
 
@@ -141,8 +123,6 @@ public class ResenasJuegoController implements Initializable {
         panelVacio.setVisible(true);
         panelVacio.setManaged(true);
     }
-
-    // ── Cerrar ────────────────────────────────────────────
     @FXML
     public void cerrar() {
         ((Stage) btnCerrar.getScene().getWindow()).close();

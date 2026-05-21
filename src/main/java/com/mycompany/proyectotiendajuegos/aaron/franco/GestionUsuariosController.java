@@ -26,8 +26,6 @@ public class GestionUsuariosController implements Initializable {
     @FXML private TableColumn<Usuario, String> colCorreo;
     @FXML private TableColumn<Usuario, String> colSaldo;
     @FXML private TableColumn<Usuario, Void>   colAcciones;
-
-    // Detalle
     @FXML private Label lblDetNombre;
     @FXML private Label lblDetCorreo;
     @FXML private Label lblDetIdioma;
@@ -35,8 +33,6 @@ public class GestionUsuariosController implements Initializable {
     @FXML private Label lblDetJuegos;
     @FXML private Label lblDetCompras;
     @FXML private Label lblDetResenas;
-
-    // Formulario
     @FXML private Label         lblTituloForm;
     @FXML private TextField     txNombre;
     @FXML private TextField     txApellidos;
@@ -59,14 +55,10 @@ public class GestionUsuariosController implements Initializable {
     }
 
     private void configurarTabla() {
-        colId.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getIdUsuario())));
-        colNombre.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getNombreCompleto()));
-        colCorreo.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getCorreo()));
-        colSaldo.setCellValueFactory(c ->
-                new SimpleStringProperty(String.format("%.2f€", c.getValue().getSaldo())));
+        colId.setCellValueFactory(c ->new SimpleStringProperty(String.valueOf(c.getValue().getIdUsuario())));
+        colNombre.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNombreCompleto()));
+        colCorreo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCorreo()));
+        colSaldo.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f€", c.getValue().getSaldo())));
 
         colAcciones.setCellFactory(tc -> new TableCell<>() {
             final Button btnVer    = new Button("🔍");
@@ -76,9 +68,9 @@ public class GestionUsuariosController implements Initializable {
                 btnVer.getStyleClass().add("btn-gold");
                 btnEditar.getStyleClass().add("btn-secondary");
                 btnBaja.getStyleClass().add("btn-danger");
-                btnVer.setOnAction(e    -> mostrarDetalle(getTableView().getItems().get(getIndex())));
+                btnVer.setOnAction(e -> mostrarDetalle(getTableView().getItems().get(getIndex())));
                 btnEditar.setOnAction(e -> prepararEdicion(getTableView().getItems().get(getIndex())));
-                btnBaja.setOnAction(e   -> darDeBaja(getTableView().getItems().get(getIndex())));
+                btnBaja.setOnAction(e -> darDeBaja(getTableView().getItems().get(getIndex())));
             }
             @Override protected void updateItem(Void item, boolean vacio) {
                 super.updateItem(item, vacio);
@@ -86,8 +78,7 @@ public class GestionUsuariosController implements Initializable {
             }
         });
 
-        tablaUsuarios.getSelectionModel().selectedItemProperty().addListener(
-                (obs, ant, nuevo) -> { if (nuevo != null) mostrarDetalle(nuevo); });
+        tablaUsuarios.getSelectionModel().selectedItemProperty().addListener((obs, ant, nuevo) -> { if (nuevo != null) mostrarDetalle(nuevo); });
     }
 
     private void cargar() {
@@ -126,11 +117,11 @@ public class GestionUsuariosController implements Initializable {
     }
 
     @FXML public void guardar() {
-        String nombre    = txNombre.getText().trim();
+        String nombre = txNombre.getText().trim();
         String apellidos = txApellidos.getText().trim();
-        String correo    = txCorreo.getText().trim();
-        String pass      = txContrasena.getText();
-        String idioma    = cbIdioma.getValue();
+        String correo = txCorreo.getText().trim();
+        String pass = txContrasena.getText();
+        String idioma = cbIdioma.getValue();
         if (nombre.isEmpty()) { lblError.setText("El nombre es obligatorio."); return; }
         double saldo;
         try { saldo = Double.parseDouble(txSaldo.getText().replace(",", ".")); }
@@ -155,7 +146,8 @@ public class GestionUsuariosController implements Initializable {
     }
 
     private void darDeBaja(Usuario u) {
-        if (DialogUtil.confirmar("¿Dar de baja a " + u.getNombreCompleto() + "?")) {
+        if (DialogUtil.confirmar("¿Dar de baja a " + u.getNombreCompleto() + "?")) 
+        {
             gd.bajaUsuario(u.getIdUsuario());
             cargar();
             limpiarFormulario();

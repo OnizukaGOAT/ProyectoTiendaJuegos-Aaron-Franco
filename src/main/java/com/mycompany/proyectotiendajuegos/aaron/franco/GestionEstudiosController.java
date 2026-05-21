@@ -23,18 +23,13 @@ import java.util.stream.Collectors;
  */
 public class GestionEstudiosController implements Initializable {
 
-    // Tabla estudios
     @FXML private TableView<Estudio>          tablaEstudios;
     @FXML private TableColumn<Estudio, String> colEstId, colEstNombre, colEstJuegos, colEstDevs;
     @FXML private TableColumn<Estudio, Void>   colEstAcc;
-
-    // Tabla desarrolladores
-    @FXML private TableView<Desarrollador>          tablaDevs;
+    @FXML private TableView<Desarrollador>          tablaDevs; //Le pongo devs porque creo que queda mejor como diminutivo de Desarrollador que des o desa o algo así
     @FXML private TableColumn<Desarrollador, String> colDevId, colDevNombre, colDevPuesto, colDevAnos;
     @FXML private TableColumn<Desarrollador, Void>   colDevAcc;
     @FXML private Label lblDevEstudio;
-
-    // Formulario
     @FXML private Label   lblFormTitulo, lblError;
     @FXML private VBox    panelEstudio, panelDev;
     @FXML private TextField txEstNombre;
@@ -42,9 +37,9 @@ public class GestionEstudiosController implements Initializable {
     @FXML private ListView<String> lstJuegosDev;
 
     private final GestorDatos gd = GestorDatos.getInstance();
-    private Estudio     estudioSeleccionado = null;
-    private Estudio     estudioEnEdicion    = null;
-    private Desarrollador devEnEdicion      = null;
+    private Estudio estudioSeleccionado = null;
+    private Estudio estudioEnEdicion = null;
+    private Desarrollador devEnEdicion = null;
     private boolean modoEstudio = true;
 
     @Override
@@ -56,14 +51,10 @@ public class GestionEstudiosController implements Initializable {
     }
 
     private void configurarTablaEstudios() {
-        colEstId.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getIdEstudio())));
-        colEstNombre.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getNombre()));
-        colEstJuegos.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getJuegos().size())));
-        colEstDevs.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getDesarrolladores().size())));
+        colEstId.setCellValueFactory(c ->new SimpleStringProperty(String.valueOf(c.getValue().getIdEstudio())));
+        colEstNombre.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNombre()));
+        colEstJuegos.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getJuegos().size())));
+        colEstDevs.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getDesarrolladores().size())));
 
         colEstAcc.setCellFactory(tc -> new TableCell<>() {
             final Button btnEdit = new Button("✏");
@@ -96,14 +87,10 @@ public class GestionEstudiosController implements Initializable {
     }
 
     private void configurarTablaDevs() {
-        colDevId.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getIdDesarrollador())));
-        colDevNombre.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getNombreCompleto()));
-        colDevPuesto.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getPuestoActual()));
-        colDevAnos.setCellValueFactory(c ->
-                new SimpleStringProperty(String.valueOf(c.getValue().getAnosExperiencia())));
+        colDevId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getIdDesarrollador())));
+        colDevNombre.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNombreCompleto()));
+        colDevPuesto.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPuestoActual()));  
+        colDevAnos.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getAnosExperiencia())));
 
         colDevAcc.setCellFactory(tc -> new TableCell<>() {
             final Button btnEdit = new Button("✏");
@@ -112,8 +99,7 @@ public class GestionEstudiosController implements Initializable {
                 btnEdit.getStyleClass().add("btn-secondary");
                 btnDel.getStyleClass().add("btn-danger");
                 btnEdit.setOnAction(e -> prepararEdicionDev(getTableView().getItems().get(getIndex())));
-                btnDel.setOnAction(e -> {
-                    Desarrollador d = getTableView().getItems().get(getIndex());
+                btnDel.setOnAction(e -> {Desarrollador d = getTableView().getItems().get(getIndex());
                     if (DialogUtil.confirmar("¿Dar de baja a " + d.getNombreCompleto() + "?")) {
                         gd.bajaDesarrollador(d.getIdDesarrollador());
                         cargarEstudios();
@@ -132,8 +118,7 @@ public class GestionEstudiosController implements Initializable {
         tablaEstudios.setItems(FXCollections.observableArrayList(lista));
         tablaDevs.getItems().clear();
         if (estudioSeleccionado != null) {
-            lista.stream().filter(e -> e.getIdEstudio() == estudioSeleccionado.getIdEstudio())
-                    .findFirst().ifPresent(e -> {
+            lista.stream().filter(e -> e.getIdEstudio() == estudioSeleccionado.getIdEstudio()).findFirst().ifPresent(e -> {
                         estudioSeleccionado = e;
                         tablaEstudios.getSelectionModel().select(e);
                     });
@@ -194,7 +179,7 @@ public class GestionEstudiosController implements Initializable {
 
     @FXML public void guardar() {
         if (modoEstudio) guardarEstudio();
-        else             guardarDev();
+        else guardarDev();
     }
 
     private void guardarEstudio() {
